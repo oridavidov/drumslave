@@ -1,0 +1,1 @@
+These samples were obtained via http://freesound.org.  These sounds are part of the "High-Quality-Cymbals" pack uploaded by ltibbits.  See http://www.freesound.org/packsViewSingle.php?id=889

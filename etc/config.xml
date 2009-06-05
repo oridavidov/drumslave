@@ -1,0 +1,81 @@
+<drum-slave>
+	<pads>
+		<pad name="Snare">
+			<zone name="Head" channel="1" />
+			<zone name="Rim" channel="2" />
+		</pad>
+		<pad name="Tom 1">
+			<zone name="Head" channel="3" />
+		</pad>
+		<pad name="Tom 2">
+			<zone name="Head" channel="4" />
+		</pad>
+		<pad name="Tom 3">
+			<zone name="Head" channel="5" />
+		</pad>
+		<pad name="Tom 4">
+			<zone name="Head" channel="6" />
+		</pad>
+		<pad name="Ride">
+			<zone name="Bow" channel="7" />
+			<zone name="Bell" channel="8" />
+			<zone name="Edge" channel="9" />
+		</pad>
+	</pads>
+
+	<samples>
+		<sample name="Cymbal/Ride/Zildjian A Ping 20/Bow">
+			<param name="count" value="1" />
+		</sample>
+		<sample name="Cymbal/Ride/Zildjian A Ping 20/Bell">
+			<param name="count" value="1" />
+		</sample>
+		<sample name="Cymbal/Ride/Zildjian A Ping 20/Edge">
+			<param name="count" value="1" />
+		</sample>
+		<sample name="Drum/Snare/Garage Band/Head">
+			<param name="count" value="1" />
+		</sample>
+		<sample name="Drum/Tom/Beech/1 High">
+			<param name="count" value="1" />
+		</sample>
+		<sample name="Drum/Tom/Beech/2 Med High">
+			<param name="count" value="1" />
+		</sample>
+		<sample name="Drum/Tom/Beech/3 Med">
+			<param name="count" value="1" />
+		</sample>
+		<sample name="Drum/Tom/Beech/4 Med Low">
+			<param name="count" value="1" />
+		</sample>
+		<sample name="Drum/Tom/Beech/5 Low">
+			<param name="count" value="1" />
+		</sample>
+	</samples>
+
+	<logics>
+		<logic name="Play" className="ca.digitalcave.drumslave.model.logic.Play" />
+	</logics>
+
+	<logic-mappings>
+		<logic-mapping pad-name="Snare" zone-name="Head" logic-name="Play" />
+		<logic-mapping pad-name="Tom 1" zone-name="Head" logic-name="Play" />
+		<logic-mapping pad-name="Tom 2" zone-name="Head" logic-name="Play" />
+		<logic-mapping pad-name="Tom 3" zone-name="Head" logic-name="Play" />
+		<logic-mapping pad-name="Tom 4" zone-name="Head" logic-name="Play" />
+		<logic-mapping pad-name="Ride" zone-name="Bow" logic-name="Play" />
+		<logic-mapping pad-name="Ride" zone-name="Bell" logic-name="Play" />
+		<logic-mapping pad-name="Ride" zone-name="Edge" logic-name="Play" />
+	</logic-mappings>
+
+	<sample-mappings>
+		<sample-mapping pad-name="Snare" zone-name="Head" sample-name="Drum/Snare/Garage Band/Head" />
+		<sample-mapping pad-name="Tom 1" zone-name="Head" sample-name="Drum/Tom/Beech/1 High" />
+		<sample-mapping pad-name="Tom 2" zone-name="Head" sample-name="Drum/Tom/Beech/2 Med High" />
+		<sample-mapping pad-name="Tom 3" zone-name="Head" sample-name="Drum/Tom/Beech/3 Med" />
+		<sample-mapping pad-name="Tom 4" zone-name="Head" sample-name="Drum/Tom/Beech/5 Low" />
+		<sample-mapping pad-name="Ride" zone-name="Bow" sample-name='Cymbal/Ride/Zildjian A Ping 20/Bow' />
+		<sample-mapping pad-name="Ride" zone-name="Bell" sample-name='Cymbal/Ride/Zildjian A Ping 20/Bell' />
+		<sample-mapping pad-name="Ride" zone-name="Edge" sample-name='Cymbal/Ride/Zildjian A Ping 20/Edge' />
+	</sample-mappings>
+</drum-slave>

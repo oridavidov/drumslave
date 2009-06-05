@@ -6,7 +6,7 @@ import gnu.io.SerialPortEventListener;
 import java.io.IOException;
 import java.io.InputStream;
 
-import ca.digitalcave.drumslave.hardware.Zone;
+import ca.digitalcave.drumslave.model.hardware.Zone;
 
 /**
  * Handles the input coming from the serial port. A new line character
