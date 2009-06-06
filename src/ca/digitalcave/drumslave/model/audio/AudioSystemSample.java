@@ -24,9 +24,7 @@ import javax.sound.sampled.FloatControl;
  * 
  * The largest limitation of this Sample implementation is that it can only open 
  * 32 clips simultaneously.  Since there is one clip opened for each sample * each
- * count, this can obviously be overloaded rather quickly; as such, this Sample class
- * is best used for testing or small (one or two pads) implementations, with low
- * sample level numbers and low counts / level.   
+ * count, this can obviously be overloaded rather quickly.
  * 
  * To configure this, you need to include a <param> item in the <sample> element in the
  * config file; this param must include an attribute name='count' and value='X', where
@@ -174,5 +172,10 @@ public class AudioSystemSample extends Sample {
 				}
 			}
 		}
+	}
+	
+	@Override
+	public float getLevel() {
+		return 0;
 	}
 }

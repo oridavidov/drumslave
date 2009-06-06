@@ -33,6 +33,7 @@ public class Zone {
 
 	protected static void clearZones(){
 		zones.clear();
+		channels.clear();
 	}
 	
 	public static Zone getZone(String padName, String zoneName){

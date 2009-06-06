@@ -1,0 +1,29 @@
+<drum-slave>
+	<sample name="Cymbal/Ride/Zildjian A Ping 20/Bow">
+		<param name="count" value="1" />
+	</sample>
+	<sample name="Cymbal/Ride/Zildjian A Ping 20/Bell">
+		<param name="count" value="1" />
+	</sample>
+	<sample name="Cymbal/Ride/Zildjian A Ping 20/Edge">
+		<param name="count" value="1" />
+	</sample>
+	<sample name="Drum/Snare/Garage Band/Head">
+		<param name="count" value="1" />
+	</sample>
+	<sample name="Drum/Tom/Beech/1 High">
+		<param name="count" value="1" />
+	</sample>
+	<sample name="Drum/Tom/Beech/2 Med High">
+		<param name="count" value="1" />
+	</sample>
+	<sample name="Drum/Tom/Beech/3 Med">
+		<param name="count" value="1" />
+	</sample>
+	<sample name="Drum/Tom/Beech/4 Med Low">
+		<param name="count" value="1" />
+	</sample>
+	<sample name="Drum/Tom/Beech/5 Low">
+		<param name="count" value="1" />
+	</sample>
+</drum-slave>

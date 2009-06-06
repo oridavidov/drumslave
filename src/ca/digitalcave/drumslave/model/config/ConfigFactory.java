@@ -18,23 +18,44 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 
 public class ConfigFactory {
 
-	private final static Logger logger = Logger.getLogger(ConfigFactory.class.getName()); 
+	private static ConfigFactory configFactorySingleton = new ConfigFactory();
+	private final static Logger logger = Logger.getLogger(ConfigFactory.class.getName()); 	
 	
-	public static void loadConfig(){
+	public static ConfigFactory getInstance() {
+		return configFactorySingleton;
+	}
+	
+	public void loadConfig(ConfigType configType, File configFile){
 		try {
 			//TODO Change this to store config in different place
-			InputStream is = new FileInputStream(new File("etc/config.xml"));
+			InputStream is = new FileInputStream(configFile);
 
 			XStream xstream = new XStream(new DomDriver());
 			xstream.processAnnotations(Config.class);
 			Object o = xstream.fromXML(is);
 			if (o instanceof Config){
 				Config c = (Config) o;
-				new HardwareConfigManager().loadFromConfig(c.getPads());
-				new SampleConfigManager().loadFromConfig(c.getSamples());
-				new LogicConfigManager().loadFromConfig(c.getLogics());
-				new LogicMappingConfigManager().loadFromConfig(c.getLogicMappings());
-				new SampleMappingConfigManager().loadFromConfig(c.getSampleMappings());
+				switch (configType) {
+				case HARDWARE:
+					new HardwareConfigManager().loadFromConfig(c.getPads());					
+					break;
+					
+				case SAMPLES:
+					new SampleConfigManager().loadFromConfig(c.getSamples());
+					break;
+					
+				case LOGIC:
+					new LogicConfigManager().loadFromConfig(c.getLogics());
+					break;
+					
+				case LOGIC_MAPPING:
+					new LogicMappingConfigManager().loadFromConfig(c.getLogicMappings());
+					break;
+					
+				case SAMPLE_MAPPING:
+					new SampleMappingConfigManager().loadFromConfig(c.getSampleMappings());
+					break;
+				}
 			}
 			else {
 				throw new RuntimeException("Loaded config is not an instance of Config; it is " + o.getClass().getName());
@@ -45,16 +66,41 @@ public class ConfigFactory {
 		}
 	}
 	
-	public static void saveConfig(){
+	public void saveConfig(ConfigType configType, File configFile){
 		Config config = new Config();
-		config.setPads(new HardwareConfigManager().saveToConfig());
-		config.setSamples(new SampleConfigManager().saveToConfig());
-		config.setLogics(new LogicConfigManager().saveToConfig());
-		config.setLogicMappings(new LogicMappingConfigManager().saveToConfig());
-		config.setSampleMappings(new SampleMappingConfigManager().saveToConfig());
+		
+		switch (configType) {
+		case HARDWARE:
+			config.setPads(new HardwareConfigManager().saveToConfig());					
+			break;
+			
+		case SAMPLES:
+			config.setSamples(new SampleConfigManager().saveToConfig());
+			break;
+			
+		case LOGIC:
+			config.setLogics(new LogicConfigManager().saveToConfig());
+			break;
+			
+		case LOGIC_MAPPING:
+			config.setLogicMappings(new LogicMappingConfigManager().saveToConfig());
+			break;
+			
+		case SAMPLE_MAPPING:
+			config.setSampleMappings(new SampleMappingConfigManager().saveToConfig());
+			break;
+		}
 		
 		XStream xstream = new XStream(new DomDriver());
 		xstream.processAnnotations(Config.class);
 		xstream.toXML(config, System.out);
+	}
+	
+	public enum ConfigType {
+		HARDWARE,
+		SAMPLES,
+		LOGIC,
+		LOGIC_MAPPING,
+		SAMPLE_MAPPING
 	}
 }

@@ -3,19 +3,25 @@ package ca.digitalcave.drumslave.model.config;
 import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 @XStreamAlias("drum-slave")
 public class Config {
 
 	@XStreamAlias("pads")
+	@XStreamImplicit
 	private List<ConfigPad> pads;
 	@XStreamAlias("samples")
+	@XStreamImplicit
 	private List<ConfigSample> samples;
 	@XStreamAlias("logics")
+	@XStreamImplicit
 	private List<ConfigLogic> logics;
 	@XStreamAlias("logic-mappings")
+	@XStreamImplicit
 	private List<ConfigLogicMapping> logicMappings;
 	@XStreamAlias("sample-mappings")
+	@XStreamImplicit
 	private List<ConfigSampleMapping> sampleMappings;
 	
 	public List<ConfigPad> getPads() {

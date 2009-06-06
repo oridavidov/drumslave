@@ -53,10 +53,12 @@ public class SampleConfigManager implements ConfigManager<ConfigSample>{
 			ConfigSample configSample = new ConfigSample();
 			configSample.setName(sample.getName());
 			List<ConfigSampleParam> params = new ArrayList<ConfigSampleParam>();
-			for (String key : sample.getParams().keySet()) {
-				ConfigSampleParam param = new ConfigSampleParam();
-				param.setName(key);
-				param.setValue(sample.getParams().get(key));
+			if (sample.getParams() != null){
+				for (String key : sample.getParams().keySet()) {
+					ConfigSampleParam param = new ConfigSampleParam();
+					param.setName(key);
+					param.setValue(sample.getParams().get(key));
+				}
 			}
 			configSample.setParams(params);
 			configSamples.add(configSample);

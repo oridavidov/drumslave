@@ -102,11 +102,14 @@ public abstract class Sample {
 		//Find the sample folder based on the given name, and find all files within it
 		// which match the regex "[0-9]{2}.wav".
 		File sampleFolder = getSampleFolder(name);
-		sampleFiles = Arrays.asList(sampleFolder.listFiles(new FileFilter(){
+		File[] sampleFilesArray = sampleFolder.listFiles(new FileFilter(){
 			public boolean accept(File file) {
 				return (file.isFile() && file.getName().matches("[0-9]{2}.wav"));
 			}
-		}));
+		});
+		if (sampleFolder == null)
+			throw new RuntimeException("No valid samples found in folder " + sampleFolder);
+		sampleFiles = Arrays.asList(sampleFilesArray);
 		if (sampleFiles.size() == 0)
 			throw new RuntimeException("No samples were found in folder " + sampleFolder.getAbsolutePath());
 
@@ -134,11 +137,45 @@ public abstract class Sample {
 		return name;
 	}
 	
+	/**
+	 * Returns any parameters which this class may need.  If no parameters are needed, 
+	 * return null.  This is used to save the info needed to load Sample classes
+	 * to the XML file.  
+	 * @return
+	 */
 	public abstract Map<String, String> getParams();
 
+	/**
+	 * Plays the sample at the given velocity.  The implementing method MUST
+	 * determine which sample to play, given the velocity, and play that sample
+	 * at the given volume.  This method MUST NOT block. 
+	 * @param volume
+	 */
 	public abstract void play(float volume);
 
+	/**
+	 * Stops all samples playing on the current sample.  This SHOULD fade out over 
+	 * a certain length of time (approx. 200 ms), to simulate a muted cymbal.  In
+	 * practice, this is probably not ever going to be used on a drum, but only on 
+	 * cymbals and other long-sustain samples. 
+	 */
 	public abstract void stop();
+	
+	/**
+	 * Returns the current playback level of the sample.  This is used by the graphical
+	 * equalizer to determine the volume of a given channel.  If there are multiple clips
+	 * being played simultaneously, this method SHOULD return the highest level of all
+	 * clips currently playing.
+	 * 
+	 * This SHOULD return the actual playback volume, using a forumla equivalent to the
+	 * following (assume each variable is a float from 0 to 1):
+	 * 		max(all_samples(sample_volume_at_playback_location * volume))
+	 *   
+	 * This method may not be able to be implemented by all Sample classes, due to limitations
+	 * of the library.  If you are unable to implement this, just return a constant 0f.
+	 * @return
+	 */
+	public abstract float getLevel();
 	
 	/**
 	 * 	Defines a linear mapping between volume and sample number.  This is currently

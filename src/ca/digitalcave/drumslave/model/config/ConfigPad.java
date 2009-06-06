@@ -1,5 +1,6 @@
 package ca.digitalcave.drumslave.model.config;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -27,6 +28,8 @@ public class ConfigPad {
 		this.zones = zones;
 	}
 	public void addZone(ConfigZone zone){
+		if (this.zones == null)
+			this.zones = new ArrayList<ConfigZone>();
 		zones.add(zone);
 	}
 }

@@ -1,0 +1,23 @@
+<drum-slave>
+	<pad name="Snare">
+		<zone name="Head" channel="1" />
+		<zone name="Rim" channel="2" />
+	</pad>
+	<pad name="Tom 1">
+		<zone name="Head" channel="3" />
+	</pad>
+	<pad name="Tom 2">
+		<zone name="Head" channel="4" />
+	</pad>
+	<pad name="Tom 3">
+		<zone name="Head" channel="5" />
+	</pad>
+	<pad name="Tom 4">
+		<zone name="Head" channel="6" />
+	</pad>
+	<pad name="Ride">
+		<zone name="Bow" channel="7" />
+		<zone name="Bell" channel="8" />
+		<zone name="Edge" channel="9" />
+	</pad>
+</drum-slave>
