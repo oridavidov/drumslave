@@ -138,7 +138,6 @@ public class LogicEditor extends MossDialog implements ActionListener {
 			}
 		}
 		else if (e.getSource().equals(closeButton)){
-			//TODO Confirm close without save
 			this.closeWindow();
 		}
 		

@@ -2,7 +2,6 @@ package ca.digitalcave.drumslave.gui;
 
 import java.io.File;
 
-import ca.digitalcave.drumslave.gui.config.logic.LogicEditor;
 import ca.digitalcave.drumslave.model.config.ConfigFactory;
 import ca.digitalcave.drumslave.model.config.ConfigFactory.ConfigType;
 
@@ -15,8 +14,9 @@ public class GuiTest {
 		ConfigFactory.getInstance().loadConfig(ConfigType.SAMPLE_MAPPING, new File("etc/config/sample-mappings.xml"));
 		ConfigFactory.getInstance().loadConfig(ConfigType.LOGIC_MAPPING, new File("etc/config/logic-mappings.xml"));
 		
-		new LogicEditor(null).openWindow();
+//		new LogicEditor(null).openWindow();
+		new Equalizer().openWindow();
 		
-		ConfigFactory.getInstance().saveConfig(ConfigType.LOGIC_MAPPING, null);
+//		ConfigFactory.getInstance().saveConfig(ConfigType.LOGIC_MAPPING, null);
 	}
 }
