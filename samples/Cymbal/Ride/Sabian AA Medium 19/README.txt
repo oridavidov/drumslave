@@ -1,0 +1,1 @@
+These samples were obtained via http://freesound.org.  These sounds are part of the "My Drumset" pack uploaded by teleport8.  See http://www.freesound.org/usersViewSingle.php?id=62541

@@ -1,0 +1,1 @@
+These files were obtained from the Zildjian website, as cymbal samples.  They are copyright Zildjian, and are not for re-distribution.
