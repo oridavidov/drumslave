@@ -1,2 +1,2 @@
-2.0.0.0 - May 27 2009
--First version after splitting Moss to a modular architecture. 
+2.0.0.0 - June 4 2009
+-First implementation of Java Drum Slave.  Technically this is really version 1.0 (hah!  probably more like 0.1), but since it is the re-implementation of the original Python drum slave, I bumped a major version number to keep things as clear as possible. 
