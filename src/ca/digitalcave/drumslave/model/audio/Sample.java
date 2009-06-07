@@ -151,14 +151,6 @@ public abstract class Sample {
 	public String getName() {
 		return name;
 	}
-	
-	/**
-	 * Returns any parameters which this class may need.  If no parameters are needed, 
-	 * return null.  This is used to save the info needed to load Sample classes
-	 * to the XML file.  
-	 * @return
-	 */
-	public abstract Map<String, String> getParams();
 
 	/**
 	 * Plays the sample at the given velocity.  The implementing method MUST
@@ -172,7 +164,7 @@ public abstract class Sample {
 	 * Stops all samples playing on the current sample.  This SHOULD fade out over 
 	 * a certain length of time (approx. 200 ms), to simulate a muted cymbal.  In
 	 * practice, this is probably not ever going to be used on a drum, but only on 
-	 * cymbals and other long-sustain samples. 
+	 * cymbals and other long-sustain samples.   This method MAY block.
 	 */
 	public abstract void stop();
 	
@@ -188,6 +180,10 @@ public abstract class Sample {
 	 *   
 	 * This method may not be able to be implemented by all Sample classes, due to limitations
 	 * of the library.  If you are unable to implement this, just return a constant 0f.
+	 * 
+	 * A decent approximation of this (for libraries which don't support returning level) 
+	 * may be obtained by starting with the volume of the sample, and fading out at a known
+	 * rate (0.1f / second or something). 
 	 * @return
 	 */
 	public abstract float getLevel();

@@ -1,7 +1,6 @@
 package ca.digitalcave.drumslave.model.audio;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -49,9 +48,6 @@ public class AudioSystemSample extends Sample {
 	
 	private final Logger logger = Logger.getLogger(this.getClass().getName());
 
-	private final static int preloadCount = 1;
-	private final static int maxLoaded = 4;
-	
 	//Non-static resources
 	private final Map<Integer, Queue<Clip>> clips = new ConcurrentHashMap<Integer, Queue<Clip>>();
 	private final int count;
@@ -116,13 +112,6 @@ public class AudioSystemSample extends Sample {
 				}
 			}
 		}
-	}
-	
-	@Override
-	public Map<String, String> getParams() {
-		Map<String, String> params = new HashMap<String, String>();
-		params.put(PARAM_COUNT, getCount() + "");
-		return params;
 	}
 
 	public int getCount() {

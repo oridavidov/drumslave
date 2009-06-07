@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.Map;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -117,13 +116,7 @@ public class LWJGLSample extends Sample {
 		// TODO Auto-generated method stub
 
 	}
-
-	@Override
-	public Map<String, String> getParams() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	@Override
 	public float getLevel() {
 		// TODO Auto-generated method stub

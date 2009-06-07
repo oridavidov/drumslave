@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.Map;
 
 import net.java.games.joal.AL;
 import net.java.games.joal.ALFactory;
@@ -40,6 +39,7 @@ public class JoalSample extends Sample {
 	private int sourceCounter = 0;
 	private int[] sources = new int[MAX_SIMULTANEOUS]; //First index is from 0 - (MAX_SIMULTANEOUS - 1), and will loop based on sourceCounter
 	private int[] buffers = new int[MAX_SIMULTANEOUS];
+	private float[] volumes = new float[MAX_SIMULTANEOUS]; //We need to keep track of the last used velocty (gain).  This lets us fade down from that when stop() is called.
 	
 	private int loadALData(int sourceIndex, File sample) {
 
@@ -101,7 +101,8 @@ public class JoalSample extends Sample {
 		super(name);
 
 		for (int i = 0; i < sampleFiles.size(); i++){
-			loadALData(i, sampleFiles.get(i));			
+			loadALData(i, sampleFiles.get(i));
+			volumes[i] = 0f;
 		}
 	}
 
@@ -109,52 +110,39 @@ public class JoalSample extends Sample {
 	public void play(float volume) {
 		al.alSourcef(sources[sourceCounter], AL.AL_GAIN, volume);
 		al.alSourcePlay(sources[sourceCounter]);
+		volumes[sourceCounter] = volume;
 		sourceCounter = (sourceCounter + 1) % MAX_SIMULTANEOUS;
 	}
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public Map<String, String> getParams() {
-		// TODO Auto-generated method stub
-		return null;
+		//Fade out logarithmically over 10 iterations (approx. 200 ms)
+		for (int i = 0; i < 10; i++){
+			for (int j = 0; j < MAX_SIMULTANEOUS; j++){
+				al.alSourcef(sources[j], AL.AL_GAIN, volumes[j]);
+				volumes[j] = volumes[j] / 2;
+			}
+			try {
+				Thread.sleep(20);
+			}
+			catch (InterruptedException ie){}
+		}
+		for (int i = 0; i < MAX_SIMULTANEOUS; i++){
+			al.alSourceStop(sources[i]);
+		}
 	}
 
 	@Override
 	public float getLevel() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	public static void main(String[] args) throws Exception {
 		JoalSample sample = new JoalSample("Cymbal/Ride/Zildjian A Ping 20/Bow");
 		sample.play(1.0f);
+		System.out.println(sample.getLevel());
 		Thread.sleep(500);
-		sample.play(0.1f);
-		Thread.sleep(500);
-		sample.play(0.5f);
-		Thread.sleep(500);
-		sample.play(0.1f);
-		Thread.sleep(500);
-		sample.play(1.0f);
-		Thread.sleep(500);
-		sample.play(1.0f);
-		Thread.sleep(500);
-		sample.play(1.0f);
-		Thread.sleep(500);
-		sample.play(1.0f);
-		Thread.sleep(500);
-		sample.play(1.0f);
-		Thread.sleep(500);
-		sample.play(1.0f);
-		Thread.sleep(500);
-		sample.play(1.0f);
-		Thread.sleep(500);
-		sample.play(1.0f);
+		sample.stop();
 		Thread.sleep(4000);
 		System.exit(0);
 	}
