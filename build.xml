@@ -14,10 +14,7 @@
 	<property name="PROJECT_COPYRIGHT" value="Copyright Wyatt Olson"/>
 
     <path id="classpath">
-    	<fileset dir="lib">
-    		<includesfile name="lib/*.jar"/>
-    		<includesfile name="lib/*.jnilib"/>
-    	</fileset>
+    	<fileset dir="lib" includes="**/*.jar"/>
     </path>
 	
 	&baseBuild;
