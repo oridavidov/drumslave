@@ -18,8 +18,8 @@ import javax.swing.JPanel;
 import org.homeunix.thecave.moss.swing.MossDialog;
 import org.homeunix.thecave.moss.swing.MossFrame;
 
-import ca.digitalcave.drumslave.gui.config.logic.model.PadsComboBoxModel;
-import ca.digitalcave.drumslave.gui.config.logic.view.NullCapableListCellRenderer;
+import ca.digitalcave.drumslave.gui.config.NullCapableListCellRenderer;
+import ca.digitalcave.drumslave.gui.config.PadsComboBoxModel;
 import ca.digitalcave.drumslave.gui.util.Formatter;
 import ca.digitalcave.drumslave.model.config.ConfigFactory;
 import ca.digitalcave.drumslave.model.config.ConfigLogicMapping;

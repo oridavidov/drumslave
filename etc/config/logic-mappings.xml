@@ -4,6 +4,7 @@
 	<logic-mapping pad-name="Tom 2" zone-name="Head" logic-name="Play" />
 	<logic-mapping pad-name="Tom 3" zone-name="Head" logic-name="Play" />
 	<logic-mapping pad-name="Tom 4" zone-name="Head" logic-name="Play" />
+	<logic-mapping pad-name="Bass" zone-name="Head" logic-name="Play" />
 	<logic-mapping pad-name="Ride" zone-name="Bow" logic-name="Play" />
 	<logic-mapping pad-name="Ride" zone-name="Bell" logic-name="Play" />
 	<logic-mapping pad-name="Ride" zone-name="Edge" logic-name="Play" />

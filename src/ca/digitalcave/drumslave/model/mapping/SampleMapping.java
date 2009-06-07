@@ -3,6 +3,8 @@ package ca.digitalcave.drumslave.model.mapping;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import ca.digitalcave.drumslave.model.audio.Sample;
+
 
 public class SampleMapping {
 
@@ -20,6 +22,12 @@ public class SampleMapping {
 			throw new RuntimeException("None of padName, zoneName, sampleName can be null");
 		if (getSampleMapping(padName, zoneName) != null)
 			throw new RuntimeException("A sample mapping for " + padName + ":" + zoneName + " already exists: " + getSampleMapping(padName, zoneName));
+		
+		//To save memory, we only load the samples which are actually mapped to
+		// a zone.  Thus, instead of loading them all from a config file or something,
+		// we load them once they are mapped here.
+		if (Sample.getSample(sampleName) == null)
+			throw new RuntimeException("Sample " + sampleName + " could not be found");
 		
 		if (zoneToSamples.get(padName) == null)
 			zoneToSamples.put(padName, new ConcurrentHashMap<String, String>());

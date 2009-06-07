@@ -49,19 +49,17 @@ public class AudioSystemSample extends Sample {
 	
 	private final Logger logger = Logger.getLogger(this.getClass().getName());
 
+	private final static int preloadCount = 1;
+	private final static int maxLoaded = 4;
+	
 	//Non-static resources
 	private final Map<Integer, Queue<Clip>> clips = new ConcurrentHashMap<Integer, Queue<Clip>>();
 	private final int count;
 
-	public AudioSystemSample(String name, Map<String, String> params) {
-		super(name, params);
+	public AudioSystemSample(String name) {
+		super(name);
 		
-		if (params.get(PARAM_COUNT) == null)
-			throw new RuntimeException("AudioSystemSample requires a parameter named '" + PARAM_COUNT + "'");
-		if (!params.get(PARAM_COUNT).matches("[0-9]+"))
-			throw new RuntimeException("AudioSystemSample requires a parameter named '" + PARAM_COUNT + "' containing a postive integer");
-
-		int count = Integer.parseInt(params.get(PARAM_COUNT));
+		int count = 2;
 		
 		if (count < 1)
 			throw new RuntimeException("Count cannot be less than 1");

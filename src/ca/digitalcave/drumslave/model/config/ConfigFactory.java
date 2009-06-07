@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import ca.digitalcave.drumslave.model.audio.SampleConfigManager;
 import ca.digitalcave.drumslave.model.hardware.HardwareConfigManager;
 import ca.digitalcave.drumslave.model.logic.LogicConfigManager;
 import ca.digitalcave.drumslave.model.mapping.LogicMappingConfigManager;
@@ -40,10 +39,6 @@ public class ConfigFactory {
 					new HardwareConfigManager().loadFromConfig(c.getPads());					
 					break;
 					
-				case SAMPLES:
-					new SampleConfigManager().loadFromConfig(c.getSamples());
-					break;
-					
 				case LOGIC:
 					new LogicConfigManager().loadFromConfig(c.getLogics());
 					break;
@@ -74,10 +69,6 @@ public class ConfigFactory {
 			config.setPads(new HardwareConfigManager().saveToConfig());					
 			break;
 			
-		case SAMPLES:
-			config.setSamples(new SampleConfigManager().saveToConfig());
-			break;
-			
 		case LOGIC:
 			config.setLogics(new LogicConfigManager().saveToConfig());
 			break;
@@ -98,7 +89,6 @@ public class ConfigFactory {
 	
 	public enum ConfigType {
 		HARDWARE,
-		SAMPLES,
 		LOGIC,
 		LOGIC_MAPPING,
 		SAMPLE_MAPPING

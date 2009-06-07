@@ -9,8 +9,7 @@ import javax.swing.JLabel;
 
 import org.homeunix.thecave.moss.swing.MossPanel;
 
-import ca.digitalcave.drumslave.gui.config.logic.model.LogicsComboBoxModel;
-import ca.digitalcave.drumslave.gui.config.logic.view.NullCapableListCellRenderer;
+import ca.digitalcave.drumslave.gui.config.NullCapableListCellRenderer;
 import ca.digitalcave.drumslave.gui.util.Formatter;
 import ca.digitalcave.drumslave.model.hardware.Zone;
 

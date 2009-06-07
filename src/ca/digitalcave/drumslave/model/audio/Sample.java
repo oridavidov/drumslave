@@ -2,8 +2,8 @@ package ca.digitalcave.drumslave.model.audio;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.lang.reflect.Constructor;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -11,14 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * This class provides a hybrid Multiton-like access to the Sample object.  
- * Objects are initially created using the Sample constructor, but can be
- * accessed later using the Multiton static getSample(name) method.
- * 
- * This class (and others in DrumSlave) provide easy thread-safe access
- * to various configuration elements without needing to pass around a 
- * reference to them, and without needing to traverse a singleton instance
- * of the configuration.
+ * This class provides Multiton access to the Sample object.  
  * 
  * Recorded samples on the file system should be named in a certain way to.
  * allow them to be used by this class.  Samples must be in the format:
@@ -40,14 +33,14 @@ import java.util.concurrent.ConcurrentHashMap;
  *  
  * For instance, assume we have a ride cymbal sampled.  Possible sample names could include:
  * 
- *  Cymbal/Ride/Zildjian A Ping 20"/Bow/00.wav
- *  Cymbal/Ride/Zildjian A Ping 20"/Bow/01.wav
- *  Cymbal/Ride/Zildjian A Ping 20"/Bow/02.wav
+ *  Cymbal/Ride/Zildjian A Ping 20/Bow/00.wav
+ *  Cymbal/Ride/Zildjian A Ping 20/Bow/01.wav
+ *  Cymbal/Ride/Zildjian A Ping 20/Bow/02.wav
  *  
- *  Cymbal/Ride/Zildjian A Ping 20"/Bell/00.wav
+ *  Cymbal/Ride/Zildjian A Ping 20/Bell/00.wav
  *  
- *  Cymbal/Ride/Zildjian A Ping 20"/Edge/00.wav
- *  Cymbal/Ride/Zildjian A Ping 20"/Edge/01.wav
+ *  Cymbal/Ride/Zildjian A Ping 20/Edge/00.wav
+ *  Cymbal/Ride/Zildjian A Ping 20/Edge/01.wav
  *  
  * There is no special need to keep to a given hierarchy for samples, as the Drum Slave sample
  * mapping window will search through the samples folder and find all samples.  However, it 
@@ -62,14 +55,36 @@ public abstract class Sample {
 	//Static resources, related to the Multiton functionality of this class
 	private final static Map<String, Sample> samples = new ConcurrentHashMap<String, Sample>();
 	public static Sample getSample(String name){
+		if (samples.get(name) == null){
+			Sample sample = loadSample(name);
+			samples.put(name, sample);
+		}
 		return samples.get(name);
 	}
-	public static Collection<Sample> getSamples(){
-		return Collections.unmodifiableCollection(samples.values());
+	
+	private static Sample loadSample(String name){
+		String className = JoalSample.class.getName();
+		
+		try {
+			@SuppressWarnings("unchecked")
+			Class<Sample> sampleImpl = (Class<Sample>) Class.forName(className);
+			Constructor<Sample> constuctor = sampleImpl.getConstructor(String.class);
+			return constuctor.newInstance(name);
+		} 
+		catch (ClassNotFoundException e) {
+			throw new RuntimeException("I could not find sample implementation '" + className + ".", e);
+		} 
+		catch (Exception e) {
+			throw new RuntimeException("Error initializing '" + className + ".", e);
+		} 
 	}
-	protected static void clearSamples(){
-		samples.clear();
-	}
+	
+//	public static Collection<Sample> getSamples(){
+//		return Collections.unmodifiableCollection(samples.values());
+//	}
+//	protected static void clearSamples(){
+//		samples.clear();
+//	}
 	/**
 	 * Returns the sample folder based on the given name.  Sample names must be in 
 	 * the format:
@@ -93,7 +108,7 @@ public abstract class Sample {
 	private final String name;
 	protected List<File> sampleFiles;
 
-	public Sample(String name, Map<String, String> params) {
+	protected Sample(String name) {
 		if (name == null)
 			throw new RuntimeException("Sample name cannot be null.");
 		if (samples.get(name) != null)
@@ -107,7 +122,7 @@ public abstract class Sample {
 				return (file.isFile() && file.getName().matches("[0-9]{2}.wav"));
 			}
 		});
-		if (sampleFolder == null)
+		if (sampleFolder == null || sampleFilesArray == null)
 			throw new RuntimeException("No valid samples found in folder " + sampleFolder);
 		sampleFiles = Arrays.asList(sampleFilesArray);
 		if (sampleFiles.size() == 0)

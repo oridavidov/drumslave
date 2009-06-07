@@ -55,7 +55,7 @@ public class Pad {
 	 * create more than one Pad with any given name.
 	 * @param name
 	 */
-	public Pad(String name) {
+	protected Pad(String name) {
 		if (name == null)
 			throw new RuntimeException("A pad's name must not be null.");
 		

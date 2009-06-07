@@ -1,23 +1,26 @@
 <drum-slave>
 	<pad name="Snare">
-		<zone name="Head" channel="1" />
-		<zone name="Rim" channel="2" />
+		<zone name="Head" channel="24" />
+		<zone name="Rim" channel="25" />
 	</pad>
 	<pad name="Tom 1">
-		<zone name="Head" channel="3" />
+		<zone name="Head" channel="28" />
 	</pad>
 	<pad name="Tom 2">
-		<zone name="Head" channel="4" />
+		<zone name="Head" channel="0" />
 	</pad>
 	<pad name="Tom 3">
-		<zone name="Head" channel="5" />
+		<zone name="Head" channel="30" />
 	</pad>
 	<pad name="Tom 4">
-		<zone name="Head" channel="6" />
+		<zone name="Head" channel="31" />
+	</pad>
+	<pad name="Bass">
+		<zone name="Head" channel="27" />
 	</pad>
 	<pad name="Ride">
-		<zone name="Bow" channel="7" />
-		<zone name="Bell" channel="8" />
-		<zone name="Edge" channel="9" />
+		<zone name="Bow" channel="29" />
+		<zone name="Bell" channel="2" />
+		<zone name="Edge" channel="3" />
 	</pad>
 </drum-slave>

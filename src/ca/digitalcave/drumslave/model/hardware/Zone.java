@@ -46,7 +46,7 @@ public class Zone {
 		return channels.get(channel);
 	}
 	
-	public Zone(int channel, String name, Pad pad) {
+	protected Zone(int channel, String name, Pad pad) {
 		if (pad == null || name == null)
 			throw new RuntimeException("A zone's name and parent pad must not be null.");
 		if (channel < 0 || channel >= 40)

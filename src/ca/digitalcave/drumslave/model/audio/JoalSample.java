@@ -1,8 +1,10 @@
 package ca.digitalcave.drumslave.model.audio;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.Map;
 
 import net.java.games.joal.AL;
@@ -19,32 +21,27 @@ public class JoalSample extends Sample {
 	private static float[] listenerVel = { 0.0f, 0.0f, 0.0f };
 	// Orientation of the listener. (first 3 elems are "at", second 3 are "up")
 	private static float[] listenerOri = { 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f };
+	// Position of the source sound.
+	private static float[] sourcePos = { 0.0f, 0.0f, 0.0f };
+	// Velocity of the source sound.
+	private static float[] sourceVel = { 0.0f, 0.0f, 0.0f };
 
 
 	static {
 		ALut.alutInit();
 		al.alGetError();
 
-        al.alListenerfv(AL.AL_POSITION, listenerPos, 0);
-        al.alListenerfv(AL.AL_VELOCITY, listenerVel, 0);
-        al.alListenerfv(AL.AL_ORIENTATION, listenerOri, 0);
+		al.alListenerfv(AL.AL_POSITION, listenerPos, 0);
+		al.alListenerfv(AL.AL_VELOCITY, listenerVel, 0);
+		al.alListenerfv(AL.AL_ORIENTATION, listenerOri, 0);
 	}
 
-	int[] source;
+	private final int MAX_SIMULTANEOUS = 8;
+	private int sourceCounter = 0;
+	private int[] sources = new int[MAX_SIMULTANEOUS]; //First index is from 0 - (MAX_SIMULTANEOUS - 1), and will loop based on sourceCounter
+	private int[] buffers = new int[MAX_SIMULTANEOUS];
+	
 	private int loadALData(int sourceIndex, File sample) {
-		
-		// Buffers hold sound data.
-		int[] buffer = new int[1];
-		// Sources are points emitting sound.
-//		int[] source = new int[1];
-		
-		// Position of the source sound.
-		float[] sourcePos = { 0.0f, 0.0f, 0.0f };
-		// Velocity of the source sound.
-		float[] sourceVel = { 0.0f, 0.0f, 0.0f };
-
-
-		// variables to load into
 
 		int[] format = new int[1];
 		int[] size = new int[1];
@@ -52,43 +49,57 @@ public class JoalSample extends Sample {
 		int[] freq = new int[1];
 		int[] loop = new int[1];
 
-		// Load wav data into a buffer.
-		al.alGenBuffers(1, buffer, 0);
-		if (al.alGetError() != AL.AL_NO_ERROR)
+		// load wav data into buffers
+
+		al.alGenBuffers(MAX_SIMULTANEOUS, buffers, 0);
+		if (al.alGetError() != AL.AL_NO_ERROR) {
 			return AL.AL_FALSE;
+		}
+		for (int i = 0; i < MAX_SIMULTANEOUS; i++){			
 
-		ALut.alutLoadWAVFile(sample.getAbsolutePath(),
-				format,
-				data,
-				size,
-				freq,
-				loop);
-		al.alBufferData(buffer[0], format[0], data[0], size[0], freq[0]);
-
-		// Bind buffer with a source.
-		al.alGenSources(1, source, 0);
-
-		if (al.alGetError() != AL.AL_NO_ERROR)
-			return AL.AL_FALSE;
-
-		al.alSourcei(source[0], AL.AL_BUFFER, buffer[0]);
-		al.alSourcef(source[0], AL.AL_PITCH, 1.0f);
-		al.alSourcef(source[0], AL.AL_GAIN, 1.0f);
-		al.alSourcefv(source[0], AL.AL_POSITION, sourcePos, 0);
-		al.alSourcefv(source[0], AL.AL_VELOCITY, sourceVel, 0);
-		al.alSourcei(source[0], AL.AL_LOOPING, loop[0]);
-
-		// Do another error check and return.
-		if (al.alGetError() == AL.AL_NO_ERROR)
-			return AL.AL_TRUE;
+			InputStream is;
+			try {
+				is = new FileInputStream(sample);
+			}
+			catch (IOException ioe){
+				throw new RuntimeException("Cannot load file", ioe);
+			}
+			if (is == null)
+				throw new RuntimeException("Cannot load file");
+			ALut.alutLoadWAVFile(
+					is,
+					format,
+					data,
+					size,
+					freq,
+					loop);
+			
+			al.alBufferData(
+					buffers[i],
+					format[0],
+					data[0],
+					size[0],
+					freq[0]);
+//			ALut.alutUnloadWAV(format[0], data[0], size[0], freq[0]);
+		}
+		
+		al.alGenSources(MAX_SIMULTANEOUS, sources, 0);
+		
+		for (int i = 0; i < MAX_SIMULTANEOUS; i++) {
+	        al.alSourcei(sources[i], AL.AL_BUFFER, buffers[i]);
+	        al.alSourcef(sources[i], AL.AL_PITCH, 1.0f);
+	        al.alSourcef(sources[i], AL.AL_GAIN, 1.0f);
+	        al.alSourcefv(sources[i], AL.AL_POSITION, sourcePos, 0);
+	        al.alSourcefv(sources[i], AL.AL_POSITION, sourceVel, 0);
+	        al.alSourcei(sources[i], AL.AL_LOOPING, AL.AL_FALSE);
+		}
 
 		return AL.AL_FALSE;
 	}
 
-	public JoalSample(String name, Map<String, String> params) {
-		super(name, params);
+	public JoalSample(String name) {
+		super(name);
 
-		source = new int[sampleFiles.size()];
 		for (int i = 0; i < sampleFiles.size(); i++){
 			loadALData(i, sampleFiles.get(i));			
 		}
@@ -96,7 +107,9 @@ public class JoalSample extends Sample {
 
 	@Override
 	public void play(float volume) {
-		al.alSourcePlay(source[0]);
+		al.alSourcef(sources[sourceCounter], AL.AL_GAIN, volume);
+		al.alSourcePlay(sources[sourceCounter]);
+		sourceCounter = (sourceCounter + 1) % MAX_SIMULTANEOUS;
 	}
 
 	@Override
@@ -116,11 +129,31 @@ public class JoalSample extends Sample {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-	
+
 	public static void main(String[] args) throws Exception {
-		JoalSample sample = new JoalSample("Cymbal/Ride/Zildjian A Ping 20/Bow", new HashMap<String, String>());
-		sample.play(0.27f);
-		Thread.sleep(1000);
+		JoalSample sample = new JoalSample("Cymbal/Ride/Zildjian A Ping 20/Bow");
+		sample.play(1.0f);
+		Thread.sleep(500);
+		sample.play(0.1f);
+		Thread.sleep(500);
+		sample.play(0.5f);
+		Thread.sleep(500);
+		sample.play(0.1f);
+		Thread.sleep(500);
+		sample.play(1.0f);
+		Thread.sleep(500);
+		sample.play(1.0f);
+		Thread.sleep(500);
+		sample.play(1.0f);
+		Thread.sleep(500);
+		sample.play(1.0f);
+		Thread.sleep(500);
+		sample.play(1.0f);
+		Thread.sleep(500);
+		sample.play(1.0f);
+		Thread.sleep(500);
+		sample.play(1.0f);
+		Thread.sleep(500);
 		sample.play(1.0f);
 		Thread.sleep(4000);
 		System.exit(0);
