@@ -30,7 +30,18 @@ import net.java.games.joal.util.ALut;
  * class.  In these cases, we simply make methods available as required.
  * 
  * The playback methods (play, setGain, etc) in this class MUST NOT block for any length
- * of time.  DrumSlave perceived latency can be directly affected by this. 
+ * of time.  DrumSlave perceived latency can be directly affected by this.
+ * 
+ * TODO: Instead of loading a source for each sound here, we may want to have a pool of 
+ * sources, set to the maximum which the system allows (apparently this differs from system
+ * to system), and load up the data in buffers instead.  When a sound is played, load the
+ * buffer to the next available source in the pool.  Depending on how long this takes, it
+ * may introduce unacceptable overhead; however, according to some articles I have read,
+ * some systems only allow a small maximum number of sources to be loaded at the same time
+ * (for reference, on the Mac this appears to be 1000, which is more than enough for our
+ * needs; however, some hardware based systems appear to be much lower than that).  Regardles,
+ * this is not a high priority modification, as it works fine for now, but it is something
+ * to think about. 
  *  
  * @author wyatt
  *
@@ -50,6 +61,7 @@ public class JoalCircularSource {
 	// Velocity of the source sound.
 	private static final float[] sourceVel = { 0.0f, 0.0f, 0.0f };
 
+	private static int loadedSources = 0;
 
 	static {
 		ALut.alutInit();
@@ -69,6 +81,7 @@ public class JoalCircularSource {
 	private final File sample;
 
 	public JoalCircularSource(File sample) {
+		
 		this.sample = sample;
 
 		int[] format = new int[1];
@@ -80,10 +93,12 @@ public class JoalCircularSource {
 		// load wav data into buffers
 
 		al.alGenBuffers(MAX_SIMULTANEOUS, buffers, 0);
-		if (al.alGetError() != AL.AL_NO_ERROR) {
-			throw new RuntimeException("Error encountered while loading sources for " + sample.getAbsolutePath());
+		int error = al.alGetError();
+		if (error != AL.AL_NO_ERROR) {
+			throw new RuntimeException("Error encountered while loading source #" + loadedSources + " for " + sample.getAbsolutePath() + " error #" + error);
 		}
 		for (int i = 0; i < MAX_SIMULTANEOUS; i++){			
+			loadedSources++;
 			volumes[i] = 0f;
 
 			InputStream is;
