@@ -174,6 +174,12 @@ public class JoalCircularSource {
 	}
 
 	public float getLevel() {
+		//TODO Store the backing buffer, and when this is called, return the level in 
+		// the buffer at location 'position[0]' for the source with the highest 
+		// return value.
+		int[] position = new int[1];
+		al.alGetSourcei(sources[0], AL.AL_BYTE_OFFSET, position, 0);
+		System.out.println(position[0]);
 		return 0;
 	}
 }

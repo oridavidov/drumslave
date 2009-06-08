@@ -64,18 +64,16 @@ public class JoalSample extends Sample {
 
 	@Override
 	public float getLevel() {
+		joalSources.get(0).getLevel();
 		return 0;
 	}
 
 	public static void main(String[] args) throws Exception {
 		JoalSample sample = new JoalSample("Cymbal/Ride/Zildjian A Ping 20/Bow");
-		for (int i = 0; i < 1; i++){
-			sample.play(1.0f);
-			Thread.sleep(500);
-			sample.play(0.7f);
-			Thread.sleep(250);
-			sample.play(0.4f);
-			Thread.sleep(250);
+		sample.play(1.0f);
+		for(int i = 0; i < 100; i++){
+			sample.getLevel();
+			Thread.sleep(100);
 		}
 		Thread.sleep(2000);
 		sample.stop();
