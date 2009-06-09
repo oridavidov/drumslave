@@ -75,8 +75,8 @@ public class JoalCircularSource {
 	private final int MAX_SIMULTANEOUS = 8;
 	private int sourceCounter = 0;
 	private int[] sources = new int[MAX_SIMULTANEOUS]; //First index is from 0 - (MAX_SIMULTANEOUS - 1), and will loop based on sourceCounter
-	private int[] buffers = new int[MAX_SIMULTANEOUS];
-	private float[] volumes = new float[MAX_SIMULTANEOUS]; //We need to keep track of the last used velocty (gain).  This lets us fade down from that when stop() is called.
+	private int[] buffers = new int[1]; //We share the same buffer with all sources in a given JoalCircularSource instance.
+	private final ByteBuffer bufferData; //We need to store the buffer data so that we can find the value at a given position, for VU meter.
 
 	private final File sample;
 
@@ -90,46 +90,30 @@ public class JoalCircularSource {
 		int[] freq = new int[1];
 		int[] loop = new int[1];
 
-		// load wav data into buffers
-
-		al.alGenBuffers(MAX_SIMULTANEOUS, buffers, 0);
+		//Generate buffer and load PCM data
+		al.alGenBuffers(1, buffers, 0);
+		InputStream is;
+		try {
+			is = new FileInputStream(sample);
+		}
+		catch (IOException ioe){
+			throw new RuntimeException("Cannot load file", ioe);
+		}
+		ALut.alutLoadWAVFile(is, format, data, size, freq, loop);
+		al.alBufferData(buffers[0], format[0], data[0], size[0], freq[0]);
+		
+		bufferData = data[0].asReadOnlyBuffer();
+		
+		//Check for error after buffer loading
 		int error = al.alGetError();
 		if (error != AL.AL_NO_ERROR) {
 			throw new RuntimeException("Error encountered while loading source #" + loadedSources + " for " + sample.getAbsolutePath() + " error #" + error);
 		}
-		for (int i = 0; i < MAX_SIMULTANEOUS; i++){			
-			loadedSources++;
-			volumes[i] = 0f;
 
-			InputStream is;
-			try {
-				is = new FileInputStream(sample);
-			}
-			catch (IOException ioe){
-				throw new RuntimeException("Cannot load file", ioe);
-			}
-			if (is == null)
-				throw new RuntimeException("Cannot load file");
-			ALut.alutLoadWAVFile(
-					is,
-					format,
-					data,
-					size,
-					freq,
-					loop);
-
-			al.alBufferData(
-					buffers[i],
-					format[0],
-					data[0],
-					size[0],
-					freq[0]);
-		}
-
+		//Generate sources and link to buffer, set defaults, etc
 		al.alGenSources(MAX_SIMULTANEOUS, sources, 0);
-
 		for (int i = 0; i < MAX_SIMULTANEOUS; i++) {
-			al.alSourcei(sources[i], AL.AL_BUFFER, buffers[i]);
+			al.alSourcei(sources[i], AL.AL_BUFFER, buffers[0]);
 			al.alSourcef(sources[i], AL.AL_PITCH, 1.0f);
 			al.alSourcef(sources[i], AL.AL_GAIN, 1.0f);
 			al.alSourcefv(sources[i], AL.AL_POSITION, sourcePos, 0);
@@ -147,20 +131,24 @@ public class JoalCircularSource {
 		System.out.println("Playing " + sample.getAbsolutePath());
 		al.alSourcef(sources[sourceCounter], AL.AL_GAIN, volume);
 		al.alSourcePlay(sources[sourceCounter]);
-		volumes[sourceCounter] = volume;
 		sourceCounter = (sourceCounter + 1) % MAX_SIMULTANEOUS;
 	}
 
 	/**
 	 * Sets the gain for all sources based on the given gain adjustment.
 	 * This sets the gain to be the current gain * the adjustment value.
-	 * To cut the gain in half, for instance, use the gainAdjustment value 0.5. 
+	 * To cut the gain in half, for instance, use the gainAdjustment value 0.5.
+	 * 
+	 * This function will apply immediately to all source, whether they are playing or not.
+	 * 
 	 * @param gainAdjustment
 	 */
 	public void setGain(float gainAdjustment) {
 		for (int i = 0; i < MAX_SIMULTANEOUS; i++){
-			volumes[i] = volumes[i] * gainAdjustment;
-			al.alSourcef(sources[i], AL.AL_GAIN, volumes[i]);
+			float[] data = new float[1];
+			al.alGetSourcef(sources[i], AL.AL_GAIN, data, 0);
+			float volume = data[0] * gainAdjustment;
+			al.alSourcef(sources[i], AL.AL_GAIN, volume);
 		}
 	}
 	
@@ -173,13 +161,35 @@ public class JoalCircularSource {
 		}
 	}
 
-	public float getLevel() {
-		//TODO Store the backing buffer, and when this is called, return the level in 
-		// the buffer at location 'position[0]' for the source with the highest 
-		// return value.
-		int[] position = new int[1];
-		al.alGetSourcei(sources[0], AL.AL_BYTE_OFFSET, position, 0);
-		System.out.println(position[0]);
-		return 0;
+	public int getLevel() {
+		int maxLevel = 0;
+		for (int i = 0; i < MAX_SIMULTANEOUS; i++){
+			int[] data = new int[1];
+			al.alGetSourcei(sources[i], AL.AL_BYTE_OFFSET, data, 0);
+			int position = data[0] / 2 * 2;  //Start on even index
+			if (position > 0){
+//				long total = 0;
+				int j = 0;
+				int rawMax = 0;
+				//The more frames we iterate over, the more accurate the level will be.
+				// 8820 will get us 100ms of sample data (4410 for a single channel, * 2 
+				// for stereo); this should be about right, as our VU meters should update 
+				// about that frequently. 
+				for (; j < 4410 && position + j + 1 < bufferData.capacity(); j+=2){
+					int highByte = bufferData.get(position + j + 1) << 8;
+					int lowByte = bufferData.get(position + j) & 0xFF;
+//					total += Math.abs(highByte + lowByte);
+					rawMax = Math.max(rawMax, highByte + lowByte);
+				}
+				
+				//Factor in the gain for the given sample 
+				float[] gainData = new float[1];
+				al.alGetSourcef(sources[i], AL.AL_GAIN, gainData, 0);
+				
+//				maxLevel = Math.max(maxLevel, (int) (gainData[0] * total / j));
+				maxLevel = Math.max(maxLevel, (int) (gainData[0] * rawMax));
+			}
+		}
+		return maxLevel;
 	}
 }

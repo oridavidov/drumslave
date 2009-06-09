@@ -4,8 +4,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
+import ca.digitalcave.drumslave.model.audio.Sample;
 import ca.digitalcave.drumslave.model.logic.Logic;
 import ca.digitalcave.drumslave.model.mapping.LogicMapping;
+import ca.digitalcave.drumslave.model.mapping.SampleMapping;
 
 /**
  * This class provides a hybrid Multiton-like access to the Zone object.  
@@ -101,5 +103,12 @@ public class Zone {
 			throw new RuntimeException("No logic class is mapped to name " + logicName);
 
 		logic.execute(this, value);
+	}
+	
+	public float getLevel(){
+		Sample sample = Sample.getSample(SampleMapping.getSampleMapping(this.getPad().getName(), this.getName()));
+		if (sample == null)
+			return 0f;
+		return sample.getLevel();
 	}
 }

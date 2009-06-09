@@ -3,10 +3,13 @@ package ca.digitalcave.drumslave.gui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.Timer;
 
 import org.homeunix.thecave.moss.swing.MossPanel;
 
@@ -52,15 +55,22 @@ public class PadEQChannel extends MossPanel {
 		this.add(centerPanel, BorderLayout.CENTER);
 		
 		this.add(namePanel, BorderLayout.SOUTH);
+		
+		Timer timer = new Timer(100, new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				if (pad != null){
+					vuMeter.setValue(pad.getLevel());
+				}				
+			}
+		});
+		timer.start();
 	}
 	
 	@Override
 	public void updateContent() {
 		super.updateContent();
 
-		if (pad != null){
-			vuMeter.setValue(0.5f);
-		}
+
 	}
 	
 	public float getVolumeAdjustment(){

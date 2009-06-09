@@ -1,10 +1,12 @@
 package ca.digitalcave.drumslave.gui;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 
-import ca.digitalcave.drumslave.gui.config.sample.SampleEditor;
 import ca.digitalcave.drumslave.model.config.ConfigFactory;
 import ca.digitalcave.drumslave.model.config.ConfigFactory.ConfigType;
+import ca.digitalcave.drumslave.model.hardware.Zone;
 
 public class GuiTest {
 
@@ -15,9 +17,21 @@ public class GuiTest {
 		ConfigFactory.getInstance().loadConfig(ConfigType.LOGIC_MAPPING, new File("etc/config/logic-mappings.xml"));
 		
 //		new LogicEditor(null).openWindow();
-		new SampleEditor(null).openWindow();
-//		new Equalizer().openWindow();
+//		new SampleEditor(null).openWindow();
+		new Equalizer().openWindow();
 		
-//		ConfigFactory.getInstance().saveConfig(ConfigType.LOGIC_MAPPING, null);
+		BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
+		String readLine;
+		while ((readLine = console.readLine()) != null){
+			String[] signal = readLine.trim().split(":");
+			if (signal.length == 2){
+				float volume = Integer.parseInt(signal[1]) / 1024f;
+				System.out.println(signal[0] + ":" + volume);
+				Zone z = Zone.getZone(Integer.parseInt(signal[0]));
+				System.out.println(z);
+				if (z != null)
+					z.play(volume);
+			}
+		}
 	}
 }

@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import ca.digitalcave.drumslave.model.audio.Sample;
+import ca.digitalcave.drumslave.model.mapping.SampleMapping;
+
 /**
  * This class provides a hybrid Multiton-like access to the Pad object.  
  * Objects are initially created using the Sample constructor, but can be
@@ -101,13 +104,27 @@ public class Pad {
 	}
 	
 	/**
+	 * Returns the highest level from all child zones
+	 * @return
+	 */
+	public float getLevel(){
+		float max = 0f;
+		for (Zone zone : getZones()) {
+			Sample sample = Sample.getSample(SampleMapping.getSampleMapping(this.getName(), zone.getName()));
+			if (sample != null)
+				max = Math.max(max, sample.getLevel());
+		}
+		return max;
+	}
+	
+	/**
 	 * Stops playback from all child zones.  Call this when a cymbal is muted, for instance.
 	 */
 	public void stop(){
-//		for (Zone zone : getZones()) {
-//			Sample sample = SampleConfigManager.getSample(zone);
-//			if (sample != null)
-//				sample.stop();
-//		}
+		for (Zone zone : getZones()) {
+			Sample sample = Sample.getSample(SampleMapping.getSampleMapping(this.getName(), zone.getName()));
+			if (sample != null)
+				sample.stop();
+		}
 	}
 }

@@ -46,14 +46,14 @@ public class JoalSample extends Sample {
 
 	@Override
 	public void stop() {
-		//Fade out logarithmically over 10 iterations (approx. 600 ms total, but since the
-		// fading is logarithmic, the perceived end of playback is much faster)
+		//Fade out logarithmically over 10 iterations (less than a second total, but since the
+		// fading is logarithmic, the perceived end of playback is even faster)
 		for (int i = 0; i < 10; i++){
 			for (JoalCircularSource source : joalSources.values()) {
 				source.setGain(0.5f);
 			}
 			try {
-				Thread.sleep(60);
+				Thread.sleep(40);
 			}
 			catch (InterruptedException ie){}
 		}
@@ -64,15 +64,20 @@ public class JoalSample extends Sample {
 
 	@Override
 	public float getLevel() {
-		joalSources.get(0).getLevel();
-		return 0;
+		int level = 0;
+		for (JoalCircularSource source : joalSources.values()) {
+			level = Math.max(level, source.getLevel());
+		}
+//		return (float) Math.log(level / 32768f + 1) * 6;
+		return level / 32768f;
 	}
 
 	public static void main(String[] args) throws Exception {
 		JoalSample sample = new JoalSample("Cymbal/Ride/Zildjian A Ping 20/Bow");
+//		JoalSample sample = new JoalSample("Drum/Snare/Garage Band/Head");
 		sample.play(1.0f);
-		for(int i = 0; i < 100; i++){
-			sample.getLevel();
+		for (int i = 0; i < 20; i++){
+			System.out.println(sample.getLevel());
 			Thread.sleep(100);
 		}
 		Thread.sleep(2000);

@@ -55,6 +55,8 @@ public abstract class Sample {
 	//Static resources, related to the Multiton functionality of this class
 	private final static Map<String, Sample> samples = new ConcurrentHashMap<String, Sample>();
 	public static Sample getSample(String name){
+		if (name == null)
+			return null;
 		if (samples.get(name) == null){
 			Sample sample = loadSample(name);
 			samples.put(name, sample);
@@ -174,8 +176,8 @@ public abstract class Sample {
 	 * being played simultaneously, this method SHOULD return the highest level of all
 	 * clips currently playing.
 	 * 
-	 * This SHOULD return the actual playback volume, using a forumla equivalent to the
-	 * following (assume each variable is a float from 0 to 1):
+	 * This SHOULD return the actual playback volume, using a logarithmic forumla 
+	 * similar to the following (assume each variable is a float from 0 to 1):
 	 * 		max(all_samples(sample_volume_at_playback_location * volume))
 	 *   
 	 * This method may not be able to be implemented by all Sample classes, due to limitations
