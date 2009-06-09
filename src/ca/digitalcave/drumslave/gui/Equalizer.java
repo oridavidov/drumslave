@@ -54,10 +54,4 @@ public class Equalizer extends MossFrame {
 		
 		pack();
 	}
-	
-	@Override
-	public void updateMenus() {
-		// TODO Auto-generated method stub
-		super.updateMenus();
-	}
 }

@@ -1,14 +1,14 @@
 <drum-slave>
+	<!-- 
 	<sample-mapping pad-name="Snare" zone-name="Head" sample-name="Drum/Snare/Garage Band/Head" />
 	<sample-mapping pad-name="Tom 1" zone-name="Head" sample-name="Drum/Tom/Beech/1 High" />
-	<!-- 
 	<sample-mapping pad-name="Tom 2" zone-name="Head" sample-name="Drum/Tom/Beech/2 Med High" />
-	-->
 	<sample-mapping pad-name="Tom 3" zone-name="Head" sample-name="Drum/Tom/Beech/3 Med" />
 	<sample-mapping pad-name="Tom 4" zone-name="Head" sample-name="Drum/Tom/Beech/5 Low" />
 	<sample-mapping pad-name="Bass" zone-name="Head" sample-name="Drum/Bass/Acoustic/Head" />
 	<sample-mapping pad-name="Ride" zone-name="Bell" sample-name='Cymbal/Ride/Zildjian A Ping 20/Bell' />
 	<sample-mapping pad-name="Ride" zone-name="Edge" sample-name='Cymbal/Ride/Zildjian A Ping 20/Edge' />
+	-->
 	<sample-mapping pad-name="Ride" zone-name="Bow" sample-name='Cymbal/Ride/Zildjian A Ping 20/Bow' />
 	<!-- 
 	-->

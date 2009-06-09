@@ -10,8 +10,8 @@ public class DrumSignal {
 			float volume = Integer.parseInt(signal[1]) / 1024f;
 			System.out.println(signal[0] + ":" + volume);
 			Zone z = Zone.getZone(Integer.parseInt(signal[0]));
-			System.out.println(z);
-			z.play(volume);
+			if (z != null)
+				z.play(volume);
 		}
 	}
 }

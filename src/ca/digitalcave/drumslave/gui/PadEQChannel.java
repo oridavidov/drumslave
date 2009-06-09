@@ -56,14 +56,14 @@ public class PadEQChannel extends MossPanel {
 		
 		this.add(namePanel, BorderLayout.SOUTH);
 		
-		Timer timer = new Timer(100, new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				if (pad != null){
-					vuMeter.setValue(pad.getLevel());
-				}				
-			}
-		});
-		timer.start();
+//		Timer timer = new Timer(100, new ActionListener(){
+//			public void actionPerformed(ActionEvent e) {
+//				if (pad != null){
+//					vuMeter.setValue(pad.getLevel());
+//				}				
+//			}
+//		});
+//		timer.start();
 	}
 	
 	@Override
