@@ -60,6 +60,7 @@ public class PadEQChannel extends MossPanel {
 			public void actionPerformed(ActionEvent e) {
 				if (pad != null){
 					vuMeter.setValue(pad.getLevel());
+					vuMeter.updateFalloff();
 				}				
 			}
 		});
