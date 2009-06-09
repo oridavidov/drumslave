@@ -116,7 +116,7 @@ public class HardwareEditor extends MossDialog implements ActionListener {
 				new HardwareConfigManager().loadFromConfig(new ArrayList<ConfigPad>(pads.values()));
 				ConfigFactory.getInstance().saveConfig(ConfigType.HARDWARE, new File("etc/config/hardware.xml"));
 				
-				this.closeWindow();
+				this.closeWindowWithoutPrompting();
 			}
 			catch (InvalidConfigurationException ice){
 				JOptionPane.showMessageDialog(this, ice.getMessage(), "Error Saving Configuration", JOptionPane.ERROR_MESSAGE);
@@ -129,7 +129,7 @@ public class HardwareEditor extends MossDialog implements ActionListener {
 	
 	@Override
 	public boolean canClose() {
-		int reply = JOptionPane.showConfirmDialog(this, "Are you sure you want to close this window?  You will lose any changes made to the configuration.", "Close Without Save", JOptionPane.QUESTION_MESSAGE);
+		int reply = JOptionPane.showConfirmDialog(this, "Are you sure you want to close this window?\nYou will lose any changes made to the configuration.", "Close Without Save", JOptionPane.YES_NO_OPTION);
 		if (reply == JOptionPane.YES_OPTION)
 			return true;
 		else

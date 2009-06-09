@@ -54,6 +54,7 @@ public abstract class Sample {
 
 	//Static resources, related to the Multiton functionality of this class
 	private final static Map<String, Sample> samples = new ConcurrentHashMap<String, Sample>();
+	
 	public static Sample getSample(String name){
 		if (name == null)
 			return null;
@@ -81,12 +82,6 @@ public abstract class Sample {
 		} 
 	}
 	
-//	public static Collection<Sample> getSamples(){
-//		return Collections.unmodifiableCollection(samples.values());
-//	}
-//	protected static void clearSamples(){
-//		samples.clear();
-//	}
 	/**
 	 * Returns the sample folder based on the given name.  Sample names must be in 
 	 * the format:

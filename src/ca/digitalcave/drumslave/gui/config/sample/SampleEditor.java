@@ -131,7 +131,7 @@ public class SampleEditor extends MossDialog implements ActionListener {
 				new SampleMappingConfigManager().loadFromConfig(new ArrayList<ConfigSampleMapping>(sampleMappings));
 				ConfigFactory.getInstance().saveConfig(ConfigType.SAMPLE_MAPPING, new File("etc/config/sample-mappings.xml"));
 				
-				this.closeWindow();
+				this.closeWindowWithoutPrompting();
 			}
 			catch (InvalidConfigurationException ice){
 				JOptionPane.showMessageDialog(this, ice.getMessage(), "Error Saving Configuration", JOptionPane.ERROR_MESSAGE);
@@ -150,7 +150,7 @@ public class SampleEditor extends MossDialog implements ActionListener {
 	
 	@Override
 	public boolean canClose() {
-		int reply = JOptionPane.showConfirmDialog(this, "Are you sure you want to close this window?  You will lose any changes made to the configuration.", "Close Without Save", JOptionPane.YES_NO_OPTION);
+		int reply = JOptionPane.showConfirmDialog(this, "Are you sure you want to close this window?\nYou will lose any changes made to the configuration.", "Close Without Save", JOptionPane.YES_NO_OPTION);
 		if (reply == JOptionPane.YES_OPTION)
 			return true;
 		else

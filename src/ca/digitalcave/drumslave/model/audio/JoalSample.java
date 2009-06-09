@@ -69,7 +69,7 @@ public class JoalSample extends Sample {
 			level = Math.max(level, source.getLevel());
 		}
 //		return (float) Math.log(level / 32768f + 1) * 6;
-		return level / 32768f;
+		return (float) Math.log10(level) / 6f;
 	}
 
 	public static void main(String[] args) throws Exception {

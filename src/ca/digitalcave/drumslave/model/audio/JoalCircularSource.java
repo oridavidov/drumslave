@@ -48,14 +48,8 @@ import net.java.games.joal.util.ALut;
  */
 public class JoalCircularSource {
 
-	private static AL al = ALFactory.getAL();
+	private static final AL al;
 
-	// Position of the listener.
-	private static final float[] listenerPos = { 0.0f, 0.0f, 0.0f };
-	// Velocity of the listener.
-	private static final float[] listenerVel = { 0.0f, 0.0f, 0.0f };
-	// Orientation of the listener. (first 3 elems are "at", second 3 are "up")
-	private static final float[] listenerOri = { 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f };
 	// Position of the source sound.
 	private static final float[] sourcePos = { 0.0f, 0.0f, 0.0f };
 	// Velocity of the source sound.
@@ -64,12 +58,14 @@ public class JoalCircularSource {
 	private static int loadedSources = 0;
 
 	static {
+		System.out.println("Calling ALut.alutInit() on thread " + Thread.currentThread().getName() + " (" + Thread.currentThread().getId() + ")");
 		ALut.alutInit();
+		al = ALFactory.getAL();
 		al.alGetError();
 
-		al.alListenerfv(AL.AL_POSITION, listenerPos, 0);
-		al.alListenerfv(AL.AL_VELOCITY, listenerVel, 0);
-		al.alListenerfv(AL.AL_ORIENTATION, listenerOri, 0);
+		al.alListenerfv(AL.AL_POSITION, new float[]{0.0f, 0.0f, 0.0f}, 0);
+		al.alListenerfv(AL.AL_VELOCITY, new float[]{0.0f, 0.0f, 0.0f} , 0);
+		al.alListenerfv(AL.AL_ORIENTATION, new float[]{0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f }, 0);
 	}
 
 	private final int MAX_SIMULTANEOUS = 8;
@@ -166,9 +162,8 @@ public class JoalCircularSource {
 		for (int i = 0; i < MAX_SIMULTANEOUS; i++){
 			int[] data = new int[1];
 			al.alGetSourcei(sources[i], AL.AL_BYTE_OFFSET, data, 0);
-			int position = data[0] / 2 * 2;  //Start on even index
-			if (position > 0){
-//				long total = 0;
+			int position = data[0] / 2 * 2;  //Start on even index to be sure we get the byte order correct.
+			if (position > 0){ //Don't show this for non-playing sources
 				int j = 0;
 				int rawMax = 0;
 				//The more frames we iterate over, the more accurate the level will be.
@@ -176,20 +171,20 @@ public class JoalCircularSource {
 				// for stereo); this should be about right, as our VU meters should update 
 				// about that frequently. 
 				for (; j < 4410 && position + j + 1 < bufferData.capacity(); j+=2){
-					int highByte = bufferData.get(position + j + 1) << 8;
-					int lowByte = bufferData.get(position + j) & 0xFF;
-//					total += Math.abs(highByte + lowByte);
-					rawMax = Math.max(rawMax, highByte + lowByte);
+					int highByte = bufferData.get(position + j + 1) << 8; //MSB is signed and shifted
+					int lowByte = bufferData.get(position + j) & 0xFF; //LSB is unsigned
+					int sample = Math.abs(highByte + lowByte);
+					rawMax = Math.max(rawMax, sample);
 				}
 				
 				//Factor in the gain for the given sample 
 				float[] gainData = new float[1];
 				al.alGetSourcef(sources[i], AL.AL_GAIN, gainData, 0);
 				
-//				maxLevel = Math.max(maxLevel, (int) (gainData[0] * total / j));
 				maxLevel = Math.max(maxLevel, (int) (gainData[0] * rawMax));
 			}
 		}
 		return maxLevel;
+//		return 0;
 	}
 }

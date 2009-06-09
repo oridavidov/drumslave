@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.homeunix.thecave.moss.swing.MossFrame;
 
+import ca.digitalcave.drumslave.gui.menu.DrumSlaveMenuBar;
 import ca.digitalcave.drumslave.model.hardware.Pad;
 
 /**
@@ -19,11 +20,17 @@ import ca.digitalcave.drumslave.model.hardware.Pad;
 public class Equalizer extends MossFrame {
 	public static final long serialVersionUID = 0l;
 	
+	static {
+		System.out.println("Class Loaded");
+	}
+	
 	private final List<PadEQChannel> eqChannels = new ArrayList<PadEQChannel>();
 	
 	@Override
 	public void init() {
 		super.init();
+		
+		this.setJMenuBar(new DrumSlaveMenuBar(this));
 		
 		this.setLayout(new GridLayout(1, 0));
 		this.setResizable(false);

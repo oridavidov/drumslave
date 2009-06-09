@@ -23,21 +23,23 @@ public class DrumSlave {
 
 	public static void main(String[] args) throws Exception {
 
-		//Load config from disk
+		//Load config from disk; first we want hardware, so that we can init GUI
 		ConfigFactory.getInstance().loadConfig(ConfigType.HARDWARE, new File("etc/config/hardware.xml"));
+
+		//Initialize LnF and start up GUI
+		LookAndFeelUtil.setLookAndFeel();
+		SwingUtilities.invokeLater(new GuiRunner());
+		
+		//Then we load the rest of the config.  Loading Samples, in particular,
+		// before the GUI is initialized tends to hang the program.
 		ConfigFactory.getInstance().loadConfig(ConfigType.LOGIC, new File("etc/config/logic.xml"));
 		ConfigFactory.getInstance().loadConfig(ConfigType.SAMPLE_MAPPING, new File("etc/config/sample-mappings.xml"));
 		ConfigFactory.getInstance().loadConfig(ConfigType.LOGIC_MAPPING, new File("etc/config/logic-mappings.xml"));
 
+		
 		//Start the communications link, whether serial line or console, on its own thread
 		Thread communicationsThread = new Thread(new CommunicationsRunner(false), "Communications");
 		communicationsThread.start();
-
-		//Initialize LnF
-		LookAndFeelUtil.setLookAndFeel();
-
-		//Start up GUI
-		SwingUtilities.invokeLater(new GuiRunner());
 	}
 
 	private static class CommunicationsRunner implements Runnable {

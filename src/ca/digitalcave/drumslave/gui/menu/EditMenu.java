@@ -18,7 +18,9 @@ public class EditMenu extends MossMenu {
 	public void updateMenus() {
 		this.removeAll();
 
-		
+		this.add(new EditHardware(getFrame()));
+		this.add(new EditLogicMappings(getFrame()));
+		this.add(new EditSampleMappings(getFrame()));
 		
 		super.updateMenus();
 	}

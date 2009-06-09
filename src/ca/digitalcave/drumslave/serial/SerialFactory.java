@@ -6,7 +6,6 @@ import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -76,9 +75,10 @@ public class SerialFactory implements CommunicationsFactory {
 				}
 
 				String command = new String(buffer,0,len).trim();
+//				Zone.getCommandQueue().put(command);
 				DrumSignal.signal(command);
 			}
-			catch (IOException e) {
+			catch (Exception e) {
 				e.printStackTrace();
 				System.exit(-1);
 			}             

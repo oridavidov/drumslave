@@ -9,6 +9,7 @@ public class ConsoleFactory implements CommunicationsFactory {
 		BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
 		String readLine;
 		while ((readLine = console.readLine()) != null){
+//			Zone.getCommandQueue().put(readLine);
 			DrumSignal.signal(readLine);
 		}
 	}
