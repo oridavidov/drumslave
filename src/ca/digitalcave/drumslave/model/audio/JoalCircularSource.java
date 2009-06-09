@@ -58,7 +58,6 @@ public class JoalCircularSource {
 	private static int loadedSources = 0;
 
 	static {
-		System.out.println("Calling ALut.alutInit() on thread " + Thread.currentThread().getName() + " (" + Thread.currentThread().getId() + ")");
 		ALut.alutInit();
 		al = ALFactory.getAL();
 		al.alGetError();
@@ -74,11 +73,11 @@ public class JoalCircularSource {
 	private int[] buffers = new int[1]; //We share the same buffer with all sources in a given JoalCircularSource instance.
 	private final ByteBuffer bufferData; //We need to store the buffer data so that we can find the value at a given position, for VU meter.
 
-	private final File sample;
+//	private final File sample;
 
 	public JoalCircularSource(File sample) {
 		
-		this.sample = sample;
+//		this.sample = sample;
 
 		int[] format = new int[1];
 		int[] size = new int[1];
@@ -112,6 +111,8 @@ public class JoalCircularSource {
 			al.alSourcei(sources[i], AL.AL_BUFFER, buffers[0]);
 			al.alSourcef(sources[i], AL.AL_PITCH, 1.0f);
 			al.alSourcef(sources[i], AL.AL_GAIN, 1.0f);
+			al.alSourcef(sources[i], AL.AL_MIN_GAIN, 0.0f);
+			al.alSourcef(sources[i], AL.AL_MAX_GAIN, 3.0f);
 			al.alSourcefv(sources[i], AL.AL_POSITION, sourcePos, 0);
 			al.alSourcefv(sources[i], AL.AL_POSITION, sourceVel, 0);
 			al.alSourcei(sources[i], AL.AL_LOOPING, AL.AL_FALSE);
@@ -124,7 +125,6 @@ public class JoalCircularSource {
 	 * @param volume
 	 */
 	public void play(float volume) {
-		System.out.println("Playing " + sample.getAbsolutePath());
 		al.alSourcef(sources[sourceCounter], AL.AL_GAIN, volume);
 		al.alSourcePlay(sources[sourceCounter]);
 		sourceCounter = (sourceCounter + 1) % MAX_SIMULTANEOUS;

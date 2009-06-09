@@ -68,8 +68,10 @@ public class JoalSample extends Sample {
 		for (JoalCircularSource source : joalSources.values()) {
 			level = Math.max(level, source.getLevel());
 		}
-//		return (float) Math.log(level / 32768f + 1) * 6;
-		return (float) Math.log10(level) / 6f;
+//		return (float) Math.log(level / 32768f + 1) * 1.5f;
+//		return (float) Math.log10(level) / 6f;
+//		return (float) Math.pow(level / 25, 0.25) / 6f;
+		return (float) level / 32768f; //Decent initial response, but falls off too fast
 	}
 
 	public static void main(String[] args) throws Exception {

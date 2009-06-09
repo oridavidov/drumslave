@@ -15,8 +15,6 @@ public class VUMeter extends JLabel {
 	private static final Color BRIGHT_GREEN = new Color(0x0, 0xFF, 0x0);
 	private static final Color DARK_GREEN = new Color(0x0, 0x5F, 0x0);
 
-	private static final int ledCount = 20;
-
 	private float value;
 	private float maxValue;
 	private float maxValueFalloff;
@@ -58,6 +56,8 @@ public class VUMeter extends JLabel {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, this.getWidth(), this.getHeight());
 
+		int ledCount = this.getHeight() / 5;
+		
 		int ledHeight = this.getHeight() / ledCount;
 		for (int i = 0; i < ledCount; i++) {
 			float topCutoff = (float) i / ledCount;
@@ -87,7 +87,11 @@ public class VUMeter extends JLabel {
 				}
 			}
 
-			g.fillRect(1, 1 + this.getHeight() - (ledHeight * (i + 1)), this.getWidth() - 2, ledHeight - 2);
+			g.fillRect(
+					1, //x 
+					1 + this.getHeight() - (ledHeight * (i + 1)), //y 
+					this.getWidth() - 2,  //width
+					ledHeight - 2); //height
 		}
 	}
 }

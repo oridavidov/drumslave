@@ -27,6 +27,7 @@ public class Pad {
 
 	private final String name;
 	private Map<String, Zone> zones;
+	private float gain = 1.0f;
 	
 	/**
 	 * Clears all the pads from the static map.  Used before loading a new config file.
@@ -96,6 +97,15 @@ public class Pad {
 	 */
 	public Collection<Zone> getZones() {
 		return Collections.unmodifiableCollection(zones.values());
+	}
+	
+	public float getGain() {
+		return gain;
+	}
+	
+	public void setGain(float gain) {
+		this.gain = gain;
+//		System.out.println("Pad " + this + " gain == " + gain);
 	}
 	
 	@Override

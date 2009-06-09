@@ -20,10 +20,6 @@ import ca.digitalcave.drumslave.model.hardware.Pad;
 public class Equalizer extends MossFrame {
 	public static final long serialVersionUID = 0l;
 	
-	static {
-		System.out.println("Class Loaded");
-	}
-	
 	private final List<PadEQChannel> eqChannels = new ArrayList<PadEQChannel>();
 	
 	@Override

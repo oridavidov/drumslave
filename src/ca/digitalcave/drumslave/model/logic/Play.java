@@ -19,6 +19,9 @@ public class Play extends Logic {
 		if (sample == null)
 			throw new RuntimeException("No sample is mapped to name " + sampleName);
 
-		sample.play(value);
+		//Adjust the value based on the GUI gain control
+//		float adjustedValue = value * (float) Math.log10(zone.getPad().getGain() * 100);
+		float adjustedValue = value * zone.getPad().getGain();
+		sample.play(adjustedValue);
 	}
 }

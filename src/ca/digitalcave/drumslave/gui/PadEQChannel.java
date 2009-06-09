@@ -3,20 +3,25 @@ package ca.digitalcave.drumslave.gui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Hashtable;
 
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.Timer;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.homeunix.thecave.moss.swing.MossPanel;
 
 import ca.digitalcave.drumslave.gui.widget.VUMeter;
 import ca.digitalcave.drumslave.model.hardware.Pad;
 
-public class PadEQChannel extends MossPanel {
+public class PadEQChannel extends MossPanel implements ChangeListener {
 	public static final long serialVersionUID = 0l;
 
 	private final Pad pad;
@@ -37,11 +42,26 @@ public class PadEQChannel extends MossPanel {
 		vuMeter = new VUMeter();
 		volumeAdjustment = new JSlider(JSlider.VERTICAL);
 		
-		volumeAdjustment.setMaximum(100);
+		volumeAdjustment.setMaximum(125);
 		volumeAdjustment.setMinimum(0);
+		volumeAdjustment.setValue(100);
+		volumeAdjustment.setSnapToTicks(true);
+		volumeAdjustment.setMajorTickSpacing(25);
+		volumeAdjustment.setMinorTickSpacing(5);
+		volumeAdjustment.setPaintTicks(true);
+		volumeAdjustment.addChangeListener(this);
+		volumeAdjustment.setPaintLabels(true);
+		Hashtable<Integer, JComponent> labels = new Hashtable<Integer, JComponent>();
+		putLabel(labels, 125, "2");
+		putLabel(labels, 100, "0db");
+		putLabel(labels, 75, "-2");
+		putLabel(labels, 50, "-6");
+		putLabel(labels, 25, "-12");
+		putLabel(labels, 0, "-96");
+		volumeAdjustment.setLabelTable(labels);
 		
-		vuMeter.setPreferredSize(new Dimension(15, 100));
-		volumeAdjustment.setPreferredSize(new Dimension(25, 100));
+		vuMeter.setPreferredSize(new Dimension(15, 150));
+		volumeAdjustment.setPreferredSize(new Dimension(50, 150));
 		
 		this.setLayout(new BorderLayout());
 		
@@ -49,7 +69,7 @@ public class PadEQChannel extends MossPanel {
 		centerPanel.add(vuMeter);
 		centerPanel.add(volumeAdjustment);
 		
-		JPanel namePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		JPanel namePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		namePanel.add(new JLabel(pad.getName()));
 		
 		this.add(centerPanel, BorderLayout.CENTER);
@@ -67,14 +87,23 @@ public class PadEQChannel extends MossPanel {
 		timer.start();
 	}
 	
+	private void putLabel(Hashtable<Integer, JComponent> labels, int value, String label){
+		JLabel l = new JLabel(label);
+		Font curFont = l.getFont();
+		l.setFont(new Font(curFont.getFontName(), curFont.getStyle(), 8));
+		labels.put(value, l);
+	}
+	
 	@Override
 	public void updateContent() {
 		super.updateContent();
 
-
+//		volumeAdjustment.setValue((int) (Math.pow(pad.getGain(), 0.25) * 100));
+		volumeAdjustment.setValue((int) (pad.getGain() * 100));
 	}
 	
-	public float getVolumeAdjustment(){
-		return volumeAdjustment.getValue() / 100f;
+	public void stateChanged(ChangeEvent e) {
+//		pad.setGain((float) Math.pow((volumeAdjustment.getValue() / 100f), 4));
+		pad.setGain(volumeAdjustment.getValue() / 100f);
 	}
 }
