@@ -68,10 +68,14 @@ public class JoalSample extends Sample {
 		for (JoalSourceCircularQueue source : joalSources.values()) {
 			level = Math.max(level, source.getLevel());
 		}
-//		return (float) Math.log(level / 32768f + 1) * 1.5f;
-//		return (float) Math.log10(level) / 6f;
-//		return (float) Math.pow(level / 25, 0.25) / 6f;
-		return (float) level / 32768f; //Decent initial response, but falls off too fast
+		//Linear display - decent initial response, but falls off too fast
+		//return (float) level / 32768f; 
+
+		//y = log10((x + 1000) / 1000) / log10(33)
+		//Low levels may get a bit clipped, but overall this maps pretty well to
+		// what sounds / looks correct.  This formula found by trial an error,
+		// not by using any proper scientific approaches.
+		return (float) Math.log10((level + 1000) / 1000) / 1.5f; 
 	}
 
 	public static void main(String[] args) throws Exception {
