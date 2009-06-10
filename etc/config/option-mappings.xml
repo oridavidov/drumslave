@@ -1,0 +1,5 @@
+<drum-slave>
+	<option-mapping pad-name="Snare" zone-name="Head">
+		<option name="double-trigger" value="50"/>
+	</option-mapping>
+</drum-slave>

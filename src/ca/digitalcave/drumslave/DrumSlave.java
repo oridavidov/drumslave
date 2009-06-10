@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
+import org.homeunix.thecave.moss.common.LogUtil;
 import org.homeunix.thecave.moss.swing.LookAndFeelUtil;
 import org.homeunix.thecave.moss.swing.exception.WindowOpenException;
 
@@ -22,7 +23,8 @@ public class DrumSlave {
 	private static Logger logger = Logger.getLogger(DrumSlave.class.getName());
 
 	public static void main(String[] args) throws Exception {
-
+		LogUtil.setLogLevel("ca.digitalcave", "FINEST", Level.INFO);
+		
 		//Load config from disk; first we want hardware, so that we can init GUI
 		ConfigFactory.getInstance().loadConfig(ConfigType.HARDWARE, new File("etc/config/hardware.xml"));
 
@@ -35,8 +37,8 @@ public class DrumSlave {
 		ConfigFactory.getInstance().loadConfig(ConfigType.LOGIC, new File("etc/config/logic.xml"));
 		ConfigFactory.getInstance().loadConfig(ConfigType.SAMPLE_MAPPING, new File("etc/config/sample-mappings.xml"));
 		ConfigFactory.getInstance().loadConfig(ConfigType.LOGIC_MAPPING, new File("etc/config/logic-mappings.xml"));
+		ConfigFactory.getInstance().loadConfig(ConfigType.OPTION_MAPPING, new File("etc/config/option-mappings.xml"));
 
-		
 		//Start the communications link, whether serial line or console, on its own thread
 		Thread communicationsThread = new Thread(new CommunicationsRunner(false), "Communications");
 		communicationsThread.start();

@@ -11,6 +11,7 @@ import ca.digitalcave.drumslave.model.hardware.HardwareConfigManager;
 import ca.digitalcave.drumslave.model.logic.LogicConfigManager;
 import ca.digitalcave.drumslave.model.mapping.LogicMappingConfigManager;
 import ca.digitalcave.drumslave.model.mapping.SampleMappingConfigManager;
+import ca.digitalcave.drumslave.model.options.OptionMappingConfigManager;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -50,6 +51,10 @@ public class ConfigFactory {
 				case SAMPLE_MAPPING:
 					new SampleMappingConfigManager().loadFromConfig(c.getSampleMappings());
 					break;
+					
+				case OPTION_MAPPING:
+					new OptionMappingConfigManager().loadFromConfig(c.getOptionMappings());
+					break;
 				}
 			}
 			else {
@@ -80,6 +85,10 @@ public class ConfigFactory {
 		case SAMPLE_MAPPING:
 			config.setSampleMappings(new SampleMappingConfigManager().saveToConfig());
 			break;
+			
+		case OPTION_MAPPING:
+			config.setOptionMappings(new OptionMappingConfigManager().saveToConfig());
+			break;
 		}
 		
 		XStream xstream = new XStream(new DomDriver());
@@ -91,6 +100,7 @@ public class ConfigFactory {
 		HARDWARE,
 		LOGIC,
 		LOGIC_MAPPING,
-		SAMPLE_MAPPING
+		SAMPLE_MAPPING,
+		OPTION_MAPPING,
 	}
 }

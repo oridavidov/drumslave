@@ -53,7 +53,7 @@ public class PadEQChannel extends MossPanel implements ChangeListener {
 		volumeAdjustment.setPaintLabels(true);
 		Hashtable<Integer, JComponent> labels = new Hashtable<Integer, JComponent>();
 		putLabel(labels, 125, "2");
-		putLabel(labels, 100, "0db");
+		putLabel(labels, 100, "0 dB");
 		putLabel(labels, 75, "-2");
 		putLabel(labels, 50, "-6");
 		putLabel(labels, 25, "-12");

@@ -23,6 +23,9 @@ public class Config {
 	@XStreamAlias("sample-mappings")
 	@XStreamImplicit
 	private List<ConfigSampleMapping> sampleMappings;
+	@XStreamAlias("option-mappings")
+	@XStreamImplicit
+	private List<ConfigOptionMapping> optionMappings;
 	
 	public List<ConfigPad> getPads() {
 		return pads;
@@ -53,5 +56,11 @@ public class Config {
 	}
 	public void setSampleMappings(List<ConfigSampleMapping> sampleMappings) {
 		this.sampleMappings = sampleMappings;
+	}
+	public List<ConfigOptionMapping> getOptionMappings() {
+		return optionMappings;
+	}
+	public void setOptionMappings(List<ConfigOptionMapping> optionMappings) {
+		this.optionMappings = optionMappings;
 	}
 }

@@ -111,4 +111,9 @@ public class Zone {
 			return 0f;
 		return sample.getLevel();
 	}
+	
+	@Override
+	public int hashCode() {
+		return (getPad().getName() + ":" + getName() + ":" + getChannel()).hashCode();
+	}
 }

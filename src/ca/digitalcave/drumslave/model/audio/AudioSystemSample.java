@@ -19,7 +19,9 @@ import javax.sound.sampled.FloatControl;
  * package for audio playback.  An implementation of this API should be included on all
  * major JVMs without any extra libraries neede.  However, it does have some limitations,
  * such as requiring that you manually fade out, that you must load multiple copies
- * of each sample if you want simultaneous playback, etc.
+ * of each sample if you want simultaneous playback, etc.  As well, some extra functionality
+ * which JOAL samples include, such as EQ integration, etc is not available.  It is 
+ * not recommended to use this source for anything other than initial experimentation.
  * 
  * The largest limitation of this Sample implementation is that it can only open 
  * 32 clips simultaneously.  Since there is one clip opened for each sample * each
@@ -118,7 +120,7 @@ public class AudioSystemSample extends Sample {
 		return count;
 	}
 
-	public void play(float volume){
+	public void play(float volume, float gain){
 		int sampleCount = clips.keySet().size();
 		if (sampleCount == 0)
 			throw new RuntimeException("No samples found for " + getName());

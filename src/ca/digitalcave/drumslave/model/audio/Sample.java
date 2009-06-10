@@ -150,12 +150,15 @@ public abstract class Sample {
 	}
 
 	/**
-	 * Plays the sample at the given velocity.  The implementing method MUST
-	 * determine which sample to play, given the velocity, and play that sample
-	 * at the given volume.  This method MUST NOT block. 
-	 * @param volume
+	 * Plays the sample at the given velocity with the specified gain.  
+	 * The implementing method MUST determine which sample to play, 
+	 * given the raw volume value, and play that sample at the given 
+	 * volume with the specified gain factor applied using multiplication
+	 * (i.e. actualVolume = rawVolume * gain).  This method MUST NOT block. 
+	 * @param rawVolume The raw volume.  This is used to determine the playback sample
+	 * @param gain The gain to apply against the raw volume
 	 */
-	public abstract void play(float volume);
+	public abstract void play(float rawVolume, float gain);
 
 	/**
 	 * Stops all samples playing on the current sample.  This SHOULD fade out over 

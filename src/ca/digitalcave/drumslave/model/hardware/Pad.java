@@ -137,4 +137,9 @@ public class Pad {
 				sample.stop();
 		}
 	}
+	
+	@Override
+	public int hashCode() {
+		return toString().hashCode();
+	}
 }

@@ -31,17 +31,17 @@ public class JoalSample extends Sample {
 	}
 
 	@Override
-	public void play(float volume) {
+	public void play(float rawVolume, float gain) {
 		int sampleCount = joalSources.keySet().size();
 		if (sampleCount == 0)
 			throw new RuntimeException("No samples found for " + getName());
 		
 		//Figure out which sample to use based on volume
-		int sampleNumber = getVolumeToSampleNumberMapping(sampleCount, volume);
+		int sampleNumber = getVolumeToSampleNumberMapping(sampleCount, rawVolume);
 		if (joalSources.get(sampleNumber) == null)
 			throw new RuntimeException("No sample loaded for sample number " + sampleNumber);
 		
-		joalSources.get(sampleNumber).play(volume);
+		joalSources.get(sampleNumber).play(rawVolume * gain);
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class JoalSample extends Sample {
 	public static void main(String[] args) throws Exception {
 		JoalSample sample = new JoalSample("Cymbal/Ride/Zildjian A Ping 20/Bow");
 //		JoalSample sample = new JoalSample("Drum/Snare/Garage Band/Head");
-		sample.play(1.0f);
+		sample.play(1.0f, 1.0f);
 		for (int i = 0; i < 20; i++){
 			System.out.println(sample.getLevel());
 			Thread.sleep(100);
