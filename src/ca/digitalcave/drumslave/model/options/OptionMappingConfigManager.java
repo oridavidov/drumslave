@@ -25,7 +25,7 @@ public class OptionMappingConfigManager implements ConfigManager<ConfigOptionMap
 			}
 		}
 		
-		System.out.println(OptionMapping.getOptionMappings());
+//		System.out.println(OptionMapping.getOptionMappings());
 	}
 	
 	public List<ConfigOptionMapping> saveToConfig(){

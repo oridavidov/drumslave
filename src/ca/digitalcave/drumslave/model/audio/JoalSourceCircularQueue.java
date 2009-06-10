@@ -11,7 +11,7 @@ import net.java.games.joal.ALFactory;
 import net.java.games.joal.util.ALut;
 
 /**
- * This is a wrapper around JOAL functions to play a sound.  This wrapper 
+ * This is a wrapper around JOAL functions to play a single sample.  This wrapper 
  * will do the following:
  * 
  *   1) Load the sound multiple times
@@ -22,7 +22,16 @@ import net.java.games.joal.util.ALut;
  * size of the circular queue determines how many you can play in a row; once you 
  * loop back to the first source, any volume adjustments will affect the currently playing
  * soure as well.  From my experiments, 8 seems to be a decent size for the circular queue,
- * but this can be adjusted as you see fit.
+ * but this can be adjusted as you see fit; there is not too much of a memory hit to increase
+ * this number.  Note however that there is one Joal Source created for each entry in the
+ * queue, and some platforms may not be able to create large numbers of sources.  If this
+ * becomes a problem, we may need to change the logic of this class to allocate a source
+ * only when needed (perhaps keeping one ready at all times, and using that for the next
+ * request).
+ * 
+ * All samples which are read from this class MUST be 16bit integer / sample, 44100Hz, 
+ * uncompressed .wav files.  Even if OpenAL will read other formats, the getLevel() method
+ * will not work properly for other file formats.
  * 
  * The methods in this class don't map directly to the Source interface; to allow some
  * functions to work in a more efficient manner, some things (like fading out over a short
@@ -39,17 +48,19 @@ import net.java.games.joal.util.ALut;
  * may introduce unacceptable overhead; however, according to some articles I have read,
  * some systems only allow a small maximum number of sources to be loaded at the same time
  * (for reference, on the Mac this appears to be 1000, which is more than enough for our
- * needs; however, some hardware based systems appear to be much lower than that).  Regardles,
+ * needs; however, some hardware based systems appear to be much lower than that).  Regardless,
  * this is not a high priority modification, as it works fine for now, but it is something
  * to think about. 
  *  
  * @author wyatt
  *
  */
-public class JoalCircularSource {
+public class JoalSourceCircularQueue {
 
 	private static final AL al;
 
+	//TODO Allow users to customize the layout of their drum set, and change the position
+	// of each source.
 	// Position of the source sound.
 	private static final float[] sourcePos = { 0.0f, 0.0f, 0.0f };
 	// Velocity of the source sound.
@@ -57,6 +68,11 @@ public class JoalCircularSource {
 
 	private static int loadedSources = 0;
 
+	/**
+	 * This should only happen once per program run.  Running ALut.alutInit() multiple
+	 * times will cause an error; setting the listener position doesn't matter, but
+	 * there is no point in doing it multiple times, as there is just one listener anyway.
+	 */
 	static {
 		ALut.alutInit();
 		al = ALFactory.getAL();
@@ -67,18 +83,13 @@ public class JoalCircularSource {
 		al.alListenerfv(AL.AL_ORIENTATION, new float[]{0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f }, 0);
 	}
 
-	private final int MAX_SIMULTANEOUS = 8;
-	private int sourceCounter = 0;
+	private final int MAX_SIMULTANEOUS = 8; //How many Sources to include in the circular buffer
+	private int sourceCounter = 0; //Internal counter to find the next source
 	private int[] sources = new int[MAX_SIMULTANEOUS]; //First index is from 0 - (MAX_SIMULTANEOUS - 1), and will loop based on sourceCounter
 	private int[] buffers = new int[1]; //We share the same buffer with all sources in a given JoalCircularSource instance.
 	private final ByteBuffer bufferData; //We need to store the buffer data so that we can find the value at a given position, for VU meter.
 
-//	private final File sample;
-
-	public JoalCircularSource(File sample) {
-		
-//		this.sample = sample;
-
+	public JoalSourceCircularQueue(File sample) {		
 		int[] format = new int[1];
 		int[] size = new int[1];
 		ByteBuffer[] data = new ByteBuffer[1];
@@ -157,6 +168,12 @@ public class JoalCircularSource {
 		}
 	}
 
+	/**
+	 * Looks at the position of all playing sources, and notes the raw level value in the
+	 * buffer (looks about 100ms forward in each buffer).  Returns the highest value in
+	 * all the sources.  
+	 * @return
+	 */
 	public int getLevel() {
 		int maxLevel = 0;
 		for (int i = 0; i < MAX_SIMULTANEOUS; i++){
@@ -185,6 +202,5 @@ public class JoalCircularSource {
 			}
 		}
 		return maxLevel;
-//		return 0;
 	}
 }

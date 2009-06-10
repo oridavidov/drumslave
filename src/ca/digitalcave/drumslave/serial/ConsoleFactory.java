@@ -7,10 +7,9 @@ public class ConsoleFactory implements CommunicationsFactory {
 
 	public void connect() throws Exception {
 		BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
-		String readLine;
-		while ((readLine = console.readLine()) != null){
-//			Zone.getCommandQueue().put(readLine);
-			DrumSignal.signal(readLine);
+		String command;
+		while ((command = console.readLine()) != null){
+			DrumSignal.threadPool.execute(new DrumSignal(command));
 		}
 	}
 }

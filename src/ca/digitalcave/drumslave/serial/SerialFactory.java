@@ -44,10 +44,6 @@ public class SerialFactory implements CommunicationsFactory {
 			}
 		}     
 	}
-//
-//	public static void main (String[] args) throws Exception {
-//		new SerialFactory("/dev/tty.usbserial-A200294u").connect();
-//	}
 
 	/**
 	 * Handles the input coming from the serial port. A new line character
@@ -56,9 +52,8 @@ public class SerialFactory implements CommunicationsFactory {
 	public class SerialReader implements SerialPortEventListener {
 		private InputStream in;
 		private byte[] buffer = new byte[1024];
-
-		public SerialReader ( InputStream in )
-		{
+		
+		public SerialReader (InputStream in){
 			this.in = in;
 		}
 
@@ -74,9 +69,8 @@ public class SerialFactory implements CommunicationsFactory {
 					buffer[len++] = (byte) data;
 				}
 
-				String command = new String(buffer,0,len).trim();
-//				Zone.getCommandQueue().put(command);
-				DrumSignal.signal(command);
+				String command = new String(buffer, 0, len);
+				DrumSignal.threadPool.execute(new DrumSignal(command));
 			}
 			catch (Exception e) {
 				e.printStackTrace();

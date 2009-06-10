@@ -20,13 +20,13 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class JoalSample extends Sample {
 
-	private final Map<Integer, JoalCircularSource> joalSources = new ConcurrentHashMap<Integer, JoalCircularSource>();
+	private final Map<Integer, JoalSourceCircularQueue> joalSources = new ConcurrentHashMap<Integer, JoalSourceCircularQueue>();
 	
 	public JoalSample(String name) {
 		super(name);
 
 		for (int i = 0; i < sampleFiles.size(); i++){
-			joalSources.put(i, new JoalCircularSource(sampleFiles.get(i)));
+			joalSources.put(i, new JoalSourceCircularQueue(sampleFiles.get(i)));
 		}
 	}
 
@@ -49,7 +49,7 @@ public class JoalSample extends Sample {
 		//Fade out logarithmically over 10 iterations (less than a second total, but since the
 		// fading is logarithmic, the perceived end of playback is even faster)
 		for (int i = 0; i < 10; i++){
-			for (JoalCircularSource source : joalSources.values()) {
+			for (JoalSourceCircularQueue source : joalSources.values()) {
 				source.setGain(0.5f);
 			}
 			try {
@@ -57,7 +57,7 @@ public class JoalSample extends Sample {
 			}
 			catch (InterruptedException ie){}
 		}
-		for (JoalCircularSource source : joalSources.values()) {
+		for (JoalSourceCircularQueue source : joalSources.values()) {
 			source.stop();
 		}
 	}
@@ -65,7 +65,7 @@ public class JoalSample extends Sample {
 	@Override
 	public float getLevel() {
 		int level = 0;
-		for (JoalCircularSource source : joalSources.values()) {
+		for (JoalSourceCircularQueue source : joalSources.values()) {
 			level = Math.max(level, source.getLevel());
 		}
 //		return (float) Math.log(level / 32768f + 1) * 1.5f;

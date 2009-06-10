@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,6 +14,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.FloatControl;
+
 
 /**
  * The AudioSystemSample is a Sample implementation which uses the javax.sound.sampled
@@ -167,5 +169,18 @@ public class AudioSystemSample extends Sample {
 	public float getLevel() {
 //		clips.get(0).peek().
 		return 0;
+	}
+	
+	private class CircularQueue<E> extends ConcurrentLinkedQueue<E> {
+		private static final long serialVersionUID = 1l;
+
+		/**
+		 * Returns the head element in the queue, and re-inserts it at the tail.
+		 */
+		public E poll() {
+			E e = super.poll();
+			this.offer(e);
+			return e;
+		}
 	}
 }
