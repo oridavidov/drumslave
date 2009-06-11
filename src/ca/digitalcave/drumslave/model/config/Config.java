@@ -20,9 +20,9 @@ public class Config {
 	@XStreamAlias("logic-mappings")
 	@XStreamImplicit
 	private List<ConfigLogicMapping> logicMappings;
-	@XStreamAlias("sample-mappings")
+	@XStreamAlias("sample-mapping-groups")
 	@XStreamImplicit
-	private List<ConfigSampleMapping> sampleMappings;
+	private List<ConfigSampleMappingGroup> sampleMappingGroups;
 	@XStreamAlias("option-mappings")
 	@XStreamImplicit
 	private List<ConfigOptionMapping> optionMappings;
@@ -51,16 +51,16 @@ public class Config {
 	public void setLogicMappings(List<ConfigLogicMapping> logicMappings) {
 		this.logicMappings = logicMappings;
 	}
-	public List<ConfigSampleMapping> getSampleMappings() {
-		return sampleMappings;
-	}
-	public void setSampleMappings(List<ConfigSampleMapping> sampleMappings) {
-		this.sampleMappings = sampleMappings;
-	}
 	public List<ConfigOptionMapping> getOptionMappings() {
 		return optionMappings;
 	}
 	public void setOptionMappings(List<ConfigOptionMapping> optionMappings) {
 		this.optionMappings = optionMappings;
+	}
+	public List<ConfigSampleMappingGroup> getSampleMappingGroups() {
+		return sampleMappingGroups;
+	}
+	public void setSampleMappingGroups(List<ConfigSampleMappingGroup> sampleMappingGroups) {
+		this.sampleMappingGroups = sampleMappingGroups;
 	}
 }

@@ -2,9 +2,9 @@ package ca.digitalcave.drumslave.gui.config.sample;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +24,7 @@ import ca.digitalcave.drumslave.gui.util.Formatter;
 import ca.digitalcave.drumslave.model.audio.Sample;
 import ca.digitalcave.drumslave.model.config.ConfigFactory;
 import ca.digitalcave.drumslave.model.config.ConfigSampleMapping;
+import ca.digitalcave.drumslave.model.config.ConfigSampleMappingGroup;
 import ca.digitalcave.drumslave.model.config.InvalidConfigurationException;
 import ca.digitalcave.drumslave.model.config.ConfigFactory.ConfigType;
 import ca.digitalcave.drumslave.model.hardware.Pad;
@@ -35,11 +36,12 @@ public class SampleEditor extends MossDialog implements ActionListener {
 	public static final long serialVersionUID = 0l;
 
 	private JComboBox padsComboBox;
+	private JComboBox sampleNamesComboBox;
 	private PadSampleEditor padSampleEditor;
 	private JButton saveButton = new JButton("Save");
 	private JButton closeButton = new JButton("Close");
 	
-	private final Map<String, Map<String, String>> sampleMappings = new HashMap<String, Map<String,String>>();
+	private final Map<String, Map<String, Map<String, String>>> sampleMappings = new HashMap<String, Map<String, Map<String, String>>>();
 	
 	
 	public SampleEditor(MossFrame owner) {
@@ -48,10 +50,13 @@ public class SampleEditor extends MossDialog implements ActionListener {
 		//Initialize the config map.  During editing, the map will be updated, not the
 		// actual in-memory config.  If the user saves, we will then persist the map
 		// to disk and load the configuration.
-		for (Pad pad : Pad.getPads()) {
-			sampleMappings.put(pad.getName(), new HashMap<String, String>());
-			for (Zone zone : pad.getZones()) {
-				sampleMappings.get(pad.getName()).put(zone.getName(), SampleMapping.getSampleMapping(pad.getName(), zone.getName()));
+		for (String sampleConfigName : SampleMapping.getSampleConfigNames()) {
+			sampleMappings.put(sampleConfigName, new HashMap<String, Map<String,String>>());
+			for (Pad pad : Pad.getPads()) {
+				sampleMappings.get(sampleConfigName).put(pad.getName(), new HashMap<String, String>());
+				for (Zone zone : pad.getZones()) {
+					sampleMappings.get(sampleConfigName).get(pad.getName()).put(zone.getName(), SampleMapping.getSampleMapping(pad.getName(), zone.getName()));
+				}
 			}
 		}
 	}
@@ -60,11 +65,15 @@ public class SampleEditor extends MossDialog implements ActionListener {
 	public void init() {
 		super.init();
 		padsComboBox = new JComboBox(new PadsComboBoxModel());
+		sampleNamesComboBox = new JComboBox(new SampleNamesComboBoxModel());
 		padSampleEditor = new PadSampleEditor(this);
 		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		JPanel sampleNamesComboBoxPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		JPanel padChooserPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JPanel bottomPanel = new JPanel(new GridLayout(1, 2));
 		
 		padsComboBox.setPreferredSize(Formatter.getComponentSize(padsComboBox, 120));
+		sampleNamesComboBox.setPreferredSize(Formatter.getComponentSize(sampleNamesComboBox, 120));
 		saveButton.setPreferredSize(Formatter.getButtonSize(saveButton));
 		closeButton.setPreferredSize(Formatter.getButtonSize(closeButton));
 		
@@ -73,11 +82,17 @@ public class SampleEditor extends MossDialog implements ActionListener {
 		padSampleEditor.setPad(Pad.getPad(padsComboBox.getSelectedItem().toString()));
 		
 		padsComboBox.addActionListener(this);
+		sampleNamesComboBox.addActionListener(this);
 		saveButton.addActionListener(this);
 		closeButton.addActionListener(this);
 		
 		buttonPanel.add(closeButton);
 		buttonPanel.add(saveButton);
+		
+		sampleNamesComboBoxPanel.add(sampleNamesComboBox);
+		
+		bottomPanel.add(sampleNamesComboBoxPanel);
+		bottomPanel.add(buttonPanel);
 		
 		padChooserPanel.add(padsComboBox);		
 		
@@ -85,7 +100,7 @@ public class SampleEditor extends MossDialog implements ActionListener {
 		
 		this.add(padChooserPanel, BorderLayout.NORTH);
 		this.add(padSampleEditor, BorderLayout.CENTER);
-		this.add(buttonPanel, BorderLayout.SOUTH);
+		this.add(bottomPanel, BorderLayout.SOUTH);
 		
 		this.getRootPane().setDefaultButton(saveButton);
 		
@@ -105,31 +120,41 @@ public class SampleEditor extends MossDialog implements ActionListener {
 		}
 		else if (e.getSource().equals(saveButton)){
 			try {
-				List<ConfigSampleMapping> sampleMappings = new ArrayList<ConfigSampleMapping>();
-				for (String padName : this.sampleMappings.keySet()) {
-					for (String zoneName : this.sampleMappings.get(padName).keySet()) {
-						if (this.sampleMappings.get(padName).get(zoneName) != null){
-							ConfigSampleMapping mapping = new ConfigSampleMapping();
-							mapping.setPadName(padName);
-							mapping.setZoneName(zoneName);
-							mapping.setSampleName(this.sampleMappings.get(padName).get(zoneName));
-							sampleMappings.add(mapping);
+				List<ConfigSampleMappingGroup> sampleMappingGroups = new ArrayList<ConfigSampleMappingGroup>();
+				for (String sampleConfigName : this.sampleMappings.keySet()){
+					ConfigSampleMappingGroup configSampleMappingGroup = new ConfigSampleMappingGroup();
+					configSampleMappingGroup.setName(sampleConfigName);
+					List<ConfigSampleMapping> sampleMappings = new ArrayList<ConfigSampleMapping>();
+					for (String padName : this.sampleMappings.get(sampleConfigName).keySet()) {
+						for (String zoneName : this.sampleMappings.get(sampleConfigName).get(padName).keySet()) {
+							if (this.sampleMappings.get(padName).get(zoneName) != null){
+								ConfigSampleMapping mapping = new ConfigSampleMapping();
+								mapping.setPadName(padName);
+								mapping.setZoneName(zoneName);
+								mapping.setSampleName(this.sampleMappings.get(sampleConfigName).get(padName).get(zoneName));
+								sampleMappings.add(mapping);
+							}
 						}
 					}
+					configSampleMappingGroup.setSampleMappings(sampleMappings);
+					sampleMappingGroups.add(configSampleMappingGroup);
+					
 				}
 				
 				//Verify that the config is valid
-				for (ConfigSampleMapping mapping : sampleMappings) {
-					if (Pad.getPad(mapping.getPadName()) == null)
-						throw new InvalidConfigurationException("A pad with name " + mapping.getPadName() + " has not been defined in the hardware mappings.");
-					if (Zone.getZone(mapping.getPadName(), mapping.getZoneName()) == null)
-						throw new InvalidConfigurationException("A zone with name " + mapping.getPadName() + ":" + mapping.getZoneName() + " has not been defined in the hardware mappings.");
-					if (Sample.getSample(mapping.getSampleName()) == null)
-						throw new InvalidConfigurationException("A sample with name " + mapping.getSampleName() + " could not be found in the samples folder.");
+				for (ConfigSampleMappingGroup configSampleMappingGroup : sampleMappingGroups) {
+					for (ConfigSampleMapping mapping : configSampleMappingGroup.getSampleMappings()) {
+						if (Pad.getPad(mapping.getPadName()) == null)
+							throw new InvalidConfigurationException("A pad with name " + mapping.getPadName() + " has not been defined in the hardware mappings.");
+						if (Zone.getZone(mapping.getPadName(), mapping.getZoneName()) == null)
+							throw new InvalidConfigurationException("A zone with name " + mapping.getPadName() + ":" + mapping.getZoneName() + " has not been defined in the hardware mappings.");
+						if (Sample.getSample(mapping.getSampleName()) == null)
+							throw new InvalidConfigurationException("A sample with name " + mapping.getSampleName() + " could not be found in the samples folder.");
+					}
 				}
 				
-				new SampleMappingConfigManager().loadFromConfig(new ArrayList<ConfigSampleMapping>(sampleMappings));
-				ConfigFactory.getInstance().saveConfig(ConfigType.SAMPLE_MAPPING, new File("etc/config/sample-mappings.xml"));
+				new SampleMappingConfigManager().loadFromConfig(new ArrayList<ConfigSampleMappingGroup>(sampleMappingGroups));
+				ConfigFactory.getInstance().saveConfig(ConfigType.SAMPLE_MAPPING);
 				
 				this.closeWindowWithoutPrompting();
 			}
@@ -144,8 +169,12 @@ public class SampleEditor extends MossDialog implements ActionListener {
 		this.updateContent();
 	}
 	
-	protected Map<String, Map<String, String>> getSampleMappings(){
+	protected Map<String, Map<String, Map<String, String>>> getSampleMappings(){
 		return sampleMappings;
+	}
+	
+	protected String getSelectedConfigGroupName(){
+		return sampleNamesComboBox.getSelectedItem().toString();
 	}
 	
 	@Override

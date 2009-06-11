@@ -1,12 +1,16 @@
 package ca.digitalcave.drumslave;
 
-import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
 import org.homeunix.thecave.moss.common.LogUtil;
+import org.homeunix.thecave.moss.common.ParseCommands;
+import org.homeunix.thecave.moss.common.ParseCommands.ParseResults;
+import org.homeunix.thecave.moss.common.ParseCommands.ParseVariable;
 import org.homeunix.thecave.moss.swing.LookAndFeelUtil;
 import org.homeunix.thecave.moss.swing.exception.WindowOpenException;
 
@@ -23,24 +27,44 @@ public class DrumSlave {
 	private static Logger logger = Logger.getLogger(DrumSlave.class.getName());
 
 	public static void main(String[] args) throws Exception {
-		LogUtil.setLogLevel("ca.digitalcave", "FINEST", Level.INFO);
+		//Parse command line options, and print usage if needed.
+		List<ParseVariable> variables = new LinkedList<ParseVariable>();
+		variables.add(new ParseVariable("--keyboard", Boolean.class, false));
+		variables.add(new ParseVariable("--console", Boolean.class, false));
+		variables.add(new ParseVariable("--log-level", String.class, false));
+		
+		String help = "USAGE: java -jar Buddi.jar <options> <data file>, where options include:\n"
+			+ "\t--keyboard\t\tUse keyboard for testing, instead of serial port\n"
+			+ "\t--console\t\tDo not launch the GUI\n"
+			+ "\t--log-level\tLEVEL\tSet log level: [SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST], default INFO\n";
+		ParseResults results = ParseCommands.parse(args, help, variables);
+		
+		boolean useSerial = true;
+		if (results.getBoolean("--keyboard"))
+			useSerial = false;
+		
+		LogUtil.setLogLevel(results.getString("--log-level"));
+		
 		
 		//Load config from disk; first we want hardware, so that we can init GUI
-		ConfigFactory.getInstance().loadConfig(ConfigType.HARDWARE, new File("etc/config/hardware.xml"));
+		ConfigFactory.getInstance().loadConfig(ConfigType.HARDWARE);
+//		ConfigFactory.getInstance().loadConfig(ConfigType.SETTINGS);
 
-		//Initialize LnF and start up GUI
-		LookAndFeelUtil.setLookAndFeel();
-		SwingUtilities.invokeLater(new GuiRunner());
+		if (!results.getBoolean("--console")){
+			//Initialize LnF and start up GUI
+			LookAndFeelUtil.setLookAndFeel();
+			SwingUtilities.invokeLater(new GuiRunner());
+		}
 		
 		//Then we load the rest of the config.  Loading Samples, in particular,
 		// before the GUI is initialized tends to hang the program.
-		ConfigFactory.getInstance().loadConfig(ConfigType.LOGIC, new File("etc/config/logic.xml"));
-		ConfigFactory.getInstance().loadConfig(ConfigType.SAMPLE_MAPPING, new File("etc/config/sample-mappings.xml"));
-		ConfigFactory.getInstance().loadConfig(ConfigType.LOGIC_MAPPING, new File("etc/config/logic-mappings.xml"));
-		ConfigFactory.getInstance().loadConfig(ConfigType.OPTION_MAPPING, new File("etc/config/option-mappings.xml"));
+		ConfigFactory.getInstance().loadConfig(ConfigType.LOGIC);
+		ConfigFactory.getInstance().loadConfig(ConfigType.SAMPLE_MAPPING);
+		ConfigFactory.getInstance().loadConfig(ConfigType.LOGIC_MAPPING);
+		ConfigFactory.getInstance().loadConfig(ConfigType.OPTION_MAPPING);
 
 		//Start the communications link, whether serial line or console, on its own thread
-		Thread communicationsThread = new Thread(new CommunicationsRunner(false), "Communications");
+		Thread communicationsThread = new Thread(new CommunicationsRunner(useSerial), "Communications");
 		communicationsThread.start();
 	}
 

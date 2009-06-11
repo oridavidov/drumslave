@@ -5,7 +5,6 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -114,7 +113,7 @@ public class HardwareEditor extends MossDialog implements ActionListener {
 				}
 
 				new HardwareConfigManager().loadFromConfig(new ArrayList<ConfigPad>(pads.values()));
-				ConfigFactory.getInstance().saveConfig(ConfigType.HARDWARE, new File("etc/config/hardware.xml"));
+				ConfigFactory.getInstance().saveConfig(ConfigType.HARDWARE);
 				
 				this.closeWindowWithoutPrompting();
 			}

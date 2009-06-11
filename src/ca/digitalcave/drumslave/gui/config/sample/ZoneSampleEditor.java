@@ -21,10 +21,10 @@ public class ZoneSampleEditor extends MossPanel implements ActionListener {
 	private JComboBox sampleNames;
 	private final SampleEditor sampleEditor;
 
-	public ZoneSampleEditor(Zone zone, SampleEditor logicEditor) {
+	public ZoneSampleEditor(Zone zone, SampleEditor sampleEditor) {
 		super(true);
 		this.zone = zone;
-		this.sampleEditor = logicEditor;
+		this.sampleEditor = sampleEditor;
 		open();
 	}
 	
@@ -54,7 +54,8 @@ public class ZoneSampleEditor extends MossPanel implements ActionListener {
 	
 	public void actionPerformed(ActionEvent arg0) {
 		if (arg0.getSource().equals(sampleNames)){
-			sampleEditor.getSampleMappings().get(zone.getPad().getName()).put(zone.getName(), (String) sampleNames.getSelectedItem());
+			String sampleConfigName = sampleEditor.getSelectedConfigGroupName();
+			sampleEditor.getSampleMappings().get(sampleConfigName).get(zone.getPad().getName()).put(zone.getName(), (String) sampleNames.getSelectedItem());
 		}
 	}
 }
