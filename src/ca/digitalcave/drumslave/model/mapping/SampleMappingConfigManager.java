@@ -18,8 +18,13 @@ public class SampleMappingConfigManager implements ConfigManager<ConfigSampleMap
 			return;
 		
 		for (ConfigSampleMappingGroup configSampleMappingGroup : configElements) {
-			for (ConfigSampleMapping configSampleMapping : configSampleMappingGroup.getSampleMappings()) {
-				SampleMapping.addSampleMapping(configSampleMappingGroup.getName(), configSampleMapping.getPadName(), configSampleMapping.getZoneName(), configSampleMapping.getSampleName());				
+			if (configSampleMappingGroup.getName() != null)
+				SampleMapping.addSampleGroup(configSampleMappingGroup.getName());
+			
+			if (configSampleMappingGroup.getSampleMappings() != null){
+				for (ConfigSampleMapping configSampleMapping : configSampleMappingGroup.getSampleMappings()) {
+					SampleMapping.addSampleMapping(configSampleMappingGroup.getName(), configSampleMapping.getPadName(), configSampleMapping.getZoneName(), configSampleMapping.getSampleName());				
+				}
 			}
 		}
 	}
@@ -27,13 +32,13 @@ public class SampleMappingConfigManager implements ConfigManager<ConfigSampleMap
 		List<ConfigSampleMappingGroup> configSampleMappingGroups = new ArrayList<ConfigSampleMappingGroup>();
 		
 		//We only save logic mappings for which there are valid zones.  Is this right?
-		for (String sampleConfigName : SampleMapping.getSampleConfigNames()) {
+		for (String sampleConfigName : SampleMapping.getSampleGroups()) {
 			ConfigSampleMappingGroup configSampleMappingGroup = new ConfigSampleMappingGroup();
 			configSampleMappingGroup.setName(sampleConfigName);
 			List<ConfigSampleMapping> configSampleMappings = new ArrayList<ConfigSampleMapping>();
 			for (Pad pad : Pad.getPads()) {
 				for (Zone zone : pad.getZones()) {
-					String sample = SampleMapping.getSampleMapping(pad.getName(), zone.getName());
+					String sample = SampleMapping.getSampleMapping(sampleConfigName, pad.getName(), zone.getName());
 					if (sample != null){
 						ConfigSampleMapping configSampleMapping = new ConfigSampleMapping();
 						configSampleMapping.setPadName(pad.getName());

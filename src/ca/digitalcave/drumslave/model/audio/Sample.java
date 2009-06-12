@@ -167,6 +167,17 @@ public abstract class Sample {
 	 * cymbals and other long-sustain samples.   This method MAY block.
 	 */
 	public abstract void stop();
+
+	/**
+	 * Adjusts the volume of the last played sound.  (Sounds previous to the most recent one
+	 * cannot be adjusted).  This can be used to adjust the volume of sounds which were played
+	 * via conglomerate pads (HDR, secondary zone, etc).
+	 * This method is optional for Sample implementations - just leave it as a NOP if you are
+	 * unable to implement it. 
+	 * @param rawVolume The raw volume, which will be applied against the most recently played sample.
+	 * @param gain The gain to apply against the raw volume
+	 */
+	public abstract void adjustLastVolume(float rawVolume, float gain);
 	
 	/**
 	 * Returns the current playback level of the sample.  This is used by the graphical

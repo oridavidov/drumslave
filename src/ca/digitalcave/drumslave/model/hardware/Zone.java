@@ -106,7 +106,7 @@ public class Zone {
 	}
 	
 	public float getLevel(){
-		Sample sample = Sample.getSample(SampleMapping.getSampleMapping(this.getPad().getName(), this.getName()));
+		Sample sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), this.getPad().getName(), this.getName()));
 		if (sample == null)
 			return 0f;
 		return sample.getLevel();

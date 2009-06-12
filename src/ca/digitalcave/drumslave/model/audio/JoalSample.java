@@ -21,6 +21,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class JoalSample extends Sample {
 
 	private final Map<Integer, JoalSourceCircularQueue> joalSources = new ConcurrentHashMap<Integer, JoalSourceCircularQueue>();
+	private int lastSampleNumber; //Last number which was played; this is used for adjustLastVolume. 
+	private final Object lastSampleNumberMutex = new Object();
 	
 	public JoalSample(String name) {
 		super(name);
@@ -42,6 +44,16 @@ public class JoalSample extends Sample {
 			throw new RuntimeException("No sample loaded for sample number " + sampleNumber);
 		
 		joalSources.get(sampleNumber).play(rawVolume * gain);
+		synchronized (lastSampleNumberMutex) {
+			lastSampleNumber = sampleNumber;			
+		}
+	}
+	
+	@Override
+	public void adjustLastVolume(float rawVolume, float gain) {
+		synchronized (lastSampleNumberMutex) {
+			joalSources.get(lastSampleNumber).adjustLastVolume(rawVolume * gain);
+		}
 	}
 
 	@Override
@@ -77,18 +89,12 @@ public class JoalSample extends Sample {
 		// not by using any proper scientific approaches.
 		return (float) Math.log10((level + 1000) / 1000) / 1.5f; 
 	}
-
+	
 	public static void main(String[] args) throws Exception {
-		JoalSample sample = new JoalSample("Cymbal/Ride/Zildjian A Ping 20/Bow");
-//		JoalSample sample = new JoalSample("Drum/Snare/Garage Band/Head");
-		sample.play(1.0f, 1.0f);
-		for (int i = 0; i < 20; i++){
-			System.out.println(sample.getLevel());
-			Thread.sleep(100);
-		}
-		Thread.sleep(2000);
-		sample.stop();
-		Thread.sleep(4000);
-		System.exit(0);
+		Sample s = new JoalSample("Cymbal/Ride/Zildjian A Ping 20/Bow");
+		s.play(1f, 1f);
+		Thread.sleep(1000);
+		s.adjustLastVolume(1f, 0.5f);
+		Thread.sleep(5000);
 	}
 }

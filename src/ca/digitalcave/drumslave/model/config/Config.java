@@ -11,21 +11,30 @@ public class Config {
 	@XStreamAlias("pads")
 	@XStreamImplicit
 	private List<ConfigPad> pads;
+	
 	@XStreamAlias("samples")
 	@XStreamImplicit
 	private List<ConfigSample> samples;
+	
 	@XStreamAlias("logics")
 	@XStreamImplicit
 	private List<ConfigLogic> logics;
+	
 	@XStreamAlias("logic-mappings")
 	@XStreamImplicit
 	private List<ConfigLogicMapping> logicMappings;
+	
 	@XStreamAlias("sample-mapping-groups")
 	@XStreamImplicit
 	private List<ConfigSampleMappingGroup> sampleMappingGroups;
+	
 	@XStreamAlias("option-mappings")
 	@XStreamImplicit
 	private List<ConfigOptionMapping> optionMappings;
+	
+	@XStreamAlias("settings")
+	@XStreamImplicit
+	private List<ConfigOption> settings;
 	
 	public List<ConfigPad> getPads() {
 		return pads;
@@ -62,5 +71,11 @@ public class Config {
 	}
 	public void setSampleMappingGroups(List<ConfigSampleMappingGroup> sampleMappingGroups) {
 		this.sampleMappingGroups = sampleMappingGroups;
+	}
+	public List<ConfigOption> getSettings() {
+		return settings;
+	}
+	public void setSettings(List<ConfigOption> settings) {
+		this.settings = settings;
 	}
 }

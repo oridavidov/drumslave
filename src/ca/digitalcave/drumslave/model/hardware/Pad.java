@@ -120,7 +120,7 @@ public class Pad {
 	public float getLevel(){
 		float max = 0f;
 		for (Zone zone : getZones()) {
-			Sample sample = Sample.getSample(SampleMapping.getSampleMapping(this.getName(), zone.getName()));
+			Sample sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), this.getName(), zone.getName()));
 			if (sample != null)
 				max = Math.max(max, sample.getLevel());
 		}
@@ -132,7 +132,7 @@ public class Pad {
 	 */
 	public void stop(){
 		for (Zone zone : getZones()) {
-			Sample sample = Sample.getSample(SampleMapping.getSampleMapping(this.getName(), zone.getName()));
+			Sample sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), this.getName(), zone.getName()));
 			if (sample != null)
 				sample.stop();
 		}

@@ -1,5 +1,6 @@
 package ca.digitalcave.drumslave.gui;
 
+import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import org.homeunix.thecave.moss.swing.MossFrame;
 import org.homeunix.thecave.moss.swing.exception.WindowOpenException;
@@ -16,6 +18,7 @@ import org.homeunix.thecave.moss.swing.exception.WindowOpenException;
 import ca.digitalcave.drumslave.gui.config.hardware.HardwareEditor;
 import ca.digitalcave.drumslave.gui.menu.DrumSlaveMenuBar;
 import ca.digitalcave.drumslave.model.hardware.Pad;
+import ca.digitalcave.drumslave.model.mapping.SampleMapping;
 
 /**
  * Main Drum Slave window, showing current volume of each pad 
@@ -27,6 +30,8 @@ public class Equalizer extends MossFrame {
 	public static final long serialVersionUID = 0l;
 	private final Logger logger = Logger.getLogger(this.getClass().getName());
 	
+	private final JPanel eqChannelsPanel = new JPanel(new GridLayout(1, 0));
+//	private final JComboBox sampleGroupNamesComboBox = new JComboBox();
 	private final List<PadEQChannel> eqChannels = new ArrayList<PadEQChannel>();
 	
 	@Override
@@ -35,10 +40,19 @@ public class Equalizer extends MossFrame {
 		
 		this.setDocumentBasedApplication(false); //On OSX, close when the last window closes
 		this.setJMenuBar(new DrumSlaveMenuBar(this));
+
+//		sampleGroupNamesComboBox.setModel(new SampleNamesComboBoxModel());
+//		sampleGroupNamesComboBox.setSelectedItem(SampleMapping.getSelectedSampleGroup());
+//		sampleGroupNamesComboBox.setPreferredSize(Formatter.getComponentSize(sampleGroupNamesComboBox, 120));
+//		sampleGroupNamesComboBox.addActionListener(this);
+//		JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+//		bottomPanel.add(sampleGroupNamesComboBox);
 		
-		this.setLayout(new GridLayout(1, 0));
+		this.setLayout(new BorderLayout());
+		this.add(eqChannelsPanel, BorderLayout.CENTER);
+//		this.add(bottomPanel, BorderLayout.SOUTH);
+		
 		this.setResizable(false);
-		this.setTitle("Drum Slave");
 	}
 	
 	@Override
@@ -61,7 +75,7 @@ public class Equalizer extends MossFrame {
 		}
 		
 		for (PadEQChannel channel : eqChannels) {
-			this.remove(channel);
+			eqChannelsPanel.remove(channel);
 		}
 		eqChannels.clear();
 		
@@ -72,12 +86,21 @@ public class Equalizer extends MossFrame {
 			}
 		});
 		
+		
 		for (Pad pad : pads){
 			PadEQChannel eqChannel = new PadEQChannel(pad);
 			eqChannels.add(eqChannel);
-			this.add(eqChannel);
+			eqChannelsPanel.add(eqChannel);
 		}
+		
+		this.setTitle("Drum Slave (" + SampleMapping.getSelectedSampleGroup() + ")");
 		
 		pack();
 	}
+	
+//	public void actionPerformed(ActionEvent e) {
+//		if (e.getSource().equals(sampleGroupNamesComboBox)){
+//			SampleMapping.setSelectedSampleGroup(sampleGroupNamesComboBox.getSelectedItem().toString());
+//		}
+//	}
 }

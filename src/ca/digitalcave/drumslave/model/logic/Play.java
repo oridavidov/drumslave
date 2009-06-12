@@ -40,7 +40,7 @@ public class Play extends Logic {
 
 		public void run() {
 			//Verify there is a sample mapped to the zone
-			String sampleName = SampleMapping.getSampleMapping(zone.getPad().getName(), zone.getName());
+			String sampleName = SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), zone.getPad().getName(), zone.getName());
 			if (sampleName == null)
 				throw new RuntimeException("No sample name is mapped to " + zone.getPad().getName() + ":" + zone.getName());
 			Sample sample = Sample.getSample(sampleName);

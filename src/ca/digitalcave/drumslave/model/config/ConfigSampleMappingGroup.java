@@ -12,6 +12,7 @@ public class ConfigSampleMappingGroup {
 	@XStreamAsAttribute
 	@XStreamAlias("name")
 	private String name;
+	
 	@XStreamImplicit
 	private List<ConfigSampleMapping> sampleMappings;
 

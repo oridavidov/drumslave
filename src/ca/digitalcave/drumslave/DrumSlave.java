@@ -48,7 +48,7 @@ public class DrumSlave {
 		
 		//Load config from disk; first we want hardware, so that we can init GUI
 		ConfigFactory.getInstance().loadConfig(ConfigType.HARDWARE);
-//		ConfigFactory.getInstance().loadConfig(ConfigType.SETTINGS);
+		ConfigFactory.getInstance().loadConfig(ConfigType.SETTINGS);
 
 		if (!results.getBoolean("--console")){
 			//Initialize LnF and start up GUI

@@ -144,6 +144,11 @@ public class AudioSystemSample extends Sample {
 		gainControl.setValue(dB);
 		clip.start();
 	}
+	
+	@Override
+	public void adjustLastVolume(float rawVolume, float gain) {
+		logger.warning("adjustLastVolume() not implemented.");
+	}
 
 	public void stop(){
 		final int fadeTimeMillis = 200;

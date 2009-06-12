@@ -15,9 +15,9 @@ import ca.digitalcave.drumslave.model.logic.LogicConfigManager;
 import ca.digitalcave.drumslave.model.logic.Mute;
 import ca.digitalcave.drumslave.model.logic.Play;
 import ca.digitalcave.drumslave.model.mapping.LogicMappingConfigManager;
-import ca.digitalcave.drumslave.model.mapping.SampleMapping;
 import ca.digitalcave.drumslave.model.mapping.SampleMappingConfigManager;
 import ca.digitalcave.drumslave.model.options.OptionMappingConfigManager;
+import ca.digitalcave.drumslave.model.options.SettingConfigManager;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -54,6 +54,10 @@ public class ConfigFactory {
 		case OPTION_MAPPING:
 			configFile = OperatingSystemUtil.getUserFile("DrumSlave", "option-mapping.xml");
 			break;
+			
+		case SETTINGS:
+			configFile = OperatingSystemUtil.getUserFile("DrumSlave", "settings.xml");
+			break;
 		}
 		
 		if (configFile == null)
@@ -87,6 +91,10 @@ public class ConfigFactory {
 				case OPTION_MAPPING:
 					new OptionMappingConfigManager().loadFromConfig(c.getOptionMappings());
 					break;
+					
+				case SETTINGS:
+					new SettingConfigManager().loadFromConfig(c.getSettings());
+					break;
 				}
 			}
 			else {
@@ -101,13 +109,6 @@ public class ConfigFactory {
 				new Mute("Mute");
 				
 				saveConfig(ConfigType.LOGIC);
-			}
-			else if (configType == ConfigType.SAMPLE_MAPPING){
-				logger.info("Couldn't find sample mapping config file; adding defaults.");
-				
-				SampleMapping.setCurrentConfig("Default");
-				
-				saveConfig(ConfigType.SAMPLE_MAPPING);
 			}
 			else {
 				logger.info("Configuration file " + configFile.getAbsolutePath() + " not found.");
@@ -143,6 +144,11 @@ public class ConfigFactory {
 		case OPTION_MAPPING:
 			config.setOptionMappings(new OptionMappingConfigManager().saveToConfig());
 			saveFile = OperatingSystemUtil.getUserFile("DrumSlave", "option-mapping.xml");
+			break;
+			
+		case SETTINGS:
+			config.setSettings(new SettingConfigManager().saveToConfig());
+			saveFile = OperatingSystemUtil.getUserFile("DrumSlave", "settings.xml");
 			break;
 		}
 		
