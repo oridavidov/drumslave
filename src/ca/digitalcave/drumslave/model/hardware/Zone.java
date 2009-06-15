@@ -22,7 +22,7 @@ import ca.digitalcave.drumslave.model.mapping.SampleMapping;
  * @author wyatt
  *
  */
-public class Zone {
+public class Zone implements Comparable<Zone> {
 
 	private final static Logger logger = Logger.getLogger(Zone.class.getName());
 	
@@ -91,7 +91,7 @@ public class Zone {
 		return getName() + " (" + getChannel() + ")";
 	}
 	
-	public void play(float value){
+	public void play(float rawValue){
 		String logicName = LogicMapping.getLogicMapping(getPad().getName(), getName());
 		if (logicName == null){
 			logger.info("No logic name is mapped to " + getPad().getName() + ":" + getName());
@@ -102,7 +102,7 @@ public class Zone {
 		if (logic == null)
 			throw new RuntimeException("No logic class is mapped to name " + logicName);
 
-		logic.execute(this, value);
+		logic.execute(this, rawValue);
 	}
 	
 	public float getLevel(){
@@ -115,5 +115,9 @@ public class Zone {
 	@Override
 	public int hashCode() {
 		return (getPad().getName() + ":" + getName() + ":" + getChannel()).hashCode();
+	}
+	
+	public int compareTo(Zone o) {
+		return this.getName().compareTo(o.getName());
 	}
 }

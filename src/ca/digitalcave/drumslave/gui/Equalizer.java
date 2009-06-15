@@ -17,6 +17,7 @@ import org.homeunix.thecave.moss.swing.exception.WindowOpenException;
 
 import ca.digitalcave.drumslave.gui.config.hardware.HardwareEditor;
 import ca.digitalcave.drumslave.gui.menu.DrumSlaveMenuBar;
+import ca.digitalcave.drumslave.gui.widget.PadEQChannel;
 import ca.digitalcave.drumslave.model.hardware.Pad;
 import ca.digitalcave.drumslave.model.mapping.SampleMapping;
 
@@ -31,7 +32,6 @@ public class Equalizer extends MossFrame {
 	private final Logger logger = Logger.getLogger(this.getClass().getName());
 	
 	private final JPanel eqChannelsPanel = new JPanel(new GridLayout(1, 0));
-//	private final JComboBox sampleGroupNamesComboBox = new JComboBox();
 	private final List<PadEQChannel> eqChannels = new ArrayList<PadEQChannel>();
 	
 	@Override
@@ -40,17 +40,9 @@ public class Equalizer extends MossFrame {
 		
 		this.setDocumentBasedApplication(false); //On OSX, close when the last window closes
 		this.setJMenuBar(new DrumSlaveMenuBar(this));
-
-//		sampleGroupNamesComboBox.setModel(new SampleNamesComboBoxModel());
-//		sampleGroupNamesComboBox.setSelectedItem(SampleMapping.getSelectedSampleGroup());
-//		sampleGroupNamesComboBox.setPreferredSize(Formatter.getComponentSize(sampleGroupNamesComboBox, 120));
-//		sampleGroupNamesComboBox.addActionListener(this);
-//		JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-//		bottomPanel.add(sampleGroupNamesComboBox);
 		
 		this.setLayout(new BorderLayout());
 		this.add(eqChannelsPanel, BorderLayout.CENTER);
-//		this.add(bottomPanel, BorderLayout.SOUTH);
 		
 		this.setResizable(false);
 	}
@@ -97,10 +89,4 @@ public class Equalizer extends MossFrame {
 		
 		pack();
 	}
-	
-//	public void actionPerformed(ActionEvent e) {
-//		if (e.getSource().equals(sampleGroupNamesComboBox)){
-//			SampleMapping.setSelectedSampleGroup(sampleGroupNamesComboBox.getSelectedItem().toString());
-//		}
-//	}
 }

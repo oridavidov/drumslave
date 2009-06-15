@@ -21,7 +21,7 @@ import ca.digitalcave.drumslave.model.mapping.SampleMapping;
  * @author wyatt
  *
  */
-public class Pad {
+public class Pad implements Comparable<Pad> {
 
 	private final static Map<String, Pad> pads = new ConcurrentHashMap<String, Pad>();
 
@@ -141,5 +141,9 @@ public class Pad {
 	@Override
 	public int hashCode() {
 		return toString().hashCode();
+	}
+	
+	public int compareTo(Pad o) {
+		return this.getName().compareTo(o.getName());
 	}
 }

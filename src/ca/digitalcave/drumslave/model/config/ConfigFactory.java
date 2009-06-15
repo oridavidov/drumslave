@@ -11,13 +11,14 @@ import java.util.logging.Logger;
 import org.homeunix.thecave.moss.common.OperatingSystemUtil;
 
 import ca.digitalcave.drumslave.model.hardware.HardwareConfigManager;
+import ca.digitalcave.drumslave.model.logic.HDRPlay;
 import ca.digitalcave.drumslave.model.logic.LogicConfigManager;
 import ca.digitalcave.drumslave.model.logic.Mute;
 import ca.digitalcave.drumslave.model.logic.Play;
 import ca.digitalcave.drumslave.model.mapping.LogicMappingConfigManager;
 import ca.digitalcave.drumslave.model.mapping.SampleMappingConfigManager;
 import ca.digitalcave.drumslave.model.options.OptionMappingConfigManager;
-import ca.digitalcave.drumslave.model.options.SettingConfigManager;
+import ca.digitalcave.drumslave.model.options.SettingsConfigManager;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -93,7 +94,7 @@ public class ConfigFactory {
 					break;
 					
 				case SETTINGS:
-					new SettingConfigManager().loadFromConfig(c.getSettings());
+					new SettingsConfigManager().loadFromConfig(c.getSettings());
 					break;
 				}
 			}
@@ -106,6 +107,7 @@ public class ConfigFactory {
 				logger.info("Couldn't find logic config file; adding known defaults.  You can manually edit the resulting logic.xml file if you want to add custom logic.");
 				
 				new Play("Play");
+				new HDRPlay("HDR Play");
 				new Mute("Mute");
 				
 				saveConfig(ConfigType.LOGIC);
@@ -147,7 +149,7 @@ public class ConfigFactory {
 			break;
 			
 		case SETTINGS:
-			config.setSettings(new SettingConfigManager().saveToConfig());
+			config.setSettings(new SettingsConfigManager().saveToConfig());
 			saveFile = OperatingSystemUtil.getUserFile("DrumSlave", "settings.xml");
 			break;
 		}

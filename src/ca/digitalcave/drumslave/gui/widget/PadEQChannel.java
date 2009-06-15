@@ -1,4 +1,4 @@
-package ca.digitalcave.drumslave.gui;
+package ca.digitalcave.drumslave.gui.widget;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -18,7 +18,6 @@ import javax.swing.event.ChangeListener;
 
 import org.homeunix.thecave.moss.swing.MossPanel;
 
-import ca.digitalcave.drumslave.gui.widget.VUMeter;
 import ca.digitalcave.drumslave.model.hardware.Pad;
 
 public class PadEQChannel extends MossPanel implements ChangeListener {
@@ -98,12 +97,10 @@ public class PadEQChannel extends MossPanel implements ChangeListener {
 	public void updateContent() {
 		super.updateContent();
 
-//		volumeAdjustment.setValue((int) (Math.pow(pad.getGain(), 0.25) * 100));
 		volumeAdjustment.setValue((int) (pad.getGain() * 100));
 	}
 	
 	public void stateChanged(ChangeEvent e) {
-//		pad.setGain((float) Math.pow((volumeAdjustment.getValue() / 100f), 4));
 		pad.setGain(volumeAdjustment.getValue() / 100f);
 	}
 }

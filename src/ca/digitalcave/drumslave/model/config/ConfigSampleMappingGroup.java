@@ -15,7 +15,7 @@ public class ConfigSampleMappingGroup {
 	
 	@XStreamImplicit
 	private List<ConfigSampleMapping> sampleMappings;
-
+	
 	public String getName() {
 		return name;
 	}
