@@ -3,7 +3,7 @@ package ca.digitalcave.drumslave.model.config;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-@XStreamAlias("logic-mapping")
+@XStreamAlias("gain-mapping")
 public class ConfigGainMapping {
 
 	@XStreamAsAttribute
