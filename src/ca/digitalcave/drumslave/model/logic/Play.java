@@ -8,11 +8,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import com.sun.org.apache.bcel.internal.generic.RETURN;
-
 import ca.digitalcave.drumslave.model.audio.Sample;
 import ca.digitalcave.drumslave.model.hardware.Pad;
 import ca.digitalcave.drumslave.model.hardware.Zone;
+import ca.digitalcave.drumslave.model.mapping.GainMapping;
 import ca.digitalcave.drumslave.model.mapping.SampleMapping;
 import ca.digitalcave.drumslave.model.options.OptionMapping;
 
@@ -88,7 +87,7 @@ public class Play extends Logic {
 				return;
 
 			//Play the sample
-			sample.play(rawValue, zone.getPad().getGain());
+			sample.play(rawValue, GainMapping.getPadGain(zone.getPad().getName()));
 		}
 	}
 	

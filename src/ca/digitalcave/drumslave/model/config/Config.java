@@ -31,6 +31,10 @@ public class Config {
 	@XStreamAlias("option-mappings")
 	@XStreamImplicit
 	private List<ConfigOptionMapping> optionMappings;
+
+	@XStreamAlias("gain-mappings")
+	@XStreamImplicit
+	private List<ConfigGainMapping> gainMappings;
 	
 	@XStreamAlias("settings")
 	@XStreamImplicit
@@ -77,5 +81,11 @@ public class Config {
 	}
 	public void setSettings(List<ConfigOption> settings) {
 		this.settings = settings;
+	}
+	public List<ConfigGainMapping> getGainMappings() {
+		return gainMappings;
+	}
+	public void setGainMappings(List<ConfigGainMapping> gainMappings) {
+		this.gainMappings = gainMappings;
 	}
 }

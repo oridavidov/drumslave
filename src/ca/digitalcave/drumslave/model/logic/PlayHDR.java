@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import ca.digitalcave.drumslave.model.audio.Sample;
 import ca.digitalcave.drumslave.model.hardware.Zone;
+import ca.digitalcave.drumslave.model.mapping.GainMapping;
 
 /**
  * HDR Play implements play functionality for groups of zones, whose sensors act
@@ -60,7 +61,7 @@ public class PlayHDR extends Play {
 			Sample sample = getSample(zone);
 
 			//Adjust the last played sample
-			sample.adjustLastVolume(getAdjustedValue(padName), zone.getPad().getGain());
+			sample.adjustLastVolume(getAdjustedValue(padName), GainMapping.getPadGain(padName));
 		}
 	}
 	

@@ -18,7 +18,10 @@ import javax.swing.event.ChangeListener;
 
 import org.homeunix.thecave.moss.swing.MossPanel;
 
+import ca.digitalcave.drumslave.model.config.ConfigFactory;
+import ca.digitalcave.drumslave.model.config.ConfigFactory.ConfigType;
 import ca.digitalcave.drumslave.model.hardware.Pad;
+import ca.digitalcave.drumslave.model.mapping.GainMapping;
 
 public class PadEQChannel extends MossPanel implements ChangeListener {
 	public static final long serialVersionUID = 0l;
@@ -97,10 +100,11 @@ public class PadEQChannel extends MossPanel implements ChangeListener {
 	public void updateContent() {
 		super.updateContent();
 
-		volumeAdjustment.setValue((int) (pad.getGain() * 100));
+		volumeAdjustment.setValue((int) (GainMapping.getPadGain(pad.getName()) * 100));
 	}
 	
 	public void stateChanged(ChangeEvent e) {
-		pad.setGain(volumeAdjustment.getValue() / 100f);
+		GainMapping.addGainMapping(pad.getName(), volumeAdjustment.getValue() / 100f);
+		ConfigFactory.getInstance().saveConfig(ConfigType.GAIN_MAPPING);
 	}
 }

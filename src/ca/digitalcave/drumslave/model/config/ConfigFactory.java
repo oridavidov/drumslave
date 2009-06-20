@@ -16,6 +16,7 @@ import ca.digitalcave.drumslave.model.logic.LogicConfigManager;
 import ca.digitalcave.drumslave.model.logic.Mute;
 import ca.digitalcave.drumslave.model.logic.Play;
 import ca.digitalcave.drumslave.model.logic.PlaySecondary;
+import ca.digitalcave.drumslave.model.mapping.GainMappingConfigManager;
 import ca.digitalcave.drumslave.model.mapping.LogicMappingConfigManager;
 import ca.digitalcave.drumslave.model.mapping.SampleMappingConfigManager;
 import ca.digitalcave.drumslave.model.options.OptionMappingConfigManager;
@@ -60,6 +61,10 @@ public class ConfigFactory {
 		case SETTINGS:
 			configFile = OperatingSystemUtil.getUserFile("DrumSlave", "settings.xml");
 			break;
+			
+		case GAIN_MAPPING:
+			configFile = OperatingSystemUtil.getUserFile("DrumSlave", "gain-mapping.xml");
+			break;
 		}
 		
 		if (configFile == null)
@@ -97,6 +102,10 @@ public class ConfigFactory {
 				case SETTINGS:
 					new SettingsConfigManager().loadFromConfig(c.getSettings());
 					break;
+					
+				case GAIN_MAPPING:
+					new GainMappingConfigManager().loadFromConfig(c.getGainMappings());
+					break;					
 				}
 			}
 			else {
@@ -154,6 +163,11 @@ public class ConfigFactory {
 			config.setSettings(new SettingsConfigManager().saveToConfig());
 			saveFile = OperatingSystemUtil.getUserFile("DrumSlave", "settings.xml");
 			break;
+
+		case GAIN_MAPPING:
+			config.setGainMappings(new GainMappingConfigManager().saveToConfig());
+			saveFile = OperatingSystemUtil.getUserFile("DrumSlave", "gain-mapping.xml");
+			break;
 		}
 		
 		if (saveFile == null)
@@ -179,6 +193,7 @@ public class ConfigFactory {
 		LOGIC_MAPPING,
 		SAMPLE_MAPPING,
 		OPTION_MAPPING,
+		GAIN_MAPPING,
 		SETTINGS,
 	}
 }
