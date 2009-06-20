@@ -105,7 +105,6 @@ public class Pad implements Comparable<Pad> {
 	
 	public void setGain(float gain) {
 		this.gain = gain;
-//		System.out.println("Pad " + this + " gain == " + gain);
 	}
 	
 	@Override
@@ -128,9 +127,20 @@ public class Pad implements Comparable<Pad> {
 	}
 	
 	/**
-	 * Stops playback from all child zones.  Call this when a cymbal is muted, for instance.
+	 * Stops playback from all child zones over a short period.  Call this when a cymbal is muted, for instance.
 	 */
 	public void stop(){
+		for (Zone zone : getZones()) {
+			Sample sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), this.getName(), zone.getName()));
+			if (sample != null)
+				sample.stop();
+		}
+	}
+	
+	/**
+	 * Stops playback from all child zones immediately.  Used for PlaySecondary, etc.
+	 */
+	public void stopImmediately(){
 		for (Zone zone : getZones()) {
 			Sample sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), this.getName(), zone.getName()));
 			if (sample != null)

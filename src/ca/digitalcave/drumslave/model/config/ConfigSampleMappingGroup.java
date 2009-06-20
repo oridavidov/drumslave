@@ -14,6 +14,9 @@ public class ConfigSampleMappingGroup {
 	private String name;
 	
 	@XStreamImplicit
+	private List<ConfigOption> padGainAdjustments;
+	
+	@XStreamImplicit
 	private List<ConfigSampleMapping> sampleMappings;
 	
 	public String getName() {
@@ -27,5 +30,11 @@ public class ConfigSampleMappingGroup {
 	}
 	public void setSampleMappings(List<ConfigSampleMapping> sampleMappings) {
 		this.sampleMappings = sampleMappings;
+	}
+	public List<ConfigOption> getPadGainAdjustments() {
+		return padGainAdjustments;
+	}
+	public void setPadGainAdjustments(List<ConfigOption> padGainAdjustments) {
+		this.padGainAdjustments = padGainAdjustments;
 	}
 }

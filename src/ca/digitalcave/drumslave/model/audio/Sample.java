@@ -161,12 +161,24 @@ public abstract class Sample {
 	public abstract void play(float rawVolume, float gain);
 
 	/**
-	 * Stops all samples playing on the current sample.  This SHOULD fade out over 
+	 * Stops all sample instances playing from the current sample.  This SHOULD fade out over 
 	 * a certain length of time (approx. 200 ms), to simulate a muted cymbal.  In
 	 * practice, this is probably not ever going to be used on a drum, but only on 
-	 * cymbals and other long-sustain samples.   This method MAY block.
+	 * cymbals and other long-sustain samples.   This method MUST NOT block; you can 
+	 * run this in a different thread if needed.
 	 */
 	public abstract void stop();
+	
+	/**
+	 * Stops all samples playing on the current sample.  This MUST stop immediately.
+	 * This method MUST NOT block.
+	 */
+//	public abstract void stopImmediately();
+	
+	/**
+	 * Stop the last played sample, using the same algorithm as stop() does.
+	 */
+	public abstract void stopLastSample();
 
 	/**
 	 * Adjusts the volume of the last played sound.  (Sounds previous to the most recent one

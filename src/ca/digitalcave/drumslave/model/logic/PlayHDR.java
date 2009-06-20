@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 
 import ca.digitalcave.drumslave.model.audio.Sample;
 import ca.digitalcave.drumslave.model.hardware.Zone;
-import ca.digitalcave.drumslave.model.mapping.SampleMapping;
 
 /**
  * HDR Play implements play functionality for groups of zones, whose sensors act
@@ -21,13 +20,13 @@ import ca.digitalcave.drumslave.model.mapping.SampleMapping;
  * @author wyatt
  *
  */
-public class HDRPlay extends Play {
+public class PlayHDR extends Play {
 
 	private final Logger logger = Logger.getLogger(this.getClass().getName());
 	private final Map<String, List<Float>> volumesByPad = new ConcurrentHashMap<String, List<Float>>();
 	protected final static Map<String, Long> lastPlayedTime = new ConcurrentHashMap<String, Long>();
 	
-	public HDRPlay(String name) {
+	public PlayHDR(String name) {
 		super(name);
 	}
 	
@@ -58,13 +57,7 @@ public class HDRPlay extends Play {
 				volumesByPad.put(padName, new ArrayList<Float>());
 			volumesByPad.get(padName).add(rawValue);
 			
-			//Verify there is a sample mapped to the zone
-			String sampleName = SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), zone.getPad().getName(), zone.getName());
-			if (sampleName == null)
-				throw new RuntimeException("No sample name is mapped to " + zone.getPad().getName() + ":" + zone.getName());
-			Sample sample = Sample.getSample(sampleName);
-			if (sample == null)
-				throw new RuntimeException("No sample is mapped to name " + sampleName);
+			Sample sample = getSample(zone);
 
 			//Adjust the last played sample
 			sample.adjustLastVolume(getAdjustedValue(padName), zone.getPad().getGain());

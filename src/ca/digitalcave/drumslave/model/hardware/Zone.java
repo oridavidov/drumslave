@@ -94,13 +94,17 @@ public class Zone implements Comparable<Zone> {
 	public void play(float rawValue){
 		String logicName = LogicMapping.getLogicMapping(getPad().getName(), getName());
 		if (logicName == null){
-			logger.info("No logic name is mapped to " + getPad().getName() + ":" + getName());
+			logger.warning("No logic name is mapped to " + getPad().getName() + ":" + getName());
 			return;
 		}
 		
 		Logic logic = Logic.getLogic(logicName);
-		if (logic == null)
-			throw new RuntimeException("No logic class is mapped to name " + logicName);
+		if (logic == null){
+			//This is severe, because there should be no reason (short of manually hacking the 
+			// logic mapping files) why this should ever happen
+			logger.severe("No logic class is mapped to name " + logicName);
+			return;
+		}
 
 		logic.execute(this, rawValue);
 	}

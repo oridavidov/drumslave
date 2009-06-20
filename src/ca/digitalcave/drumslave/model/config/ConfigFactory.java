@@ -11,10 +11,11 @@ import java.util.logging.Logger;
 import org.homeunix.thecave.moss.common.OperatingSystemUtil;
 
 import ca.digitalcave.drumslave.model.hardware.HardwareConfigManager;
-import ca.digitalcave.drumslave.model.logic.HDRPlay;
+import ca.digitalcave.drumslave.model.logic.PlayHDR;
 import ca.digitalcave.drumslave.model.logic.LogicConfigManager;
 import ca.digitalcave.drumslave.model.logic.Mute;
 import ca.digitalcave.drumslave.model.logic.Play;
+import ca.digitalcave.drumslave.model.logic.PlaySecondary;
 import ca.digitalcave.drumslave.model.mapping.LogicMappingConfigManager;
 import ca.digitalcave.drumslave.model.mapping.SampleMappingConfigManager;
 import ca.digitalcave.drumslave.model.options.OptionMappingConfigManager;
@@ -107,7 +108,8 @@ public class ConfigFactory {
 				logger.info("Couldn't find logic config file; adding known defaults.  You can manually edit the resulting logic.xml file if you want to add custom logic.");
 				
 				new Play("Play");
-				new HDRPlay("HDR Play");
+				new PlayHDR("Play HDR");
+				new PlaySecondary("Play Secondary");
 				new Mute("Mute");
 				
 				saveConfig(ConfigType.LOGIC);

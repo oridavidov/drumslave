@@ -8,7 +8,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import com.sun.org.apache.bcel.internal.generic.RETURN;
+
 import ca.digitalcave.drumslave.model.audio.Sample;
+import ca.digitalcave.drumslave.model.hardware.Pad;
 import ca.digitalcave.drumslave.model.hardware.Zone;
 import ca.digitalcave.drumslave.model.mapping.SampleMapping;
 import ca.digitalcave.drumslave.model.options.OptionMapping;
@@ -17,7 +20,10 @@ public class Play extends Logic {
 
 	private final Logger logger = Logger.getLogger(this.getClass().getName());
 
-	protected final static Map<Zone, Long> lastPlayedTime = new ConcurrentHashMap<Zone, Long>();
+	protected final static Map<Zone, Long> lastPlayedTimeZone = new ConcurrentHashMap<Zone, Long>();
+	protected final static Map<Pad, Long> lastPlayedTimePad = new ConcurrentHashMap<Pad, Long>();
+	protected final static Map<Zone, Float> lastPlayedVelocityZone = new ConcurrentHashMap<Zone, Float>();
+	protected final static Map<Pad, Float> lastPlayedVelocityPad = new ConcurrentHashMap<Pad, Float>();
 	
 	protected final long DEFAULT_DOUBLE_TRIGGER_THRESHOLD = 80;
 	
@@ -33,9 +39,12 @@ public class Play extends Logic {
 		
 		//Check that this is not a double hit; we only want to play this if it
 		// has been more than DOUBLE_TRIGGER_THRESHOLD (millis) since the last hit
-		if (lastPlayedTime.get(zone) == null 
-				|| lastPlayedTime.get(zone) + doubleTriggerThreshold < System.currentTimeMillis()){
-			lastPlayedTime.put(zone, System.currentTimeMillis());
+		if (lastPlayedTimeZone.get(zone) == null 
+				|| lastPlayedTimeZone.get(zone) + doubleTriggerThreshold < System.currentTimeMillis()){
+			lastPlayedTimeZone.put(zone, System.currentTimeMillis());
+			lastPlayedTimePad.put(zone.getPad(), System.currentTimeMillis());
+			lastPlayedVelocityZone.put(zone, rawValue);
+			lastPlayedVelocityPad.put(zone.getPad(), rawValue);
 			
 			executor.execute(new PlayThread(zone, rawValue));
 		}
@@ -74,16 +83,26 @@ public class Play extends Logic {
 		}
 
 		public void run() {
-			//Verify there is a sample mapped to the zone
-			String sampleName = SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), zone.getPad().getName(), zone.getName());
-			if (sampleName == null)
-				throw new RuntimeException("No sample name is mapped to " + zone.getPad().getName() + ":" + zone.getName());
-			Sample sample = Sample.getSample(sampleName);
+			Sample sample = getSample(zone);
 			if (sample == null)
-				throw new RuntimeException("No sample is mapped to name " + sampleName);
+				return;
 
 			//Play the sample
 			sample.play(rawValue, zone.getPad().getGain());
 		}
+	}
+	
+	protected Sample getSample(Zone zone){
+		//Verify there is a sample mapped to the zone
+		String sampleName = SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), zone.getPad().getName(), zone.getName());
+		if (sampleName == null){
+			logger.warning("No sample name is mapped to " + zone.getPad().getName() + ":" + zone.getName());
+			return null;
+		}
+		Sample sample = Sample.getSample(sampleName);
+		if (sample == null)
+			logger.warning("No sample is mapped to name " + sampleName);
+
+		return sample;
 	}
 }

@@ -170,6 +170,17 @@ public class AudioSystemSample extends Sample {
 		}
 	}
 	
+//	@Override
+//	public void stopImmediately() {
+//		throw new RuntimeException("Method not implemented.");
+//	}
+	
+	@Override
+	public void stopLastSample() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	@Override
 	public float getLevel() {
 //		clips.get(0).peek().
