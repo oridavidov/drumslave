@@ -74,11 +74,8 @@ public abstract class Sample {
 			Constructor<Sample> constuctor = sampleImpl.getConstructor(String.class);
 			return constuctor.newInstance(name);
 		} 
-		catch (ClassNotFoundException e) {
-			throw new RuntimeException("I could not find sample implementation '" + className + ".", e);
-		} 
-		catch (Exception e) {
-			throw new RuntimeException("Error initializing '" + className + ".", e);
+		catch (Throwable t) {
+			throw new RuntimeException("Error initializing '" + className + ".", t);
 		} 
 	}
 	

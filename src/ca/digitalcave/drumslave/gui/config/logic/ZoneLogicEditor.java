@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import org.homeunix.thecave.moss.swing.MossPanel;
 
@@ -20,11 +21,13 @@ public class ZoneLogicEditor extends MossPanel implements ActionListener {
 	private JLabel zoneName;
 	private JComboBox logicNames;
 	private final LogicEditor logicEditor;
+	private final JPanel logicOptionsPanel;
 
 	public ZoneLogicEditor(Zone zone, LogicEditor logicEditor) {
 		super(true);
 		this.zone = zone;
 		this.logicEditor = logicEditor;
+		this.logicOptionsPanel = new JPanel();
 		open();
 	}
 	
@@ -43,6 +46,7 @@ public class ZoneLogicEditor extends MossPanel implements ActionListener {
 		this.setLayout(new FlowLayout());
 		this.add(zoneName);
 		this.add(logicNames);
+		this.add(logicOptionsPanel);
 		
 		//Set the combo boxes according to the temporary config map
 		if (logicEditor.getLogicMappings().get(zone.getPad().getName()) != null){
@@ -55,6 +59,8 @@ public class ZoneLogicEditor extends MossPanel implements ActionListener {
 	public void actionPerformed(ActionEvent arg0) {
 		if (arg0.getSource().equals(logicNames)){
 			logicEditor.getLogicMappings().get(zone.getPad().getName()).put(zone.getName(), (String) logicNames.getSelectedItem());
+			
+			
 		}
 	}
 }

@@ -1,0 +1,5 @@
+These samples were copied from the Garage Band loops.  They are not licensed for redistribution, but derivative works (songs recorded using them) are able to be distributed royalty free.
+
+The GarageBand software license agreement says:"GarageBand Software. You may use the Apple and third party audio loop content (Audio Content), contained in or otherwise included with the Apple Software, on a royalty-free basis, to create your own original music compositions or audio projects. You may broadcast and/or distribute your own music compositions or audio projects that were created using the Audio Content, however, individual audio loops may not be commercially or otherwise distributed on a standalone basis, nor may they be repackaged in whole or in part as audio samples, sound effects or music beds." (http://docs.info.apple.com/article.html?artnum=93762)
+
+If you have received these samples by mistake, please delete them.
