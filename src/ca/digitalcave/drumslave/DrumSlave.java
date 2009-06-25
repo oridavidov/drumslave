@@ -82,6 +82,7 @@ public class DrumSlave {
 			try {
 				CommunicationsFactory commLink;
 				if (useSerialLink)
+//					commLink = new SerialFactory("/dev/tty.usbserial-FTE0U36U");
 					commLink = new SerialFactory("/dev/tty.usbserial-A200294u");
 				else
 					commLink = new ConsoleFactory();

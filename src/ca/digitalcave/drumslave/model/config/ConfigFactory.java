@@ -11,10 +11,13 @@ import java.util.logging.Logger;
 import org.homeunix.thecave.moss.common.OperatingSystemUtil;
 
 import ca.digitalcave.drumslave.model.hardware.HardwareConfigManager;
-import ca.digitalcave.drumslave.model.logic.PlayHDR;
+import ca.digitalcave.drumslave.model.logic.HiHatControllerAnalog;
+import ca.digitalcave.drumslave.model.logic.HiHatControllerDigital;
 import ca.digitalcave.drumslave.model.logic.LogicConfigManager;
 import ca.digitalcave.drumslave.model.logic.Mute;
 import ca.digitalcave.drumslave.model.logic.Play;
+import ca.digitalcave.drumslave.model.logic.PlayHDR;
+import ca.digitalcave.drumslave.model.logic.PlayHiHat;
 import ca.digitalcave.drumslave.model.logic.PlaySecondary;
 import ca.digitalcave.drumslave.model.mapping.GainMappingConfigManager;
 import ca.digitalcave.drumslave.model.mapping.LogicMappingConfigManager;
@@ -119,7 +122,10 @@ public class ConfigFactory {
 				new Play("Play");
 				new PlayHDR("Play HDR");
 				new PlaySecondary("Play Secondary");
+				new PlayHiHat("Play Hi-Hat");
 				new Mute("Mute");
+				new HiHatControllerAnalog("Hi-Hat Controller Analog");
+				new HiHatControllerDigital("Hi-Hat Controller Digital");
 				
 				saveConfig(ConfigType.LOGIC);
 			}

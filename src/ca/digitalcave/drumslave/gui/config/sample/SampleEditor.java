@@ -30,6 +30,8 @@ import ca.digitalcave.drumslave.model.config.InvalidConfigurationException;
 import ca.digitalcave.drumslave.model.config.ConfigFactory.ConfigType;
 import ca.digitalcave.drumslave.model.hardware.Pad;
 import ca.digitalcave.drumslave.model.hardware.Zone;
+import ca.digitalcave.drumslave.model.logic.Logic;
+import ca.digitalcave.drumslave.model.mapping.LogicMapping;
 import ca.digitalcave.drumslave.model.mapping.SampleMapping;
 import ca.digitalcave.drumslave.model.mapping.SampleMappingConfigManager;
 
@@ -61,7 +63,15 @@ public class SampleEditor extends MossDialog implements ActionListener {
 			for (Pad pad : Pad.getPads()) {
 				sampleMappings.get(sampleConfigName).put(pad.getName(), new HashMap<String, String>());
 				for (Zone zone : pad.getZones()) {
-					sampleMappings.get(sampleConfigName).get(pad.getName()).put(zone.getName(), SampleMapping.getSampleMapping(sampleConfigName, pad.getName(), zone.getName()));
+					String logicName = LogicMapping.getLogicMapping(zone.getPad().getName(), zone.getName());
+					if (logicName != null){
+						Logic logic = Logic.getLogic(logicName);
+						if (logic != null){						
+							for (String logicalName : logic.getLogicalNames(zone)) {
+								sampleMappings.get(sampleConfigName).get(pad.getName()).put(logicalName, SampleMapping.getSampleMapping(sampleConfigName, pad.getName(), logicalName));
+							}
+						}
+					}				
 				}
 			}
 		}
@@ -92,6 +102,7 @@ public class SampleEditor extends MossDialog implements ActionListener {
 		
 		padsComboBox.addActionListener(this);
 		sampleGroupNamesComboBox.addActionListener(this);
+		sampleGroupNamesComboBox.setSelectedItem(SampleMapping.getSelectedSampleGroup());
 		saveButton.addActionListener(this);
 		closeButton.addActionListener(this);
 		addGroupButton.addActionListener(this);
@@ -133,6 +144,9 @@ public class SampleEditor extends MossDialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(padsComboBox)){
 			padSampleEditor.setPad(Pad.getPad(padsComboBox.getSelectedItem().toString()));
+			
+			this.pack();
+			this.setLocationRelativeTo(null);
 		}
 		else if (e.getSource().equals(sampleGroupNamesComboBox)){
 			if (sampleGroupNamesComboBox.getSelectedItem() != null){
@@ -206,6 +220,7 @@ public class SampleEditor extends MossDialog implements ActionListener {
 				if (reply == JOptionPane.YES_OPTION){
 					try {
 						saveChanges();
+						sampleMappings.remove(sampleGroupNamesComboBox.getSelectedItem().toString());
 						SampleMapping.deleteSampleGroup(sampleGroupNamesComboBox.getSelectedItem().toString());
 					}
 					catch (InvalidConfigurationException ice){
@@ -238,15 +253,15 @@ public class SampleEditor extends MossDialog implements ActionListener {
 			List<ConfigSampleMapping> sampleMappings = new ArrayList<ConfigSampleMapping>();
 			if (this.sampleMappings.get(sampleConfigName) != null){
 				for (String padName : this.sampleMappings.get(sampleConfigName).keySet()) {
-					for (String zoneName : this.sampleMappings.get(sampleConfigName).get(padName).keySet()) {
+					for (String logicalName : this.sampleMappings.get(sampleConfigName).get(padName).keySet()) {
 						if (this.sampleMappings.get(sampleConfigName).get(padName) != null 
-								&& this.sampleMappings.get(sampleConfigName).get(padName).get(zoneName) != null){
+								&& this.sampleMappings.get(sampleConfigName).get(padName).get(logicalName) != null){
 							ConfigSampleMapping mapping = new ConfigSampleMapping();
 							mapping.setPadName(padName);
-							mapping.setZoneName(zoneName);
-							mapping.setSampleName(this.sampleMappings.get(sampleConfigName).get(padName).get(zoneName));
+							mapping.setLogicalName(logicalName);
+							mapping.setSampleName(this.sampleMappings.get(sampleConfigName).get(padName).get(logicalName));
 							sampleMappings.add(mapping);
-						}
+						}							
 					}
 				}
 			}
@@ -259,8 +274,8 @@ public class SampleEditor extends MossDialog implements ActionListener {
 			for (ConfigSampleMapping mapping : configSampleMappingGroup.getSampleMappings()) {
 				if (Pad.getPad(mapping.getPadName()) == null)
 					throw new InvalidConfigurationException("A pad with name " + mapping.getPadName() + " has not been defined in the hardware mappings.");
-				if (Zone.getZone(mapping.getPadName(), mapping.getZoneName()) == null)
-					throw new InvalidConfigurationException("A zone with name " + mapping.getPadName() + ":" + mapping.getZoneName() + " has not been defined in the hardware mappings.");
+//				if (Zone.getZone(mapping.getPadName(), mapping.getZoneName()) == null)
+//					throw new InvalidConfigurationException("A zone with name " + mapping.getPadName() + ":" + mapping.getZoneName() + " has not been defined in the hardware mappings.");
 				if (Sample.getSample(mapping.getSampleName()) == null)
 					throw new InvalidConfigurationException("A sample with name " + mapping.getSampleName() + " could not be found in the samples folder.");
 			}

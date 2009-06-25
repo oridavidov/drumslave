@@ -1,11 +1,9 @@
 package ca.digitalcave.drumslave.model.logic;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import ca.digitalcave.drumslave.model.audio.Sample;
@@ -24,9 +22,9 @@ public class Play extends Logic {
 	protected final static Map<Zone, Float> lastPlayedVelocityZone = new ConcurrentHashMap<Zone, Float>();
 	protected final static Map<Pad, Float> lastPlayedVelocityPad = new ConcurrentHashMap<Pad, Float>();
 	
-	protected final long DEFAULT_DOUBLE_TRIGGER_THRESHOLD = 80;
+	protected final long DEFAULT_DOUBLE_TRIGGER_THRESHOLD = 50;
 	
-	protected final Executor executor = new ThreadPoolExecutor(5, 10, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+//	protected final Executor executor = new ThreadPoolExecutor(5, 10, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 
 	public Play(String name) {
 		super(name);
@@ -45,7 +43,8 @@ public class Play extends Logic {
 			lastPlayedVelocityZone.put(zone, rawValue);
 			lastPlayedVelocityPad.put(zone.getPad(), rawValue);
 			
-			executor.execute(new PlayThread(zone, rawValue));
+//			executor.execute(new PlayThread(zone, rawValue));
+			new PlayThread(zone, rawValue).run();
 		}
 		else {
 			logger.fine("Ignoring double trigger");
@@ -103,5 +102,10 @@ public class Play extends Logic {
 			logger.warning("No sample is mapped to name " + sampleName);
 
 		return sample;
+	}
+	
+	@Override
+	public List<String> getLogicalNames(Zone zone) {
+		return Collections.singletonList(zone.getName());
 	}
 }

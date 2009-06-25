@@ -93,14 +93,33 @@ public class SampleMapping {
 	
 	
 
-	public static String getSampleMapping(String sampleGroupName, String padName, String zoneName){
+	public static String getSampleMapping(String sampleGroupName, String padName, String logicalName){
 		if (sampleGroupName == null)
 			return null;
 		if (sampleMappings.get(sampleGroupName) == null)
 			return null;
 		if (sampleMappings.get(sampleGroupName).get(padName) == null)
 			return null;
-		return sampleMappings.get(sampleGroupName).get(padName).get(zoneName);
+		return sampleMappings.get(sampleGroupName).get(padName).get(logicalName);
+	}
+	
+	/**
+	 * Returns all sample mappings
+	 * @return
+	 */
+	public static Map<String, Map<String, Map<String, String>>> getSampleMappings() {
+		return Collections.unmodifiableMap(sampleMappings);
+	}
+	
+	/**
+	 * Returns all sample mappings for the given group, or null if the group name is invalid.
+	 * @param groupName
+	 * @return
+	 */
+	public static Map<String, Map<String, String>> getSampleMappingsByGroup(String groupName){
+		if (groupName == null || sampleMappings.get(groupName) == null)
+			return null;
+		return Collections.unmodifiableMap(sampleMappings.get(groupName));
 	}
 
 
@@ -109,19 +128,19 @@ public class SampleMapping {
 		getSampleGroups();
 	}
 
-	public static void addSampleMapping(String padName, String zoneName, String sampleName){
-		addSampleMapping(getSelectedSampleGroup(), padName, zoneName, sampleName);
+	public static void addSampleMapping(String padName, String logicalName, String sampleName){
+		addSampleMapping(getSelectedSampleGroup(), padName, logicalName, sampleName);
 	}
 
 //	public static String getSampleMapping(String padName, String zoneName){
 //		return getSampleMapping(getSelectedSampleGroup(), padName, zoneName);
 //	}
 	
-	public static void addSampleMapping(String sampleGroupName, String padName, String zoneName, String sampleName){
-		if (padName == null || zoneName == null || sampleName == null)
-			throw new RuntimeException("None of padName, zoneName, sampleName can be null");
-		if (getSampleMapping(sampleGroupName, padName, zoneName) != null)
-			throw new RuntimeException("A sample mapping for " + padName + ":" + zoneName + " already exists: " + getSampleMapping(sampleGroupName, padName, zoneName));
+	public static void addSampleMapping(String sampleGroupName, String padName, String logicalName, String sampleName){
+		if (padName == null || logicalName == null || sampleName == null)
+			throw new RuntimeException("None of padName, logicalName, sampleName can be null");
+		if (getSampleMapping(sampleGroupName, padName, logicalName) != null)
+			throw new RuntimeException("A sample mapping for " + padName + ":" + logicalName + " already exists: " + getSampleMapping(sampleGroupName, padName, logicalName));
 
 		//To save memory, we only load the samples which are actually mapped to
 		// a zone.  Thus, instead of loading them all from a config file or something,
@@ -133,6 +152,6 @@ public class SampleMapping {
 			sampleMappings.put(sampleGroupName, new ConcurrentHashMap<String, Map<String,String>>());
 		if (sampleMappings.get(sampleGroupName).get(padName) == null)
 			sampleMappings.get(sampleGroupName).put(padName, new ConcurrentHashMap<String, String>());
-		sampleMappings.get(sampleGroupName).get(padName).put(zoneName, sampleName);
+		sampleMappings.get(sampleGroupName).get(padName).put(logicalName, sampleName);
 	}
 }

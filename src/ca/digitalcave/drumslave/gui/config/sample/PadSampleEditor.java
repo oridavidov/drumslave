@@ -9,6 +9,8 @@ import org.homeunix.thecave.moss.swing.MossPanel;
 
 import ca.digitalcave.drumslave.model.hardware.Pad;
 import ca.digitalcave.drumslave.model.hardware.Zone;
+import ca.digitalcave.drumslave.model.logic.Logic;
+import ca.digitalcave.drumslave.model.mapping.LogicMapping;
 
 public class PadSampleEditor extends MossPanel {
 	public static final long serialVersionUID = 0l;
@@ -38,7 +40,15 @@ public class PadSampleEditor extends MossPanel {
 			List<Zone> zones = new ArrayList<Zone>(pad.getZones());
 			Collections.sort(zones);
 			for (Zone zone : zones) {
-				this.add(new ZoneSampleEditor(zone, sampleEditor));
+				String logicName = LogicMapping.getLogicMapping(zone.getPad().getName(), zone.getName());
+				if (logicName != null){
+					Logic logic = Logic.getLogic(logicName);
+					if (logic != null){
+						for (String logicalName : logic.getLogicalNames(zone)) {
+							this.add(new ZoneSampleEditor(zone.getPad(), logicalName, sampleEditor));					
+						}
+					}
+				}
 			}
 		}
 	}

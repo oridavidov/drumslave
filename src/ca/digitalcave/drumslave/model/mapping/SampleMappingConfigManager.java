@@ -2,12 +2,11 @@ package ca.digitalcave.drumslave.model.mapping;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import ca.digitalcave.drumslave.model.config.ConfigManager;
 import ca.digitalcave.drumslave.model.config.ConfigSampleMapping;
 import ca.digitalcave.drumslave.model.config.ConfigSampleMappingGroup;
-import ca.digitalcave.drumslave.model.hardware.Pad;
-import ca.digitalcave.drumslave.model.hardware.Zone;
 
 public class SampleMappingConfigManager implements ConfigManager<ConfigSampleMappingGroup>{
 
@@ -23,7 +22,7 @@ public class SampleMappingConfigManager implements ConfigManager<ConfigSampleMap
 			
 			if (configSampleMappingGroup.getSampleMappings() != null){
 				for (ConfigSampleMapping configSampleMapping : configSampleMappingGroup.getSampleMappings()) {
-					SampleMapping.addSampleMapping(configSampleMappingGroup.getName(), configSampleMapping.getPadName(), configSampleMapping.getZoneName(), configSampleMapping.getSampleName());				
+					SampleMapping.addSampleMapping(configSampleMappingGroup.getName(), configSampleMapping.getPadName(), configSampleMapping.getLogicalName(), configSampleMapping.getSampleName());				
 				}
 			}
 		}
@@ -31,23 +30,27 @@ public class SampleMappingConfigManager implements ConfigManager<ConfigSampleMap
 	public List<ConfigSampleMappingGroup> saveToConfig() {
 		List<ConfigSampleMappingGroup> configSampleMappingGroups = new ArrayList<ConfigSampleMappingGroup>();
 		
-		//We only save logic mappings for which there are valid zones.  Is this right?
 		for (String sampleConfigName : SampleMapping.getSampleGroups()) {
 			ConfigSampleMappingGroup configSampleMappingGroup = new ConfigSampleMappingGroup();
 			configSampleMappingGroup.setName(sampleConfigName);
 			List<ConfigSampleMapping> configSampleMappings = new ArrayList<ConfigSampleMapping>();
-			for (Pad pad : Pad.getPads()) {
-				for (Zone zone : pad.getZones()) {
-					String sample = SampleMapping.getSampleMapping(sampleConfigName, pad.getName(), zone.getName());
-					if (sample != null){
-						ConfigSampleMapping configSampleMapping = new ConfigSampleMapping();
-						configSampleMapping.setPadName(pad.getName());
-						configSampleMapping.setZoneName(zone.getName());
-						configSampleMapping.setSampleName(sample);
-						configSampleMappings.add(configSampleMapping);
+			
+			Map<String, Map<String, String>> sampleMappingsByGroup = SampleMapping.getSampleMappingsByGroup(sampleConfigName);
+			if (sampleMappingsByGroup != null){
+				for (String padName : sampleMappingsByGroup.keySet()) {
+					for (String logicalName : sampleMappingsByGroup.get(padName).keySet()) {
+						String sample = SampleMapping.getSampleMapping(sampleConfigName, padName, logicalName);
+						if (sample != null){
+							ConfigSampleMapping configSampleMapping = new ConfigSampleMapping();
+							configSampleMapping.setPadName(padName);
+							configSampleMapping.setLogicalName(logicalName);
+							configSampleMapping.setSampleName(sample);
+							configSampleMappings.add(configSampleMapping);
+						}						
 					}
 				}
 			}
+			
 			configSampleMappingGroup.setSampleMappings(configSampleMappings);
 			configSampleMappingGroups.add(configSampleMappingGroup);
 		}
