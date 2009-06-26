@@ -46,8 +46,8 @@ public class PlayHDR extends Play {
 			lastPlayedTime.put(padName, System.currentTimeMillis());
 			logger.finest("Set play time to " + lastPlayedTime.get(padName));
 			
-//			executor.execute(new PlayThread(zone, rawValue));
-			new PlayThread(zone, rawValue).run();
+			executor.execute(new PlayThread(zone, rawValue));
+//			new PlayThread(zone, rawValue).run();
 			
 			volumesByPad.remove(padName);
 			volumesByPad.put(padName, new ArrayList<Float>());

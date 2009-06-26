@@ -24,10 +24,10 @@ public class PlayHiHat extends Play {
 	private final Logger logger = Logger.getLogger(this.getClass().getName());
 	protected final static Map<String, Long> lastPlayedTime = new ConcurrentHashMap<String, Long>();
 	
-	private final static String LOGICAL_TIGHT = " (Tight)";
-	private final static String LOGICAL_CLOSED = " (Closed)";
-	private final static String LOGICAL_LOOSE = " (Loose)";
-	private final static String LOGICAL_OPEN = " (Open)";
+	public final static String LOGICAL_TIGHT = " (Tight)";
+	public final static String LOGICAL_CLOSED = " (Closed)";
+	public final static String LOGICAL_LOOSE = " (Loose)";
+	public final static String LOGICAL_OPEN = " (Open)";
 	
 	public PlayHiHat(String name) {
 		super(name);
@@ -48,10 +48,10 @@ public class PlayHiHat extends Play {
 		if (isClosed){
 			sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), padName, zone.getName() + LOGICAL_TIGHT));
 		}
-		else if (analogValue > 0.9f){
+		else if (analogValue > 0.95f){
 			sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), padName, zone.getName() + LOGICAL_OPEN));
 		}
-		else if (analogValue > 0.5){
+		else if (analogValue > 0.3f){
 			sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), padName, zone.getName() + LOGICAL_LOOSE));
 		}
 		else {
@@ -60,7 +60,7 @@ public class PlayHiHat extends Play {
 		
 		if (sample != null){
 			logger.finer("Playing " + sample.getName() + " (hihat analog value is " + analogValue + ")");
-			sample.play(rawValue, GainMapping.getPadGain(zone.getPad().getName()));
+			executor.execute(new HiHatPlayThread(sample, rawValue, GainMapping.getPadGain(zone.getPad().getName())));
 		}
 	}
 
@@ -72,5 +72,23 @@ public class PlayHiHat extends Play {
 		logicalNames.add(zone.getName() + LOGICAL_LOOSE);
 		logicalNames.add(zone.getName() + LOGICAL_OPEN);
 		return logicalNames;
+	}
+	
+	protected class HiHatPlayThread implements Runnable  { 
+		public static final long serialVersionUID = 0l;
+		
+		private final Sample sample;
+		private final float rawValue;
+		private final float gain;
+		
+		public HiHatPlayThread(Sample sample, float rawValue, float gain) {
+			this.sample = sample;
+			this.rawValue = rawValue;
+			this.gain = gain;
+		}
+
+		public void run() {
+			sample.play(rawValue, gain);
+		}
 	}
 }

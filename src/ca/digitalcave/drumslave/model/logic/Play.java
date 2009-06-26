@@ -4,6 +4,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import ca.digitalcave.drumslave.model.audio.Sample;
@@ -24,7 +28,7 @@ public class Play extends Logic {
 	
 	protected final long DEFAULT_DOUBLE_TRIGGER_THRESHOLD = 50;
 	
-//	protected final Executor executor = new ThreadPoolExecutor(5, 10, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+	protected final Executor executor = new ThreadPoolExecutor(5, 10, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 
 	public Play(String name) {
 		super(name);
@@ -43,8 +47,8 @@ public class Play extends Logic {
 			lastPlayedVelocityZone.put(zone, rawValue);
 			lastPlayedVelocityPad.put(zone.getPad(), rawValue);
 			
-//			executor.execute(new PlayThread(zone, rawValue));
-			new PlayThread(zone, rawValue).run();
+			executor.execute(new PlayThread(zone, rawValue));
+//			new PlayThread(zone, rawValue).run();
 		}
 		else {
 			logger.fine("Ignoring double trigger");

@@ -110,20 +110,17 @@ public class Pad implements Comparable<Pad> {
 	 */
 	public float getLevel(){
 		float max = 0f;
-		for (Zone zone : getZones()) {
-			Sample sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), this.getName(), zone.getName()));
+		if (SampleMapping.getSampleMappingsByPad(SampleMapping.getSelectedSampleGroup(), this.getName()) == null)
+			return max;
+		
+		Collection<String> sampleNames = SampleMapping.getSampleMappingsByPad(SampleMapping.getSelectedSampleGroup(), this.getName()).values();
+		for (String sampleName : sampleNames) {
+			Sample sample = Sample.getSample(sampleName);
 			if (sample != null)
 				max = Math.max(max, sample.getLevel());
 		}
 		return max;
 	}
-	
-	/**
-	 * Stops playback from all child zones over a short period.  Call this when a cymbal is muted, for instance.
-	 */
-//	public void stop(){
-//		stop(200);
-//	}
 	
 	/**
 	 * Stops playback from all samples playing on this pad, except those listed in 

@@ -221,7 +221,7 @@ public class SampleEditor extends MossDialog implements ActionListener {
 					try {
 						saveChanges();
 						sampleMappings.remove(sampleGroupNamesComboBox.getSelectedItem().toString());
-						SampleMapping.deleteSampleGroup(sampleGroupNamesComboBox.getSelectedItem().toString());
+						SampleMapping.removeSampleGroup(sampleGroupNamesComboBox.getSelectedItem().toString());
 					}
 					catch (InvalidConfigurationException ice){
 						JOptionPane.showMessageDialog(this, ice.getMessage(), "Invalid Configuration: ", JOptionPane.ERROR_MESSAGE);						

@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import ca.digitalcave.drumslave.model.audio.Sample;
 import ca.digitalcave.drumslave.model.hardware.Zone;
+import ca.digitalcave.drumslave.model.mapping.GainMapping;
 import ca.digitalcave.drumslave.model.mapping.SampleMapping;
 
 /**
@@ -58,16 +59,19 @@ public class HiHatControllerDigital extends Logic {
 			logger.finest(padName + " opened");
 		}
 		else{
-			//Stop playing all other sounds, and play the chic sound
 			logger.finest(padName + " closed");
+			//If the HH is closed, we want to be sure that all non-closed sounds stop.
+			zone.getPad().stop(10, LOGICAL_CHIC, zone.getName() + PlayHiHat.LOGICAL_TIGHT, zone.getName() + PlayHiHat.LOGICAL_CLOSED);
 			if (lastTimeByPad.get(padName) + CHIC_SAMPLE_DEBOUNCE_PERIOD < System.currentTimeMillis()){
 				zone.getPad().stop(10, LOGICAL_CHIC);
-//				System.out.println(SampleMapping.getSampleMappings().get("Acoustic").get("Hi-Hat"));
 			
 				Sample sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), padName, LOGICAL_CHIC));
-//				Sample sample = Sample.getSample("Hi Hat/Zildjian A Custom 14/Chic");
-				if (sample != null)
-					sample.play(0.5f, 1.0f); //TODO change volume based on how fast the pedal has gone down
+				if (sample != null){
+					HiHatControllerAnalog analog = (HiHatControllerAnalog) Logic.getLogic(HiHatControllerAnalog.HIHAT_CONTROLLER_ANALOG_NAME);
+					float volume = analog.getAnalogValueByPad(padName);
+					logger.finer("Playing HiHat Chic at volume " + volume);
+					sample.play(volume, GainMapping.getPadGain(zone.getPad().getName()));
+				}
 			}
 		}
 		

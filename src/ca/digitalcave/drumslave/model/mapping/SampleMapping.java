@@ -55,7 +55,7 @@ public class SampleMapping {
 		}
 	}
 	
-	public static void deleteSampleGroup(String sampleGroupName) throws InvalidModelException {
+	public static void removeSampleGroup(String sampleGroupName) throws InvalidModelException {
 		synchronized (mutex) {			
 			if (sampleGroupName == null)
 				throw new InvalidModelException("Config Group name cannot be null.");
