@@ -2,6 +2,7 @@ package ca.digitalcave.drumslave.model.hardware;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -21,13 +22,12 @@ import ca.digitalcave.drumslave.model.mapping.SampleMapping;
  * @author wyatt
  *
  */
-public class Pad {
+public class Pad implements Comparable<Pad> {
 
 	private final static Map<String, Pad> pads = new ConcurrentHashMap<String, Pad>();
 
 	private final String name;
 	private Map<String, Zone> zones;
-	private float gain = 1.0f;
 	
 	/**
 	 * Clears all the pads from the static map.  Used before loading a new config file.
@@ -99,15 +99,6 @@ public class Pad {
 		return Collections.unmodifiableCollection(zones.values());
 	}
 	
-	public float getGain() {
-		return gain;
-	}
-	
-	public void setGain(float gain) {
-		this.gain = gain;
-//		System.out.println("Pad " + this + " gain == " + gain);
-	}
-	
 	@Override
 	public String toString() {
 		return getName() + ":" + getZones();
@@ -119,8 +110,12 @@ public class Pad {
 	 */
 	public float getLevel(){
 		float max = 0f;
-		for (Zone zone : getZones()) {
-			Sample sample = Sample.getSample(SampleMapping.getSampleMapping(this.getName(), zone.getName()));
+		if (SampleMapping.getSampleMappingsByPad(SampleMapping.getSelectedSampleGroup(), this.getName()) == null)
+			return max;
+		
+		Collection<String> sampleNames = SampleMapping.getSampleMappingsByPad(SampleMapping.getSelectedSampleGroup(), this.getName()).values();
+		for (String sampleName : sampleNames) {
+			Sample sample = Sample.getSample(sampleName);
 			if (sample != null)
 				max = Math.max(max, sample.getLevel());
 		}
@@ -128,18 +123,37 @@ public class Pad {
 	}
 	
 	/**
-	 * Stops playback from all child zones.  Call this when a cymbal is muted, for instance.
+	 * Stops playback from all samples playing on this pad, except those listed in 
+	 * the exemptedLogics set, fading out over the given fadeOutPeriod.
+	 * @param exemptedLogicals
+	 * @param fadeOutPeriod
 	 */
-	public void stop(){
-		for (Zone zone : getZones()) {
-			Sample sample = Sample.getSample(SampleMapping.getSampleMapping(this.getName(), zone.getName()));
-			if (sample != null)
-				sample.stop();
+	public void stop(long fadeOutPeriod, String... exemptedLogicals){
+		Collection<String> sampleNames = SampleMapping.getSampleMappingsByPad(SampleMapping.getSelectedSampleGroup(), this.getName()).values();
+		Collection<String> exemptedSamples = new HashSet<String>();
+
+		//Figure out which samples are excluded, based on logical names
+		for (String exemptedLogical : exemptedLogicals) {
+			exemptedSamples.add(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), this.getName(), exemptedLogical));
 		}
+		
+		if (exemptedLogicals != null)
+			sampleNames.removeAll(exemptedSamples);
+		
+		
+		for (String sampleName : sampleNames) {
+			Sample sample = Sample.getSample(sampleName);
+			if (sample != null)
+				sample.stop(fadeOutPeriod);
+		}		
 	}
 	
 	@Override
 	public int hashCode() {
 		return toString().hashCode();
+	}
+	
+	public int compareTo(Pad o) {
+		return this.getName().compareTo(o.getName());
 	}
 }

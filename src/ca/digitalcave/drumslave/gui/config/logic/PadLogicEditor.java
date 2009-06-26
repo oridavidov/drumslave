@@ -1,6 +1,9 @@
 package ca.digitalcave.drumslave.gui.config.logic;
 
 import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.homeunix.thecave.moss.swing.MossPanel;
 
@@ -32,7 +35,9 @@ public class PadLogicEditor extends MossPanel {
 		this.removeAll();
 		
 		if (pad != null){
-			for (Zone zone : pad.getZones()) {
+			List<Zone> zones = new ArrayList<Zone>(pad.getZones());
+			Collections.sort(zones);
+			for (Zone zone : zones) {
 				this.add(new ZoneLogicEditor(zone, logicEditor));
 			}
 		}

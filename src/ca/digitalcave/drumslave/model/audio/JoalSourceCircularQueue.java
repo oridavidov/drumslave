@@ -136,9 +136,16 @@ public class JoalSourceCircularQueue {
 	 * @param volume
 	 */
 	public void play(float volume) {
+		//We increment the source counter before, not after; that way we have access to
+		// the most recently played sample up until the time a sample is played.
+		sourceCounter = (sourceCounter + 1) % MAX_SIMULTANEOUS;
+		
 		al.alSourcef(sources[sourceCounter], AL.AL_GAIN, volume);
 		al.alSourcePlay(sources[sourceCounter]);
-		sourceCounter = (sourceCounter + 1) % MAX_SIMULTANEOUS;
+	}
+	
+	public void adjustLastVolume(float volume) {
+		al.alSourcef(sources[sourceCounter], AL.AL_GAIN, volume);
 	}
 
 	/**

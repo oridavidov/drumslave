@@ -32,4 +32,8 @@ public class ConfigPad {
 			this.zones = new ArrayList<ConfigZone>();
 		zones.add(zone);
 	}
+	@Override
+	public String toString() {
+		return name + ":" + zones;
+	}
 }

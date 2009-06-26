@@ -20,17 +20,27 @@ public class DrumSignal implements Runnable {
 	public void run() {
 		if (command == null)
 			return;
-		
-		String[] signal = command.trim().split(":");
-		if (signal.length == 2){
-			float rawVelocity = Integer.parseInt(signal[1]);
-			//System.out.println(signal[0] + ":" + rawVelocity);
-//			rawVelocity = (float) (Math.log10(rawVelocity) / 3); //==log_1000(rawVelocity), since 6.9 ~= log(1000)
-			//System.out.println(signal[0] + ":" + rawVelocity);
-			float volume = rawVelocity / 1024;
-			Zone z = Zone.getZone(Integer.parseInt(signal[0]));
-			if (z != null)
-				z.play(volume);
+
+//		System.out.println(command);
+		String[] commands = command.split(";");
+		for (String command : commands) {
+			String[] signal = command.trim().split(":");
+			if (signal.length == 2){
+				Zone z = Zone.getZone(Integer.parseInt(signal[0]));
+				float rawVelocity = Integer.parseInt(signal[1]);
+
+				//If the channel is digital, use raw value; otherwise, divide by max value.
+				float volume;
+				if (z.getChannel() >= 32)
+					volume = rawVelocity;
+				else 
+					volume = rawVelocity / 1024;
+				
+				if (z != null){
+					System.out.println(z.getChannel() + ":" + volume);
+					z.play(volume);
+				}
+			}			
 		}
 	}
 }

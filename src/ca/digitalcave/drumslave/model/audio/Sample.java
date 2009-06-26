@@ -74,11 +74,8 @@ public abstract class Sample {
 			Constructor<Sample> constuctor = sampleImpl.getConstructor(String.class);
 			return constuctor.newInstance(name);
 		} 
-		catch (ClassNotFoundException e) {
-			throw new RuntimeException("I could not find sample implementation '" + className + ".", e);
-		} 
-		catch (Exception e) {
-			throw new RuntimeException("Error initializing '" + className + ".", e);
+		catch (Throwable t) {
+			throw new RuntimeException("Error initializing '" + className + ".", t);
 		} 
 	}
 	
@@ -161,12 +158,33 @@ public abstract class Sample {
 	public abstract void play(float rawVolume, float gain);
 
 	/**
-	 * Stops all samples playing on the current sample.  This SHOULD fade out over 
-	 * a certain length of time (approx. 200 ms), to simulate a muted cymbal.  In
-	 * practice, this is probably not ever going to be used on a drum, but only on 
-	 * cymbals and other long-sustain samples.   This method MAY block.
+	 * Stops all sample instances playing from the current sample, fading out over the 
+	 * given length of time (in ms).  This method MUST NOT block; you can run this in a 
+	 * different thread if needed.
 	 */
-	public abstract void stop();
+	public abstract void stop(long fadeOutPeriod);
+	
+	/**
+	 * Stops all samples playing on the current sample.  This MUST stop immediately.
+	 * This method MUST NOT block.
+	 */
+//	public abstract void stopImmediately();
+	
+	/**
+	 * Stop the last played sample, using the same algorithm as stop() does.
+	 */
+	public abstract void stopLastSample();
+
+	/**
+	 * Adjusts the volume of the last played sound.  (Sounds previous to the most recent one
+	 * cannot be adjusted).  This can be used to adjust the volume of sounds which were played
+	 * via conglomerate pads (HDR, secondary zone, etc).
+	 * This method is optional for Sample implementations - just leave it as a NOP if you are
+	 * unable to implement it. 
+	 * @param rawVolume The raw volume, which will be applied against the most recently played sample.
+	 * @param gain The gain to apply against the raw volume
+	 */
+	public abstract void adjustLastVolume(float rawVolume, float gain);
 	
 	/**
 	 * Returns the current playback level of the sample.  This is used by the graphical

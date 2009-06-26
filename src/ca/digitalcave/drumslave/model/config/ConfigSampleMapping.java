@@ -10,8 +10,8 @@ public class ConfigSampleMapping {
 	@XStreamAlias("pad-name")
 	private String padName;
 	@XStreamAsAttribute
-	@XStreamAlias("zone-name")
-	private String zoneName;
+	@XStreamAlias("logical-name")
+	private String logicalName;
 	@XStreamAsAttribute
 	@XStreamAlias("sample-name")
 	private String sampleName;
@@ -28,10 +28,15 @@ public class ConfigSampleMapping {
 	public void setPadName(String padName) {
 		this.padName = padName;
 	}
-	public String getZoneName() {
-		return zoneName;
+	public String getLogicalName() {
+		return logicalName;
 	}
-	public void setZoneName(String zoneName) {
-		this.zoneName = zoneName;
+	public void setLogicalName(String zoneName) {
+		this.logicalName = zoneName;
+	}
+	
+	@Override
+	public String toString() {
+		return padName + ":" + logicalName + ":" + sampleName;
 	}
 }

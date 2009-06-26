@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -129,7 +128,7 @@ public class LogicEditor extends MossDialog implements ActionListener {
 				}
 				
 				new LogicMappingConfigManager().loadFromConfig(new ArrayList<ConfigLogicMapping>(logicMappings));
-				ConfigFactory.getInstance().saveConfig(ConfigType.LOGIC_MAPPING, new File("etc/config/logic-mappings.xml"));
+				ConfigFactory.getInstance().saveConfig(ConfigType.LOGIC_MAPPING);
 				
 				this.closeWindowWithoutPrompting();
 			}

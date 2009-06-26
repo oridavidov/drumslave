@@ -36,4 +36,9 @@ public class ConfigOptionMapping {
 	public void setOptions(List<ConfigOption> options) {
 		this.options = options;
 	}	
+	
+	@Override
+	public String toString() {
+		return padName + ":" + zoneName + ":" + options;
+	}
 }

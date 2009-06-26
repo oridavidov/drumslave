@@ -22,7 +22,7 @@ import ca.digitalcave.drumslave.model.mapping.SampleMapping;
  * @author wyatt
  *
  */
-public class Zone {
+public class Zone implements Comparable<Zone> {
 
 	private final static Logger logger = Logger.getLogger(Zone.class.getName());
 	
@@ -91,22 +91,26 @@ public class Zone {
 		return getName() + " (" + getChannel() + ")";
 	}
 	
-	public void play(float value){
+	public void play(float rawValue){
 		String logicName = LogicMapping.getLogicMapping(getPad().getName(), getName());
 		if (logicName == null){
-			logger.info("No logic name is mapped to " + getPad().getName() + ":" + getName());
+			logger.warning("No logic name is mapped to " + getPad().getName() + ":" + getName());
 			return;
 		}
 		
 		Logic logic = Logic.getLogic(logicName);
-		if (logic == null)
-			throw new RuntimeException("No logic class is mapped to name " + logicName);
+		if (logic == null){
+			//This is severe, because there should be no reason (short of manually hacking the 
+			// logic mapping files) why this should ever happen
+			logger.severe("No logic class is mapped to name " + logicName);
+			return;
+		}
 
-		logic.execute(this, value);
+		logic.execute(this, rawValue);
 	}
 	
 	public float getLevel(){
-		Sample sample = Sample.getSample(SampleMapping.getSampleMapping(this.getPad().getName(), this.getName()));
+		Sample sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), this.getPad().getName(), this.getName()));
 		if (sample == null)
 			return 0f;
 		return sample.getLevel();
@@ -115,5 +119,9 @@ public class Zone {
 	@Override
 	public int hashCode() {
 		return (getPad().getName() + ":" + getName() + ":" + getChannel()).hashCode();
+	}
+	
+	public int compareTo(Zone o) {
+		return this.getName().compareTo(o.getName());
 	}
 }

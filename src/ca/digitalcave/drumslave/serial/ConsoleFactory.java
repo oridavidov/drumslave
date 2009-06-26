@@ -10,6 +10,7 @@ public class ConsoleFactory implements CommunicationsFactory {
 		String command;
 		while ((command = console.readLine()) != null){
 			DrumSignal.threadPool.execute(new DrumSignal(command));
+//			new DrumSignal(command).run();
 		}
 	}
 }

@@ -1,11 +1,16 @@
 package ca.digitalcave.drumslave.gui.config.sample;
 
 import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.homeunix.thecave.moss.swing.MossPanel;
 
 import ca.digitalcave.drumslave.model.hardware.Pad;
 import ca.digitalcave.drumslave.model.hardware.Zone;
+import ca.digitalcave.drumslave.model.logic.Logic;
+import ca.digitalcave.drumslave.model.mapping.LogicMapping;
 
 public class PadSampleEditor extends MossPanel {
 	public static final long serialVersionUID = 0l;
@@ -32,8 +37,18 @@ public class PadSampleEditor extends MossPanel {
 		this.removeAll();
 		
 		if (pad != null){
-			for (Zone zone : pad.getZones()) {
-				this.add(new ZoneSampleEditor(zone, sampleEditor));
+			List<Zone> zones = new ArrayList<Zone>(pad.getZones());
+			Collections.sort(zones);
+			for (Zone zone : zones) {
+				String logicName = LogicMapping.getLogicMapping(zone.getPad().getName(), zone.getName());
+				if (logicName != null){
+					Logic logic = Logic.getLogic(logicName);
+					if (logic != null){
+						for (String logicalName : logic.getLogicalNames(zone)) {
+							this.add(new ZoneSampleEditor(zone.getPad(), logicalName, sampleEditor));					
+						}
+					}
+				}
 			}
 		}
 	}

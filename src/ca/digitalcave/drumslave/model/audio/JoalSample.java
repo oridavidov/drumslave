@@ -2,6 +2,10 @@ package ca.digitalcave.drumslave.model.audio;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A Sample implementation, based on the OpenAL Java wrapper project 'JOAL' (https://joal.dev.java.net/).
@@ -21,6 +25,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class JoalSample extends Sample {
 
 	private final Map<Integer, JoalSourceCircularQueue> joalSources = new ConcurrentHashMap<Integer, JoalSourceCircularQueue>();
+	private int lastSampleNumber; //Last number which was played; this is used for adjustLastVolume. 
+	private final Object lastSampleNumberMutex = new Object();
+	
+	private final static Executor executor = new ThreadPoolExecutor(2, 5, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 	
 	public JoalSample(String name) {
 		super(name);
@@ -42,24 +50,62 @@ public class JoalSample extends Sample {
 			throw new RuntimeException("No sample loaded for sample number " + sampleNumber);
 		
 		joalSources.get(sampleNumber).play(rawVolume * gain);
+		synchronized (lastSampleNumberMutex) {
+			lastSampleNumber = sampleNumber;			
+		}
+	}
+	
+	@Override
+	public void adjustLastVolume(float rawVolume, float gain) {
+		synchronized (lastSampleNumberMutex) {
+			joalSources.get(lastSampleNumber).adjustLastVolume(rawVolume * gain);
+		}
 	}
 
 	@Override
-	public void stop() {
-		//Fade out logarithmically over 10 iterations (less than a second total, but since the
-		// fading is logarithmic, the perceived end of playback is even faster)
-		for (int i = 0; i < 10; i++){
-			for (JoalSourceCircularQueue source : joalSources.values()) {
-				source.setGain(0.5f);
+	public void stop(final long fadeOutPeriod) {
+		final int ITERATIONS = 10;
+		Runnable stopRunner = new Runnable(){
+			public void run() {				
+				for (int i = 0; i < ITERATIONS; i++){
+					for (JoalSourceCircularQueue source : joalSources.values()) {
+						source.setGain(0.5f);
+					}
+					try {
+						Thread.sleep(fadeOutPeriod / ITERATIONS);
+					}
+					catch (InterruptedException ie){}
+				}
+				for (JoalSourceCircularQueue source : joalSources.values()) {
+					source.stop();
+				}
 			}
-			try {
-				Thread.sleep(40);
-			}
-			catch (InterruptedException ie){}
+		};
+		
+		executor.execute(stopRunner);
+	}
+	
+	@Override
+	public void stopLastSample() {
+		
+		Runnable stopRunner;
+		synchronized (lastSampleNumberMutex) {
+			final JoalSourceCircularQueue lastSample = joalSources.get(lastSampleNumber);
+			stopRunner = new Runnable(){
+				public void run() {
+					for (int i = 0; i < 10; i++){
+						lastSample.setGain(0.5f);
+						try {
+							Thread.sleep(40);
+						}
+						catch (InterruptedException ie){}
+					}
+					lastSample.stop();
+				}
+			};
 		}
-		for (JoalSourceCircularQueue source : joalSources.values()) {
-			source.stop();
-		}
+
+		executor.execute(stopRunner);
 	}
 
 	@Override
@@ -77,18 +123,14 @@ public class JoalSample extends Sample {
 		// not by using any proper scientific approaches.
 		return (float) Math.log10((level + 1000) / 1000) / 1.5f; 
 	}
-
+	
 	public static void main(String[] args) throws Exception {
-		JoalSample sample = new JoalSample("Cymbal/Ride/Zildjian A Ping 20/Bow");
-//		JoalSample sample = new JoalSample("Drum/Snare/Garage Band/Head");
-		sample.play(1.0f, 1.0f);
-		for (int i = 0; i < 20; i++){
-			System.out.println(sample.getLevel());
-			Thread.sleep(100);
-		}
-		Thread.sleep(2000);
-		sample.stop();
-		Thread.sleep(4000);
-		System.exit(0);
+		Sample s = new JoalSample("Cymbal/Ride/Zildjian A Ping 20/Bow");
+		s.play(1f, 1f);
+		Thread.sleep(1000);
+		System.out.println(System.currentTimeMillis());
+		s.stop(200);
+		System.out.println(System.currentTimeMillis());
+		Thread.sleep(5000);
 	}
 }

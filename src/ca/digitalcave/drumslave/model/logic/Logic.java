@@ -2,6 +2,7 @@ package ca.digitalcave.drumslave.model.logic;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -43,5 +44,21 @@ public abstract class Logic {
 		return className;
 	}
 	
+	/**
+	 * The method which is called when the serial port receives notification of
+	 * a new hit.
+	 * @param zone
+	 * @param value
+	 */
 	public abstract void execute(Zone zone, float value);
+	
+	/**
+	 * This method is used to determine what the name(s) of the logical zones
+	 * are, which will be used to map samples to.  Most logic implementations
+	 * will just return a single string, namely the zone name.  However, some
+	 * specialized logics, such as HiHat controllers, can map multiple samples
+	 * to a single zone, to (for instance) use a splash, chic, etc.  
+	 * @return
+	 */
+	public abstract List<String> getLogicalNames(Zone zone);
 }

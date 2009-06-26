@@ -144,8 +144,13 @@ public class AudioSystemSample extends Sample {
 		gainControl.setValue(dB);
 		clip.start();
 	}
+	
+	@Override
+	public void adjustLastVolume(float rawVolume, float gain) {
+		logger.warning("adjustLastVolume() not implemented.");
+	}
 
-	public void stop(){
+	public void stop(long fadeOutPeriod){
 		final int fadeTimeMillis = 200;
 
 		for (int i = 0; i < fadeTimeMillis / 10; i++){
@@ -163,6 +168,17 @@ public class AudioSystemSample extends Sample {
 				}
 			}
 		}
+	}
+	
+//	@Override
+//	public void stopImmediately() {
+//		throw new RuntimeException("Method not implemented.");
+//	}
+	
+	@Override
+	public void stopLastSample() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	@Override
