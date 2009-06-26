@@ -36,4 +36,9 @@ public class ConfigGainMapping {
 	public void setSampleMappingGroupName(String sampleMappingGroupName) {
 		this.sampleMappingGroupName = sampleMappingGroupName;
 	}
+	
+	@Override
+	public String toString() {
+		return sampleMappingGroupName + ":" + padName + ":" + gain;
+	}
 }

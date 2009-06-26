@@ -26,4 +26,9 @@ public class ConfigSample {
 	public void setParams(List<ConfigSampleParam> params) {
 		this.params = params;
 	}
+	
+	@Override
+	public String toString() {
+		return name + ":" + params;
+	}
 }

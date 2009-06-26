@@ -45,4 +45,9 @@ public class ConfigLogicMapping {
 	public void setLogicOptions(List<ConfigOption> logicOptions) {
 		this.logicOptions = logicOptions;
 	}
+	
+	@Override
+	public String toString() {
+		return padName + ":" + zoneName + ":" + logicName;
+	}
 }

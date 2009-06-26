@@ -23,4 +23,9 @@ public class ConfigLogic {
 	public void setClassName(String className) {
 		this.className = className;
 	}
+	
+	@Override
+	public String toString() {
+		return name + ":" + className;
+	}
 }
