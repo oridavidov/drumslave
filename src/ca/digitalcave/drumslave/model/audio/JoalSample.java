@@ -63,17 +63,16 @@ public class JoalSample extends Sample {
 	}
 
 	@Override
-	public void stop() {
-		//Fade out logarithmically over 10 iterations (less than a second total, but since the
-		// fading is logarithmic, the perceived end of playback is even faster)
+	public void stop(final long fadeOutPeriod) {
+		final int ITERATIONS = 10;
 		Runnable stopRunner = new Runnable(){
 			public void run() {				
-				for (int i = 0; i < 10; i++){
+				for (int i = 0; i < ITERATIONS; i++){
 					for (JoalSourceCircularQueue source : joalSources.values()) {
 						source.setGain(0.5f);
 					}
 					try {
-						Thread.sleep(40);
+						Thread.sleep(fadeOutPeriod / ITERATIONS);
 					}
 					catch (InterruptedException ie){}
 				}
@@ -108,13 +107,6 @@ public class JoalSample extends Sample {
 
 		executor.execute(stopRunner);
 	}
-	
-//	@Override
-//	public void stopImmediately() {
-//		for (JoalSourceCircularQueue source : joalSources.values()) {
-//			source.stop();
-//		}
-//	}
 
 	@Override
 	public float getLevel() {
@@ -137,7 +129,7 @@ public class JoalSample extends Sample {
 		s.play(1f, 1f);
 		Thread.sleep(1000);
 		System.out.println(System.currentTimeMillis());
-		s.stop();
+		s.stop(200);
 		System.out.println(System.currentTimeMillis());
 		Thread.sleep(5000);
 	}

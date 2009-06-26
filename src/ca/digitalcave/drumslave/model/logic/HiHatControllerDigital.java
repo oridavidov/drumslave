@@ -22,42 +22,63 @@ import ca.digitalcave.drumslave.model.mapping.SampleMapping;
 public class HiHatControllerDigital extends Logic {
 
 	private final Logger logger = Logger.getLogger(this.getClass().getName());
-	private final Map<String, Long> lastOpenTimeByPad = new ConcurrentHashMap<String, Long>();
-	private final Map<String, Long> lastClosedTimeByPad = new ConcurrentHashMap<String, Long>();
+	private final Map<String, Long> lastTimeByPad = new ConcurrentHashMap<String, Long>();
+	private final Map<String, Boolean> openValueByPad = new ConcurrentHashMap<String, Boolean>();
+//	private final Map<String, Long> lastClosedTimeByPad = new ConcurrentHashMap<String, Long>();
 	
 	private final static String LOGICAL_CHIC = "Chic";
 	private final static String LOGICAL_SPLASH = "Splash";
 	
-	private final static Map<String, HiHatControllerDigital> logicByPadName = new ConcurrentHashMap<String, HiHatControllerDigital>();
+//	private final static Map<String, HiHatControllerDigital> logicByPadName = new ConcurrentHashMap<String, HiHatControllerDigital>();
+//	
+//	public final static HiHatControllerDigital getHiHatControllerDigital(String padName){
+//		if (padName == null)
+//			return null;
+//		return logicByPadName.get(padName);
+//	}
 	
-	public final static HiHatControllerDigital getHiHatControllerDigital(String padName){
-		if (padName == null)
-			return null;
-		return logicByPadName.get(padName);
-	}
+	private static final long CHIC_SAMPLE_DEBOUNCE_PERIOD = 100; //in ms.
+	
+	//This is initialized the first time the HiHat Controller is instantiated.
+	//TODO This will only let there be one HiHatControllerAnalog.  Is this right?
+	static String HIHAT_CONTROLLER_DIGITAL_NAME;
 	
 	public HiHatControllerDigital(String name) {
 		super(name);
+		HIHAT_CONTROLLER_DIGITAL_NAME = name;
 	}
 	
 	public void execute(Zone zone, float rawValue) {
 		String padName = zone.getPad().getName();
-		if (lastOpenTimeByPad.get(padName) == null)
-			lastOpenTimeByPad.put(padName, 0l);
-		if (lastClosedTimeByPad.get(padName) == null)
-			lastClosedTimeByPad.put(padName, 0l);
+		openValueByPad.put(padName, rawValue > 0.5f);
+		if (lastTimeByPad.get(padName) == null)
+			lastTimeByPad.put(padName, 0l);
 		
 		if (rawValue < 0.5f){
-			lastOpenTimeByPad.put(padName, System.currentTimeMillis());
 			logger.finest(padName + " opened");
 		}
 		else{
-			lastClosedTimeByPad.put(padName, System.currentTimeMillis());
+			//Stop playing all other sounds, and play the chic sound
 			logger.finest(padName + " closed");
-
-			Sample sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), padName, LOGICAL_CHIC));
-			sample.play(0.5f, 1.0f); //TODO change volume based on how fast the pedal has gone down
+			if (lastTimeByPad.get(padName) + CHIC_SAMPLE_DEBOUNCE_PERIOD < System.currentTimeMillis()){
+				zone.getPad().stop(10, LOGICAL_CHIC);
+//				System.out.println(SampleMapping.getSampleMappings().get("Acoustic").get("Hi-Hat"));
+			
+				Sample sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), padName, LOGICAL_CHIC));
+//				Sample sample = Sample.getSample("Hi Hat/Zildjian A Custom 14/Chic");
+				if (sample != null)
+					sample.play(0.5f, 1.0f); //TODO change volume based on how fast the pedal has gone down
+			}
 		}
+		
+		//Keep track of the time
+		lastTimeByPad.put(padName, System.currentTimeMillis());
+	}
+	
+	public boolean isClosedByPad(String padName){
+		if (openValueByPad.get(padName) == null)
+			return false;
+		return openValueByPad.get(padName);
 	}
 	
 	@Override

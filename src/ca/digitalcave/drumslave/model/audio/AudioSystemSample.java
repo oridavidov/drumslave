@@ -150,7 +150,7 @@ public class AudioSystemSample extends Sample {
 		logger.warning("adjustLastVolume() not implemented.");
 	}
 
-	public void stop(){
+	public void stop(long fadeOutPeriod){
 		final int fadeTimeMillis = 200;
 
 		for (int i = 0; i < fadeTimeMillis / 10; i++){

@@ -12,7 +12,7 @@ public class Mute extends Logic {
 	}
 	
 	public void execute(Zone zone, float value) {
-		zone.getPad().stop();
+		zone.getPad().stop(200);
 	}
 	
 	@Override

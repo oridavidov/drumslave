@@ -28,4 +28,9 @@ public class ConfigSampleMappingGroup {
 	public void setSampleMappings(List<ConfigSampleMapping> sampleMappings) {
 		this.sampleMappings = sampleMappings;
 	}
+	
+	@Override
+	public String toString() {
+		return name + ":" + sampleMappings;
+	}
 }

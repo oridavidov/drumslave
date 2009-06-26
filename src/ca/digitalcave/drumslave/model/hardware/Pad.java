@@ -2,6 +2,7 @@ package ca.digitalcave.drumslave.model.hardware;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -120,23 +121,34 @@ public class Pad implements Comparable<Pad> {
 	/**
 	 * Stops playback from all child zones over a short period.  Call this when a cymbal is muted, for instance.
 	 */
-	public void stop(){
-		for (Zone zone : getZones()) {
-			Sample sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), this.getName(), zone.getName()));
-			if (sample != null)
-				sample.stop();
-		}
-	}
+//	public void stop(){
+//		stop(200);
+//	}
 	
 	/**
-	 * Stops playback from all child zones immediately.  Used for PlaySecondary, etc.
+	 * Stops playback from all samples playing on this pad, except those listed in 
+	 * the exemptedLogics set, fading out over the given fadeOutPeriod.
+	 * @param exemptedLogicals
+	 * @param fadeOutPeriod
 	 */
-	public void stopImmediately(){
-		for (Zone zone : getZones()) {
-			Sample sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), this.getName(), zone.getName()));
-			if (sample != null)
-				sample.stop();
+	public void stop(long fadeOutPeriod, String... exemptedLogicals){
+		Collection<String> sampleNames = SampleMapping.getSampleMappingsByPad(SampleMapping.getSelectedSampleGroup(), this.getName()).values();
+		Collection<String> exemptedSamples = new HashSet<String>();
+
+		//Figure out which samples are excluded, based on logical names
+		for (String exemptedLogical : exemptedLogicals) {
+			exemptedSamples.add(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), this.getName(), exemptedLogical));
 		}
+		
+		if (exemptedLogicals != null)
+			sampleNames.removeAll(exemptedSamples);
+		
+		
+		for (String sampleName : sampleNames) {
+			Sample sample = Sample.getSample(sampleName);
+			if (sample != null)
+				sample.stop(fadeOutPeriod);
+		}		
 	}
 	
 	@Override

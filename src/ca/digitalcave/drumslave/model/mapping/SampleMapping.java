@@ -2,6 +2,7 @@ package ca.digitalcave.drumslave.model.mapping;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -103,12 +104,20 @@ public class SampleMapping {
 		return sampleMappings.get(sampleGroupName).get(padName).get(logicalName);
 	}
 	
-	/**
-	 * Returns all sample mappings
-	 * @return
-	 */
-	public static Map<String, Map<String, Map<String, String>>> getSampleMappings() {
-		return Collections.unmodifiableMap(sampleMappings);
+//	/**
+//	 * Returns all sample mappings
+//	 * @return
+//	 */
+//	public static Map<String, Map<String, Map<String, String>>> getSampleMappings() {
+//		return Collections.unmodifiableMap(sampleMappings);
+//	}
+	
+	public static Map<String, String> getSampleMappingsByPad(String selectedSampleGroup, String padName){
+		if (sampleMappings.get(selectedSampleGroup) == null)
+			return null;
+		if (sampleMappings.get(selectedSampleGroup).get(padName) == null)
+			return null;
+		return new HashMap<String, String>(sampleMappings.get(selectedSampleGroup).get(padName));
 	}
 	
 	/**

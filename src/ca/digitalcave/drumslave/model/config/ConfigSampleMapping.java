@@ -34,4 +34,9 @@ public class ConfigSampleMapping {
 	public void setLogicalName(String zoneName) {
 		this.logicalName = zoneName;
 	}
+	
+	@Override
+	public String toString() {
+		return padName + ":" + logicalName + ":" + sampleName;
+	}
 }
