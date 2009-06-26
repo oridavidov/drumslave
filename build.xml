@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE project [
 <!ENTITY baseBuild SYSTEM "../ca.digitalcave.build/build.xml.inc">
+<!ENTITY desktopBuild SYSTEM "../ca.digitalcave.build/build-desktop.xml.inc">
 ]>
 <project name="Drum Slave" default="jar" basedir=".">
 
@@ -19,4 +20,6 @@
 	
 	&baseBuild;
 
+	&desktopBuild;
+	
 </project>

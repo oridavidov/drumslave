@@ -56,7 +56,7 @@ public class ZoneEditor extends MossPanel {
 		super.updateContent();
 
 		//Load the channel number
-		channelLabel.setText(channel + "");
+		channelLabel.setText((channel < 32 ? channel : channel - 32) + "");
 		
 		//Load the zone data from the currently 
 		Zone zone = Zone.getZone(channel);

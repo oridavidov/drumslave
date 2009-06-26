@@ -24,6 +24,7 @@ public class EditSampleMappings extends MossMenuItem{
 	public void actionPerformed(ActionEvent e) {
 		try {
 			new SampleEditor(null).openWindow();
+			getFrame().updateContent();
 		} 
 		catch (WindowOpenException woe) {
 			Logger logger = Logger.getLogger(this.getClass().getName());

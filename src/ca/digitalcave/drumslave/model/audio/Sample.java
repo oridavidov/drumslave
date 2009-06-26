@@ -2,6 +2,7 @@ package ca.digitalcave.drumslave.model.audio;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FilenameFilter;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.Collections;
@@ -9,6 +10,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import ca.digitalcave.drumslave.DrumSlave;
 
 /**
  * This class provides Multiton access to the Sample object.  
@@ -75,7 +78,7 @@ public abstract class Sample {
 			return constuctor.newInstance(name);
 		} 
 		catch (Throwable t) {
-			throw new RuntimeException("Error initializing '" + className + ".", t);
+			throw new RuntimeException("Error initializing '" + className + "'; message is " + t.getCause(), t);
 		} 
 	}
 	
@@ -87,13 +90,27 @@ public abstract class Sample {
 	 * Basically, this will point to the folder which contains the 00.wav, 01.wav, etc
 	 * sample files.
 	 * 
-	 * There is no error checking done in this method
-	 * 
 	 * @param name
 	 * @return
 	 */
 	private static File getSampleFolder(String name){
-		return new File("samples/" + name);
+		File sampleFolder = new File(DrumSlave.getSamplesFolder().getAbsolutePath() + "/" + name);
+		
+		if (!sampleFolder.exists()){
+			throw new RuntimeException("Error while finding samples!  " + sampleFolder.getAbsolutePath() + " does not exist!");
+		}
+		if (!sampleFolder.isDirectory()){
+			throw new RuntimeException("Error while finding samples!  " + sampleFolder.getAbsolutePath() + " is not a directory!");
+		}
+		if (sampleFolder.list(new FilenameFilter(){
+			public boolean accept(File dir, String name) {
+				return name.matches("[0-9]{2}.wav");
+			}
+		}).length == 0){
+			throw new RuntimeException("Error while finding samples!  " + sampleFolder.getAbsolutePath() + " does not contain any samples with file names matching '[0-9]{2}.wav'!");
+		}
+		
+		return sampleFolder;
 	}
 
 

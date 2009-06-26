@@ -14,6 +14,7 @@ import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.border.TitledBorder;
 
 import org.homeunix.thecave.moss.swing.MossDialog;
 import org.homeunix.thecave.moss.swing.MossFrame;
@@ -42,11 +43,16 @@ public class HardwareEditor extends MossDialog implements ActionListener {
 	public void init() {
 		super.init();
 		
-		JPanel gridPanel = new JPanel(new GridLayout(0, 4));
+		JPanel analogGridPanel = new JPanel(new GridLayout(0, 4));
+		JPanel digitalGridPanel = new JPanel(new GridLayout(0, 4));
 		
-		for (int i = 0; i < zoneEditors.length; i++){
+		for (int i = 0; i < 32; i++){
 			zoneEditors[i] = new ZoneEditor(i);
-			gridPanel.add(zoneEditors[i]);
+			analogGridPanel.add(zoneEditors[i]);
+		}
+		for (int i = 0; i < 8; i++){
+			zoneEditors[i + 32] = new ZoneEditor(i + 32);
+			digitalGridPanel.add(zoneEditors[i + 32]);
 		}
 		
 		saveButton.setPreferredSize(Formatter.getButtonSize(saveButton));
@@ -60,8 +66,15 @@ public class HardwareEditor extends MossDialog implements ActionListener {
 		buttonPanel.add(saveButton);
 		this.getRootPane().setDefaultButton(saveButton);
 		
+//		JPanel gridPanelHolder = new JPanel();
+//		gridPanelHolder.setLayout(new BorderLayout());
+		
+		analogGridPanel.setBorder(new TitledBorder("Analog Channels"));
+		digitalGridPanel.setBorder(new TitledBorder("Digital Channels"));
+		
 		this.setLayout(new BorderLayout());
-		this.add(gridPanel, BorderLayout.CENTER);
+		this.add(analogGridPanel, BorderLayout.NORTH);
+		this.add(digitalGridPanel, BorderLayout.CENTER);
 		this.add(buttonPanel, BorderLayout.SOUTH);
 		
 		this.setTitle("Edit Hardware Mappings");

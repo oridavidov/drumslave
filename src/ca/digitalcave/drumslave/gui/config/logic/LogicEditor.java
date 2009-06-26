@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.border.TitledBorder;
 
 import org.homeunix.thecave.moss.swing.MossDialog;
 import org.homeunix.thecave.moss.swing.MossFrame;
@@ -81,6 +82,8 @@ public class LogicEditor extends MossDialog implements ActionListener {
 		padChooserPanel.add(padsComboBox);		
 		
 		this.setLayout(new BorderLayout());
+		
+		padLogicEditor.setBorder(new TitledBorder("Logic Assignments"));
 		
 		this.add(padChooserPanel, BorderLayout.NORTH);
 		this.add(padLogicEditor, BorderLayout.CENTER);

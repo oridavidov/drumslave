@@ -24,6 +24,7 @@ public class EditLogicMappings extends MossMenuItem{
 	public void actionPerformed(ActionEvent e) {
 		try {
 			new LogicEditor(null).openWindow();
+			getFrame().updateContent();
 		} 
 		catch (WindowOpenException woe) {
 			Logger logger = Logger.getLogger(this.getClass().getName());

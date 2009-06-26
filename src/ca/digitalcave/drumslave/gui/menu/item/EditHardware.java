@@ -24,6 +24,7 @@ public class EditHardware extends MossMenuItem{
 	public void actionPerformed(ActionEvent e) {
 		try {
 			new HardwareEditor(null).openWindow();
+			getFrame().updateContent();
 		} 
 		catch (WindowOpenException woe) {
 			Logger logger = Logger.getLogger(this.getClass().getName());
