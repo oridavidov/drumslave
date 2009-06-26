@@ -38,7 +38,7 @@ public class DrumSlave {
 			variables.add(new ParseVariable("--keyboard", Boolean.class, false));
 			variables.add(new ParseVariable("--console", Boolean.class, false));
 			variables.add(new ParseVariable("--log-level", String.class, false));
-			variables.add(new ParseVariable("--samples-folder", String.class, false));
+			variables.add(new ParseVariable("--sample-folder", String.class, false));
 
 			String help = "USAGE: java -jar Buddi.jar <options> <data file>, where options include:\n"
 				+ "\t--keyboard\t\tUse keyboard for testing, instead of serial port\n"
@@ -50,8 +50,8 @@ public class DrumSlave {
 
 			LogUtil.setLogLevel(results.getString("--log-level"));
 
-			if (results.getString("--samples-folder") != null){
-				samplesFolder = new File(results.getString("--samples-folder"));
+			if (results.getString("--sample-folder") != null){
+				samplesFolder = new File(results.getString("--sample-folder"));
 			}
 
 
