@@ -21,8 +21,6 @@ import ca.digitalcave.drumslave.model.hardware.Zone;
  *
  */
 public class OptionMapping {
-	public final static String DOUBLE_TRIGGER_THRESHOLD_NAME = "double-trigger";
-
 	private final static Map<Zone, OptionMapping> optionMappings = new ConcurrentHashMap<Zone, OptionMapping>();
 	
 	private final String padName;

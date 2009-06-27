@@ -44,6 +44,72 @@ public abstract class Logic {
 		return className;
 	}
 	
+	
+	public enum LogicOptionType {
+		OPTION_BOOLEAN,
+		OPTION_FLOAT,
+		OPTION_INTEGER,
+		OPTION_RANGE,
+	}
+	
+	public class LogicOption {
+		//Required settings
+		private final LogicOptionType logicOptionType;
+		private final String name;
+		
+		//Optional settings, depending on type.  We use floats
+		// as they can be downcast to either int or boolean as
+		// needed.
+		private float maxValue;
+		private float minValue;
+		private float defaultValue;
+//		private float floatValue;
+//		private boolean boolValue;
+		
+		public LogicOption(LogicOptionType logicOptionType, String name){
+			this.logicOptionType = logicOptionType;
+			this.name = name;
+		}
+
+		public LogicOptionType getLogicOptionType() {
+			return logicOptionType;
+		}
+		public String getName() {
+			return name;
+		}
+		
+		public float getMaxValue() {
+			return maxValue;
+		}
+		public void setMaxValue(float maxValue) {
+			this.maxValue = maxValue;
+		}
+		public float getMinValue() {
+			return minValue;
+		}
+		public void setMinValue(float minValue) {
+			this.minValue = minValue;
+		}
+		public float getDefaultValue() {
+			return defaultValue;
+		}
+		public void setDefaultValue(float defaultValue) {
+			this.defaultValue = defaultValue;
+		}
+//		public float getFloatValue() {
+//			return floatValue;
+//		}
+//		public void setFloatValue(float floatValue) {
+//			this.floatValue = floatValue;
+//		}
+//		public boolean getBoolValue() {
+//			return boolValue;
+//		}
+//		public void setBoolValue(boolean boolValue) {
+//			this.boolValue = boolValue;
+//		}
+	}
+	
 	/**
 	 * The method which is called when the serial port receives notification of
 	 * a new hit.
@@ -61,4 +127,17 @@ public abstract class Logic {
 	 * @return
 	 */
 	public abstract List<String> getLogicalNames(Zone zone);
+	
+	/**
+	 * Returns a list of LogicOptions, which are used to determine what options
+	 * appear on the Logic config window.  All options will be stored in OptionMappings
+	 * when entered.
+	 * 
+	 * The default implementation doesn't return anything; override this if a given
+	 * logic class supports options.
+	 * @return
+	 */
+	public List<LogicOption> getLogicOptions(){
+		return null;
+	}
 }
