@@ -1,4 +1,0 @@
-<drum-slave>
-	<logic name="Play" className="ca.digitalcave.drumslave.model.logic.Play" />
-	<logic name="Mute" className="ca.digitalcave.drumslave.model.logic.Mute" />
-</drum-slave>

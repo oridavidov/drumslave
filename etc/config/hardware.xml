@@ -1,8 +1,0 @@
-<drum-slave>
-  <pad name="Ride">
-    <zone name="Bow" channel="29"/>
-  </pad>
-  <pad name="Snare">
-    <zone name="Head" channel="24"/>
-  </pad>
-</drum-slave>
