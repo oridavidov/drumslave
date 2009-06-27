@@ -178,7 +178,7 @@ public class Play extends Logic {
 		List<LogicOption> logicOptions = new ArrayList<LogicOption>();
 		logicOptions.add(new LogicOption(LogicOptionType.OPTION_BOOLEAN, OPTION_ADDITIVE_VOLUME, "AV"));
 		LogicOption doubleTrigger = new LogicOption(LogicOptionType.OPTION_INTEGER, OPTION_DOUBLE_TRIGGER_THRESHOLD, "DTT");
-		doubleTrigger.setDefaultValue(50);
+		doubleTrigger.setDefaultValue(DEFAULT_DOUBLE_TRIGGER_THRESHOLD);
 		logicOptions.add(doubleTrigger);
 		return logicOptions;
 	}

@@ -13,6 +13,8 @@ public abstract class Logic {
 	//Static resources, related to the Multiton functionality of this class
 	private static Map<String, Logic> logics = new ConcurrentHashMap<String, Logic>();
 	public static Logic getLogic(String name){
+		if (name == null)
+			return null;
 		return logics.get(name);
 	}
 	public static Collection<Logic> getLogics(){
