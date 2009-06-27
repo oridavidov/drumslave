@@ -6,8 +6,11 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.homeunix.thecave.moss.swing.MossPanel;
 
@@ -25,13 +28,18 @@ public class ZoneSampleEditor extends MossPanel implements ActionListener {
 	private JLabel zoneName;
 	private JComboBox sampleNames;
 	private final SampleEditor sampleEditor;
-
-	public ZoneSampleEditor(Pad pad, String logicalName, SampleEditor sampleEditor) {
+	private final JCheckBox matchSampleNamesToPad;
+	private final JComboBox padChooser;
+	
+	public ZoneSampleEditor(Pad pad, String logicalName, SampleEditor sampleEditor, JComboBox padChooser, JCheckBox matchSampleNamesToPad) {
 		super(true);
-//		this.zone = zone;
+
 		this.pad = pad;
 		this.logicalName = logicalName;
 		this.sampleEditor = sampleEditor;
+		
+		this.matchSampleNamesToPad = matchSampleNamesToPad;
+		this.padChooser = padChooser;
 		open();
 	}
 	
@@ -41,7 +49,7 @@ public class ZoneSampleEditor extends MossPanel implements ActionListener {
 		
 		zoneName = new JLabel(pad.getName() + ":" + logicalName);
 		zoneName.setHorizontalAlignment(JLabel.RIGHT);
-		sampleNames = new JComboBox(new SamplesComboBoxModel());
+		sampleNames = new JComboBox(new SamplesComboBoxModel(padChooser, matchSampleNamesToPad));
 		sampleNames.setRenderer(new NullCapableListCellRenderer());
 		
 		zoneName.setPreferredSize(Formatter.getComponentSize(zoneName, 200));
@@ -50,6 +58,14 @@ public class ZoneSampleEditor extends MossPanel implements ActionListener {
 		this.setLayout(new FlowLayout());
 		this.add(zoneName);
 		this.add(sampleNames);
+		
+		matchSampleNamesToPad.addChangeListener(new ChangeListener(){
+			public void stateChanged(ChangeEvent e) {
+				String selectedItem = sampleEditor.getSampleMappings().get(SampleMapping.getSelectedSampleGroup()).get(pad.getName()).get(logicalName);
+				((SamplesComboBoxModel) sampleNames.getModel()).updateModel();				
+				sampleNames.setSelectedItem(selectedItem);
+			}
+		});
 		
 		//Set the combo boxes according to the temporary config map
 		if (sampleEditor.getSampleMappings().get(SampleMapping.getSelectedSampleGroup()) != null

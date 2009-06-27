@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+
 import org.homeunix.thecave.moss.swing.MossPanel;
 
 import ca.digitalcave.drumslave.model.hardware.Pad;
@@ -17,10 +20,17 @@ public class PadSampleEditor extends MossPanel {
 	
 	private Pad pad;
 	private final SampleEditor sampleEditor;
+
+	private final JCheckBox matchSampleNamesToPad;
+	private final JComboBox padChooser;
 	
-	public PadSampleEditor(SampleEditor logicEditor) {
+
+	public PadSampleEditor(SampleEditor logicEditor, JComboBox padChooser, JCheckBox matchSampleNamesToPad) {
 		super(true);
 		this.sampleEditor = logicEditor;
+		this.matchSampleNamesToPad = matchSampleNamesToPad;
+		this.padChooser = padChooser;
+
 		open();
 	}
 
@@ -45,7 +55,7 @@ public class PadSampleEditor extends MossPanel {
 					Logic logic = Logic.getLogic(logicName);
 					if (logic != null){
 						for (String logicalName : logic.getLogicalNames(zone)) {
-							this.add(new ZoneSampleEditor(zone.getPad(), logicalName, sampleEditor));					
+							this.add(new ZoneSampleEditor(zone.getPad(), logicalName, sampleEditor, padChooser, matchSampleNamesToPad));					
 						}
 					}
 				}

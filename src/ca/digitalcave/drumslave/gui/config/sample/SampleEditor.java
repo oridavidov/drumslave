@@ -10,10 +10,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.border.TitledBorder;
 
 import org.homeunix.thecave.moss.swing.MossDialog;
 import org.homeunix.thecave.moss.swing.MossFrame;
@@ -41,6 +43,7 @@ public class SampleEditor extends MossDialog implements ActionListener {
 	private JComboBox padsComboBox;
 	private JComboBox sampleGroupNamesComboBox;
 	private PadSampleEditor padSampleEditor;
+	private JCheckBox matchSampleNames;
 	
 	private JButton addGroupButton = new JButton("Add");
 	private JButton renameGroupButton = new JButton("Rename");
@@ -81,8 +84,10 @@ public class SampleEditor extends MossDialog implements ActionListener {
 	public void init() {
 		super.init();
 		padsComboBox = new JComboBox(new PadsComboBoxModel());
+		matchSampleNames = new JCheckBox("Match Sample Names to Pad");
+		matchSampleNames.setSelected(true);
 		sampleGroupNamesComboBox = new JComboBox(new SampleNamesComboBoxModel());
-		padSampleEditor = new PadSampleEditor(this);
+		padSampleEditor = new PadSampleEditor(this, padsComboBox, matchSampleNames);
 		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		JPanel sampleNamesComboBoxPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		JPanel padChooserPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -121,9 +126,11 @@ public class SampleEditor extends MossDialog implements ActionListener {
 		topPanel.add(sampleNamesComboBoxPanel, BorderLayout.NORTH);
 		topPanel.add(padChooserPanel, BorderLayout.SOUTH);
 		
-		padChooserPanel.add(padsComboBox);		
+		padChooserPanel.add(padsComboBox);
+		padChooserPanel.add(matchSampleNames);
 		
 		this.setLayout(new BorderLayout());
+		padSampleEditor.setBorder(new TitledBorder("Sample Mappings"));
 		
 		this.add(topPanel, BorderLayout.NORTH);
 		this.add(padSampleEditor, BorderLayout.CENTER);

@@ -6,22 +6,44 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+
+import ca.digitalcave.drumslave.DrumSlave;
 
 public class SamplesComboBoxModel extends DefaultComboBoxModel {
 	public static final long serialVersionUID = 0l;
 
-	public SamplesComboBoxModel() {
-
-		File samplesFolder = new File("samples");
+	private final JCheckBox matchSampleNamesToPad;
+	private final JComboBox padChooser;
+	
+	public SamplesComboBoxModel(JComboBox padChooser, JCheckBox matchSampleNamesToPad) {
+		this.matchSampleNamesToPad = matchSampleNamesToPad;
+		this.padChooser = padChooser;
+		
+		updateModel();
+	}
+	
+	public void updateModel(){
+		this.removeAllElements();
+		
+		boolean matchSamples = matchSampleNamesToPad.isSelected();
+		String padName = padChooser.getSelectedItem().toString();
+		Pattern pattern = Pattern.compile(".*" + padName.replaceAll("[^a-zA-Z]", "") + ".*", Pattern.CASE_INSENSITIVE);
+		
+		File samplesFolder = DrumSlave.getSamplesFolder();
 		List<String> samples = new ArrayList<String>(getSampleNamesRecursive(samplesFolder));
 
 		Collections.sort(samples);
 
 		this.addElement(null);
 		for (String sample : samples) {
-			this.addElement(sample);
+			//Only add samples which match the pad name somewhat.
+			if (!matchSamples || pattern.matcher(sample.replaceAll("[^a-zA-Z]", "")).matches())
+				this.addElement(sample);
 		}
 	}
 

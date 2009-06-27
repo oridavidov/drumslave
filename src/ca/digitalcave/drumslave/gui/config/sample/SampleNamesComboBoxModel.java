@@ -21,7 +21,6 @@ public class SampleNamesComboBoxModel extends DefaultComboBoxModel {
 		List<String> sampleGroupNames = new ArrayList<String>(SampleMapping.getSampleGroups());
 		Collections.sort(sampleGroupNames);
 		
-		
 		for (String sampleGroupName : sampleGroupNames) {
 			this.addElement(sampleGroupName);
 		}

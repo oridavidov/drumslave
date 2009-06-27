@@ -3,6 +3,10 @@
  */
 package ca.digitalcave.drumslave.gui.menu.menu;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.homeunix.thecave.moss.swing.MossFrame;
 import org.homeunix.thecave.moss.swing.MossMenu;
 
@@ -14,14 +18,15 @@ public class SampleMappingsMenu extends MossMenu {
 	
 	public SampleMappingsMenu(MossFrame frame) {
 		super(frame, "Sample Groups");
-		
 	}
 	
 	@Override
 	public void updateMenus() {
 		this.removeAll();
+		List<String> sampleGroups = new ArrayList<String>(SampleMapping.getSampleGroups());
+		Collections.sort(sampleGroups);
 
-		for (String sampleGroup : SampleMapping.getSampleGroups()) {
+		for (String sampleGroup : sampleGroups) {
 			this.add(new SwitchToSampleGroup(getFrame(), sampleGroup));
 		}
 		
