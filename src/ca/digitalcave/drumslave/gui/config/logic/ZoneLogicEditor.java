@@ -82,24 +82,29 @@ public class ZoneLogicEditor extends MossPanel implements ActionListener {
 
 					//Boolean option
 					if (logicOption.getLogicOptionType().equals(LogicOptionType.OPTION_BOOLEAN)){
-						component = new JCheckBox(logicOption.getName());
-						((JCheckBox) component).setSelected(Boolean.parseBoolean(logicEditor.getLogicOption(zone.getPad().getName(), zone.getName(), logicOption.getName())));
-						((JCheckBox) component).addChangeListener(new ChangeListener(){
+						JCheckBox checkBox = new JCheckBox(logicOption.getShortName());
+						checkBox.setToolTipText(logicOption.getName());
+						checkBox.setSelected(Boolean.parseBoolean(logicEditor.getLogicOption(zone.getPad().getName(), zone.getName(), logicOption.getName())));
+						checkBox.addChangeListener(new ChangeListener(){
 							public void stateChanged(ChangeEvent e) {
 								logicEditor.setLogicOption(zone.getPad().getName(), zone.getName(), logicOptionFinal.getName(), ((JCheckBox) e.getSource()).isSelected() + "");
 							}
 						});
+						component = checkBox;
 					}
 
 					else if (logicOption.getLogicOptionType().equals(LogicOptionType.OPTION_INTEGER)){
 						component = new JPanel(new FlowLayout(FlowLayout.LEFT));
 						final MossDecimalField number = new MossDecimalField((long) logicOption.getDefaultValue(), false, 0);
+						number.setToolTipText(logicOption.getName());
 						try {
 							number.setValue(Long.parseLong(logicEditor.getLogicOption(zone.getPad().getName(), zone.getName(), logicOption.getName())));
 						}
 						catch (NumberFormatException nfe){}
 						component.add(number);
-						component.add(new JLabel(logicOption.getName()));
+						JLabel label = new JLabel(logicOption.getShortName());
+						label.setToolTipText(logicOption.getName());
+						component.add(label);
 						number.addFocusListener(new FocusAdapter(){
 							@Override
 							public void focusLost(FocusEvent e) {
@@ -115,13 +120,15 @@ public class ZoneLogicEditor extends MossPanel implements ActionListener {
 				}
 			}
 		}
+		
+		this.validate();
 	}
 	
 	public void actionPerformed(ActionEvent arg0) {
 		if (arg0.getSource().equals(logicNames)){
 			logicEditor.getLogicMappings().get(zone.getPad().getName()).put(zone.getName(), (String) logicNames.getSelectedItem());
 			
-			
+			updateContent();
 		}
 	}
 }

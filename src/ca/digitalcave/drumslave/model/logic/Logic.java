@@ -56,6 +56,7 @@ public abstract class Logic {
 		//Required settings
 		private final LogicOptionType logicOptionType;
 		private final String name;
+		private final String shortName;
 		
 		//Optional settings, depending on type.  We use floats
 		// as they can be downcast to either int or boolean as
@@ -66,9 +67,10 @@ public abstract class Logic {
 //		private float floatValue;
 //		private boolean boolValue;
 		
-		public LogicOption(LogicOptionType logicOptionType, String name){
+		public LogicOption(LogicOptionType logicOptionType, String name, String shortName){
 			this.logicOptionType = logicOptionType;
 			this.name = name;
+			this.shortName = shortName;
 		}
 
 		public LogicOptionType getLogicOptionType() {
@@ -76,6 +78,9 @@ public abstract class Logic {
 		}
 		public String getName() {
 			return name;
+		}
+		public String getShortName() {
+			return shortName;
 		}
 		
 		public float getMaxValue() {

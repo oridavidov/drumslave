@@ -54,6 +54,7 @@ public class Play extends Logic {
 				System.out.println(volumeAdjustment);
 				if (volumeAdjustment > 1){
 					rawValue = rawValue * volumeAdjustment;
+					rawValue = Math.min(1, Math.max(0, rawValue));
 				}
 			}
 			
@@ -91,37 +92,22 @@ public class Play extends Logic {
 		return doubleTriggerThreshold;
 	}
 	
+	private static float SLOPE = 100; //Higher number is less of a drop-off
+	private static float FALLOFF = 10000; //Higher numbers lets the slope take longer to reach 1.
 	/**
-	 *This is a function which maps a volume adjustment to a current volume, given 
-	 * the time (in seconds) since this zone was last hit, and the volume at which 
-	 * it was hit.  The graph of this function starts at 0 and quickly jumps up to 
-	 * a max value of 2.  This drops off slowly, increasing in slope as the time 
-	 * increases, until such time that it drops below 1 and we cease to care about it.
-	 *Since we only use it between the numbers 1 and 2, this function can *only*
-	 * increase in volume, never decrease.
-	 *DOUBLE_TRIGGER_THRESHOLD determines the distance to the initial curve; this number
-	 * should be between 0 and about 0.2.  At 0, there is nothing to prevent a double
-	 * trigger from gaining volume from this function; at 0.2, there is about an 80 ms
-	 * delay before we are willing to increase the volume at all.  Anything over 0.2 
-	 * will probably just introduce too much of a delay, and should not be used for 
-	 * the most part.
-	 *HORIZONTAL_STRETCH determines the horizontal stretch factor, and directly affects
-	 * how long the vibrations will last for.  A value of 1 drops off in under 2 seconds; 
-	 * a value of 2 drops off at over 10.  A reasonable value for this may be something 
-	 * like 1.9 or so, which will drop off at about 10 seconds.
+	 * Function which starts at a high spike, and slowly gets to 1.  The higher the
+	 * SLOPE constant, the smoother the slope left of the spike is; the higher the FALLOFF 
+	 * constant, the slower the function goes to 1. 
 	 * @param zone
 	 * @return
 	 */
-	private static float DOUBLE_TRIGGER_THRESHOLD = 20f;
-	private static float HORIZONTAL_STRETCH = 149f;
 	protected float getAdditiveVolumeAdjustment(Zone zone){
-		if (lastPlayedVelocityZone.get(zone) == null 
-				|| lastPlayedTimeZone.get(zone) == null)
+		if (lastPlayedTimePad.get(zone.getPad()) == null)
 			return 1f;
 		
-		float lastVolume = lastPlayedVelocityZone.get(zone);
-		long timeDifference = System.currentTimeMillis() - lastPlayedTimeZone.get(zone);
-		return (float) (-1.0 * ((Math.pow((timeDifference-DOUBLE_TRIGGER_THRESHOLD), 8) / HORIZONTAL_STRETCH) / Math.pow(timeDifference, 6) + 2.1) * lastVolume);
+//		float lastVolume = lastPlayedVelocityZone.get(zone);
+		long timeDifference = System.currentTimeMillis() - lastPlayedTimePad.get(zone.getPad());
+		return (float) (SLOPE / (timeDifference + SLOPE) - ((timeDifference / FALLOFF) * (timeDifference / FALLOFF)) + 1);
 	}
 	
 	/**
@@ -190,8 +176,8 @@ public class Play extends Logic {
 	@Override
 	public List<LogicOption> getLogicOptions() {
 		List<LogicOption> logicOptions = new ArrayList<LogicOption>();
-		logicOptions.add(new LogicOption(LogicOptionType.OPTION_BOOLEAN, OPTION_ADDITIVE_VOLUME));
-		LogicOption doubleTrigger = new LogicOption(LogicOptionType.OPTION_INTEGER, OPTION_DOUBLE_TRIGGER_THRESHOLD);
+		logicOptions.add(new LogicOption(LogicOptionType.OPTION_BOOLEAN, OPTION_ADDITIVE_VOLUME, "AV"));
+		LogicOption doubleTrigger = new LogicOption(LogicOptionType.OPTION_INTEGER, OPTION_DOUBLE_TRIGGER_THRESHOLD, "DTT");
 		doubleTrigger.setDefaultValue(50);
 		logicOptions.add(doubleTrigger);
 		return logicOptions;
