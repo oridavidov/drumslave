@@ -3,8 +3,8 @@ package ca.digitalcave.drumslave.gui.config.logic;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.List;
 
 import javax.swing.JCheckBox;
@@ -105,9 +105,9 @@ public class ZoneLogicEditor extends MossPanel implements ActionListener {
 						JLabel label = new JLabel(logicOption.getShortName());
 						label.setToolTipText(logicOption.getName());
 						component.add(label);
-						number.addFocusListener(new FocusAdapter(){
+						number.addKeyListener(new KeyAdapter(){
 							@Override
-							public void focusLost(FocusEvent e) {
+							public void keyReleased(KeyEvent e) {
 								logicEditor.setLogicOption(zone.getPad().getName(), zone.getName(), logicOptionFinal.getName(), number.getValue() + "");
 							}
 						});
