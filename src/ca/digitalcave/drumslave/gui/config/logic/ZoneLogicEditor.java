@@ -16,6 +16,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.homeunix.thecave.moss.swing.MossDecimalField;
+import org.homeunix.thecave.moss.swing.MossHintTextField;
 import org.homeunix.thecave.moss.swing.MossPanel;
 
 import ca.digitalcave.drumslave.gui.config.NullCapableListCellRenderer;
@@ -109,6 +110,18 @@ public class ZoneLogicEditor extends MossPanel implements ActionListener {
 							@Override
 							public void keyReleased(KeyEvent e) {
 								logicEditor.setLogicOption(zone.getPad().getName(), zone.getName(), logicOptionFinal.getName(), number.getValue() + "");
+							}
+						});
+					}
+					
+					else if (logicOption.getLogicOptionType().equals(LogicOptionType.OPTION_STRING)){
+						component = new MossHintTextField(logicOption.getShortName());
+						((MossHintTextField) component).setText(logicEditor.getLogicOption(zone.getPad().getName(), zone.getName(), logicOptionFinal.getName()));
+						component.setToolTipText(logicOption.getName());
+						component.addKeyListener(new KeyAdapter(){
+							@Override
+							public void keyReleased(KeyEvent e) {
+								logicEditor.setLogicOption(zone.getPad().getName(), zone.getName(), logicOptionFinal.getName(), ((MossHintTextField) e.getSource()).getText());
 							}
 						});
 					}

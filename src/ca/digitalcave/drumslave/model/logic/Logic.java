@@ -52,6 +52,7 @@ public abstract class Logic {
 		OPTION_FLOAT,
 		OPTION_INTEGER,
 		OPTION_RANGE,
+		OPTION_STRING,
 	}
 	
 	public class LogicOption {
@@ -128,8 +129,8 @@ public abstract class Logic {
 	/**
 	 * This method is used to determine what the name(s) of the logical zones
 	 * are, which will be used to map samples to.  Most logic implementations
-	 * will just return a single string, namely the zone name.  However, some
-	 * specialized logics, such as HiHat controllers, can map multiple samples
+	 * will just return a single string, namely the zone name.  However, some 
+	 * specialized logics, such as HiHat controllers, can map multiple samples 
 	 * to a single zone, to (for instance) use a splash, chic, etc.  
 	 * @return
 	 */

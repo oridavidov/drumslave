@@ -21,7 +21,7 @@ public class DrumSignal implements Runnable {
 		if (command == null)
 			return;
 
-//		System.out.println(command);
+		System.out.println(command);
 		String[] commands = command.split(";");
 		for (String command : commands) {
 			String[] signal = command.trim().split(":");
@@ -37,7 +37,7 @@ public class DrumSignal implements Runnable {
 					volume = rawVelocity / 1024;
 				
 				if (z != null){
-					System.out.println(z.getChannel() + ":" + volume);
+//					System.out.println(z.getChannel() + ":" + volume);
 					z.play(volume);
 				}
 			}			

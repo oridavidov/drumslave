@@ -68,9 +68,11 @@ public class HiHatControllerDigital extends Logic {
 				Sample sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), padName, LOGICAL_CHIC));
 				if (sample != null){
 					HiHatControllerAnalog analog = (HiHatControllerAnalog) Logic.getLogic(HiHatControllerAnalog.HIHAT_CONTROLLER_ANALOG_NAME);
-					float volume = analog.getAnalogValueByPad(padName);
-					logger.finer("Playing HiHat Chic at volume " + volume);
-					sample.play(volume, GainMapping.getPadGain(zone.getPad().getName()));
+					Float volume = analog.getAnalogValueByPad(padName);
+					if (volume != null){
+						logger.finer("Playing HiHat Chic at volume " + volume);
+						sample.play(volume, GainMapping.getPadGain(zone.getPad().getName()));
+					}
 				}
 			}
 		}

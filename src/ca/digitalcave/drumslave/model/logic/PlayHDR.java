@@ -27,6 +27,9 @@ public class PlayHDR extends Play {
 	private final Map<String, List<Float>> volumesByPad = new ConcurrentHashMap<String, List<Float>>();
 	protected final static Map<String, Long> lastPlayedTime = new ConcurrentHashMap<String, Long>();
 	
+	public final static String OPTION_HDR_LOGICAL_KEY_NAME = "HDR Logical Key Name";
+
+	
 	public PlayHDR(String name) {
 		super(name);
 	}
@@ -64,6 +67,13 @@ public class PlayHDR extends Play {
 			//Adjust the last played sample
 			sample.adjustLastVolume(getAdjustedValue(padName), GainMapping.getPadGain(padName));
 		}
+	}
+	
+	@Override
+	public List<LogicOption> getLogicOptions() {
+		List<LogicOption> logicOptions = super.getLogicOptions();
+		logicOptions.add(new LogicOption(LogicOptionType.OPTION_STRING, OPTION_HDR_LOGICAL_KEY_NAME, "<Name>"));
+		return logicOptions;
 	}
 	
 	
