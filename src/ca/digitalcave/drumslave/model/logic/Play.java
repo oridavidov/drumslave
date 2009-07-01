@@ -29,6 +29,7 @@ public class Play extends Logic {
 	
 	public final static String OPTION_ADDITIVE_VOLUME = "Additive Volume";
 	public final static String OPTION_DOUBLE_TRIGGER_THRESHOLD = "Double Trigger Threshold";
+	public final static String OPTION_HDR_LOGICAL_KEY_NAME = "HDR Logical Key Name";
 	
 	protected final long DEFAULT_DOUBLE_TRIGGER_THRESHOLD = 50;
 	
@@ -170,7 +171,17 @@ public class Play extends Logic {
 	
 	@Override
 	public List<String> getLogicalNames(Zone zone) {
-		return Collections.singletonList(zone.getName());
+		OptionMapping optionMapping = OptionMapping.getOptionMapping(zone.getPad().getName(), zone.getName());
+		String logicalName = null;
+		if (optionMapping != null){
+			logicalName = optionMapping.getOptions().get(OPTION_HDR_LOGICAL_KEY_NAME);
+		}
+		
+		//If there is no HDR key defined, fall back to the zone name.
+		if (logicalName == null)
+			logicalName = zone.getName();
+		
+		return Collections.singletonList(logicalName);
 	}
 	
 	@Override
@@ -180,6 +191,7 @@ public class Play extends Logic {
 		LogicOption doubleTrigger = new LogicOption(LogicOptionType.OPTION_INTEGER, OPTION_DOUBLE_TRIGGER_THRESHOLD, "DTT");
 		doubleTrigger.setDefaultValue(DEFAULT_DOUBLE_TRIGGER_THRESHOLD);
 		logicOptions.add(doubleTrigger);
+		logicOptions.add(new LogicOption(LogicOptionType.OPTION_STRING, OPTION_HDR_LOGICAL_KEY_NAME, "HDR Key"));
 		return logicOptions;
 	}
 }

@@ -1,6 +1,7 @@
 package ca.digitalcave.drumslave.model.logic;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,6 +10,7 @@ import java.util.logging.Logger;
 import ca.digitalcave.drumslave.model.audio.Sample;
 import ca.digitalcave.drumslave.model.hardware.Zone;
 import ca.digitalcave.drumslave.model.mapping.GainMapping;
+import ca.digitalcave.drumslave.model.options.OptionMapping;
 
 /**
  * HDR Play implements play functionality for groups of zones, whose sensors act
@@ -74,6 +76,16 @@ public class PlayHDR extends Play {
 		List<LogicOption> logicOptions = super.getLogicOptions();
 		logicOptions.add(new LogicOption(LogicOptionType.OPTION_STRING, OPTION_HDR_LOGICAL_KEY_NAME, "<Name>"));
 		return logicOptions;
+	}
+	
+	@Override
+	public List<String> getLogicalNames(Zone zone) {
+		OptionMapping optionMapping = OptionMapping.getOptionMapping(zone.getPad().getName(), zone.getName());
+		if (optionMapping != null){
+			return Collections.singletonList(optionMapping.getOptions().get(OPTION_HDR_LOGICAL_KEY_NAME));
+		}
+		//If there is no HDR key defined, don't return anything.
+		return new ArrayList<String>();
 	}
 	
 	

@@ -71,7 +71,9 @@ public class SampleEditor extends MossDialog implements ActionListener {
 						Logic logic = Logic.getLogic(logicName);
 						if (logic != null){						
 							for (String logicalName : logic.getLogicalNames(zone)) {
-								sampleMappings.get(sampleConfigName).get(pad.getName()).put(logicalName, SampleMapping.getSampleMapping(sampleConfigName, pad.getName(), logicalName));
+								if (logicalName != null){
+									sampleMappings.get(sampleConfigName).get(pad.getName()).put(logicalName, SampleMapping.getSampleMapping(sampleConfigName, pad.getName(), logicalName));
+								}
 							}
 						}
 					}				

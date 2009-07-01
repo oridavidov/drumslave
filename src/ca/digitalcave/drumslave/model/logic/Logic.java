@@ -131,7 +131,8 @@ public abstract class Logic {
 	 * are, which will be used to map samples to.  Most logic implementations
 	 * will just return a single string, namely the zone name.  However, some 
 	 * specialized logics, such as HiHat controllers, can map multiple samples 
-	 * to a single zone, to (for instance) use a splash, chic, etc.  
+	 * to a single zone, to (for instance) use a splash, chic, etc.  Samples will
+	 * be mapped to the string logical name.   
 	 * @return
 	 */
 	public abstract List<String> getLogicalNames(Zone zone);

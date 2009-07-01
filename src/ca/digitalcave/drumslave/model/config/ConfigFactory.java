@@ -16,7 +16,6 @@ import ca.digitalcave.drumslave.model.logic.HiHatControllerDigital;
 import ca.digitalcave.drumslave.model.logic.LogicConfigManager;
 import ca.digitalcave.drumslave.model.logic.Mute;
 import ca.digitalcave.drumslave.model.logic.Play;
-import ca.digitalcave.drumslave.model.logic.PlayHDR;
 import ca.digitalcave.drumslave.model.logic.PlayHiHat;
 import ca.digitalcave.drumslave.model.logic.PlaySecondary;
 import ca.digitalcave.drumslave.model.mapping.GainMappingConfigManager;
@@ -120,7 +119,7 @@ public class ConfigFactory {
 				logger.info("Couldn't find logic config file; adding known defaults.  You can manually edit the resulting logic.xml file if you want to add custom logic.");
 				
 				new Play("Play");
-				new PlayHDR("Play HDR");
+//				new PlayHDR("Play HDR");
 				new PlaySecondary("Play Secondary");
 				new PlayHiHat("Play Hi-Hat");
 				new Mute("Mute");

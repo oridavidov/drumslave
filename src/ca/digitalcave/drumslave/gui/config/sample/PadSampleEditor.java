@@ -4,9 +4,12 @@ import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 
 import org.homeunix.thecave.moss.swing.MossPanel;
 
@@ -48,6 +51,7 @@ public class PadSampleEditor extends MossPanel {
 		
 		if (pad != null){
 			List<Zone> zones = new ArrayList<Zone>(pad.getZones());
+			Set<String> logicalNames = new TreeSet<String>();
 			Collections.sort(zones);
 			for (Zone zone : zones) {
 				String logicName = LogicMapping.getLogicMapping(zone.getPad().getName(), zone.getName());
@@ -55,12 +59,24 @@ public class PadSampleEditor extends MossPanel {
 					Logic logic = Logic.getLogic(logicName);
 					if (logic != null){
 						for (String logicalName : logic.getLogicalNames(zone)) {
-							this.add(new ZoneSampleEditor(zone.getPad(), logicalName, sampleEditor, padChooser, matchSampleNamesToPad));					
+							if (logicalName != null){
+								logicalNames.add(logicalName);
+							}
 						}
 					}
 				}
 			}
+			
+			for (String logicalName : logicalNames) {
+				this.add(new ZoneSampleEditor(pad, logicalName, sampleEditor, padChooser, matchSampleNamesToPad));								
+			}
+			
+			if (logicalNames.size() == 0){
+				JLabel noLogicalSamplesMessage = new JLabel("<html>There were no logical sample names defined; perhaps you have not configured any<br>Play-style logic for the pad? (Mute and other silent logics will not include logical<br>sample mappings in this list)</html>");
+				this.add(noLogicalSamplesMessage);
+			}
 		}
+		
 	}
 	
 	public void setPad(Pad pad) {
