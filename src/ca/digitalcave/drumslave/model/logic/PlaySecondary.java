@@ -45,8 +45,8 @@ public class PlaySecondary extends Play {
 			}
 		}
 		
-		long lastPlayTime = (lastPlayedTimePad.get(zone.getPad()) != null ? lastPlayedTimePad.get(zone.getPad()) : 0);
-		float lastPlayVelocity = (lastPlayedVelocityPad.get(zone.getPad()) != null ? lastPlayedVelocityPad.get(zone.getPad()) : 0);
+		long lastPlayTime = (lastPlayedTimeByPad.get(zone.getPad()) != null ? lastPlayedTimeByPad.get(zone.getPad()) : 0);
+		float lastPlayVelocity = (lastPlayedVelocityByPad.get(zone.getPad()) != null ? lastPlayedVelocityByPad.get(zone.getPad()) : 0);
 		if (lastPlayTime + SECONDARY_TIME_THRESHOLD > System.currentTimeMillis()){
 			if (rawValue > SECONDARY_VELOCITY_THRESHOLD){
 				//Stop the last sample on the primary pad if it is available 

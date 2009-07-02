@@ -15,6 +15,7 @@ import ca.digitalcave.drumslave.model.audio.Sample;
 import ca.digitalcave.drumslave.model.hardware.Pad;
 import ca.digitalcave.drumslave.model.hardware.Zone;
 import ca.digitalcave.drumslave.model.mapping.GainMapping;
+import ca.digitalcave.drumslave.model.mapping.LogicMapping;
 import ca.digitalcave.drumslave.model.mapping.SampleMapping;
 import ca.digitalcave.drumslave.model.options.OptionMapping;
 
@@ -22,16 +23,20 @@ public class Play extends Logic {
 
 	private final Logger logger = Logger.getLogger(this.getClass().getName());
 
-	protected final static Map<Zone, Long> lastPlayedTimeZone = new ConcurrentHashMap<Zone, Long>();
-	protected final static Map<Pad, Long> lastPlayedTimePad = new ConcurrentHashMap<Pad, Long>();
-	protected final static Map<Zone, Float> lastPlayedVelocityZone = new ConcurrentHashMap<Zone, Float>();
-	protected final static Map<Pad, Float> lastPlayedVelocityPad = new ConcurrentHashMap<Pad, Float>();
+	protected final static Map<Zone, Long> lastPlayedTimeByZone = new ConcurrentHashMap<Zone, Long>();
+	protected final static Map<Pad, Long> lastPlayedTimeByPad = new ConcurrentHashMap<Pad, Long>();
+	protected final static Map<String, Long> lastPlayedTimeByHDRKey = new ConcurrentHashMap<String, Long>();
+	protected final static Map<Zone, Float> lastPlayedVelocityByZone = new ConcurrentHashMap<Zone, Float>();
+	protected final static Map<Pad, Float> lastPlayedVelocityByPad = new ConcurrentHashMap<Pad, Float>();
+	protected final static Map<String, List<Float>> recentPlayedVelocityByHDRKey = new ConcurrentHashMap<String, List<Float>>();
+//	protected final static Map<String, Float> lastPlayedVelocityByHDRKey = new ConcurrentHashMap<String, Float>();
 	
 	public final static String OPTION_ADDITIVE_VOLUME = "Additive Volume";
 	public final static String OPTION_DOUBLE_TRIGGER_THRESHOLD = "Double Trigger Threshold";
 	public final static String OPTION_HDR_LOGICAL_KEY_NAME = "HDR Logical Key Name";
 	
 	protected final long DEFAULT_DOUBLE_TRIGGER_THRESHOLD = 50;
+	protected final long DEFAULT_HDR_TRIGGER_THRESHOLD = 50;
 	
 	protected final Executor executor = new ThreadPoolExecutor(5, 10, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 
@@ -40,16 +45,19 @@ public class Play extends Logic {
 	}
 
 	public void execute(Zone zone, float rawValue) {
-		//See if there are any zone-specific overrides for double trigger
+		long currentTime = System.currentTimeMillis();
+		
+		//See if there are any zone-specific overrides for various logic options
 		long doubleTriggerThreshold = getDoubleTriggerThreshold(zone);
+		boolean additiveVolume = isAdditiveVolume(zone);
+		String hdrKey = getHDRKey(zone);
 		
 		//Check that this is not a double hit; we only want to play this if it
 		// has been more than DOUBLE_TRIGGER_THRESHOLD (millis) since the last hit
-		if (lastPlayedTimeZone.get(zone) == null 
-				|| lastPlayedTimeZone.get(zone) + doubleTriggerThreshold < System.currentTimeMillis()){
+		if (lastPlayedTimeByZone.get(zone) == null 
+				|| lastPlayedTimeByZone.get(zone) + doubleTriggerThreshold < currentTime){
 			
-			//See if this zone uses additive volume; if so, calculate the adjustment
-			boolean additiveVolume = isAdditiveVolume(zone);
+			//If this zone uses additive volume, calculate the adjustment			
 			if (additiveVolume){
 				float volumeAdjustment = getAdditiveVolumeAdjustment(zone);
 				System.out.println(volumeAdjustment);
@@ -58,11 +66,39 @@ public class Play extends Logic {
 					rawValue = Math.min(1, Math.max(0, rawValue));
 				}
 			}
+
+			//If the HDR key is set, we can either adjust volume based on recent hits 
+			if (hdrKey != null){
+				Long lastPlayedTimeHDR = lastPlayedTimeByHDRKey.get(hdrKey);
+				List<Float> recentVelocities = recentPlayedVelocityByHDRKey.get(hdrKey);
+				if (lastPlayedTimeHDR != null && recentVelocities != null && recentVelocities.size() > 0){
+					logger.fine("Adjusting volume levels");
+					recentPlayedVelocityByHDRKey.get(hdrKey).add(rawValue);
+					
+					Sample sample = getSample(zone);
+
+					//Adjust the last played sample
+					sample.adjustLastVolume(getHDRAdjustedValue(hdrKey), GainMapping.getPadGain(zone.getPad().getName()));
+
+				}
+			}
 			
-			lastPlayedTimeZone.put(zone, System.currentTimeMillis());
-			lastPlayedTimePad.put(zone.getPad(), System.currentTimeMillis());
-			lastPlayedVelocityZone.put(zone, rawValue);
-			lastPlayedVelocityPad.put(zone.getPad(), rawValue);
+
+			
+			lastPlayedTimeByZone.put(zone, currentTime);
+			lastPlayedTimeByPad.put(zone.getPad(), currentTime);
+			lastPlayedVelocityByZone.put(zone, rawValue);
+			lastPlayedVelocityByPad.put(zone.getPad(), rawValue);
+			
+			//Reset the HDR values if this has taken too long.
+			if (hdrKey != null){
+				if (recentPlayedVelocityByHDRKey.get(hdrKey) == null 
+						|| lastPlayedTimeByHDRKey.get(hdrKey) == null
+						|| lastPlayedTimeByHDRKey.get(hdrKey) + DEFAULT_HDR_TRIGGER_THRESHOLD < currentTime)
+					recentPlayedVelocityByHDRKey.put(hdrKey, new ArrayList<Float>());
+				recentPlayedVelocityByHDRKey.get(hdrKey).add(rawValue);
+				lastPlayedTimeByHDRKey.put(hdrKey, currentTime);
+			}
 			
 			executor.execute(new PlayThread(zone, rawValue));
 		}
@@ -103,11 +139,11 @@ public class Play extends Logic {
 	 * @return
 	 */
 	protected float getAdditiveVolumeAdjustment(Zone zone){
-		if (lastPlayedTimePad.get(zone.getPad()) == null)
+		if (lastPlayedTimeByPad.get(zone.getPad()) == null)
 			return 1f;
 		
 //		float lastVolume = lastPlayedVelocityZone.get(zone);
-		long timeDifference = System.currentTimeMillis() - lastPlayedTimePad.get(zone.getPad());
+		long timeDifference = System.currentTimeMillis() - lastPlayedTimeByPad.get(zone.getPad());
 		return (float) (SLOPE / (timeDifference + SLOPE) - ((timeDifference / FALLOFF) * (timeDifference / FALLOFF)) + 1);
 	}
 	
@@ -133,6 +169,40 @@ public class Play extends Logic {
 		
 		return additiveVolume;
 	}
+	
+	/**
+	 * Returns the HDR key.  This is the internal key, and to avoid confusion with
+	 * multiple pads with the same key, we prepend the key with the pad name.
+	 * @param zone
+	 * @return
+	 */
+	protected String getHDRKey(Zone zone){
+		OptionMapping om = OptionMapping.getOptionMapping(zone.getPad().getName(), zone.getName());
+		if (om != null){
+			String hdrKey = om.getOptions().get(OPTION_HDR_LOGICAL_KEY_NAME);
+			if (hdrKey != null && hdrKey.length() > 0){
+				return zone.getPad().getName() + ":" + hdrKey;
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Returns the adjusted value, based on all available data points.
+	 * @param padName
+	 * @return
+	 */
+	private float getHDRAdjustedValue(String hdrKey){
+		//Currently this is implemented as a simple average.  Perhaps later we 
+		// can adjust this based on weight, etc.
+		float total = 0;
+		for (Float value : recentPlayedVelocityByHDRKey.get(hdrKey)) {
+			total = total + value;
+		}
+		logger.finer("Volume adjusted to " + total + "/" + recentPlayedVelocityByHDRKey.get(hdrKey).size());
+		return total / recentPlayedVelocityByHDRKey.get(hdrKey).size();
+	}
 
 	protected class PlayThread implements Runnable  { 
 		public static final long serialVersionUID = 0l;
@@ -157,7 +227,18 @@ public class Play extends Logic {
 	
 	protected Sample getSample(Zone zone){
 		//Verify there is a sample mapped to the zone
-		String sampleName = SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), zone.getPad().getName(), zone.getName());
+		String sampleName = null;
+		String logicName = LogicMapping.getLogicMapping(zone.getPad().getName(), zone.getName());
+		Logic logic = Logic.getLogic(logicName);
+		if (logic != null){
+			//We return the first sample name which is mapped.  Is it possible that
+			// there are multiple logical sample names for a given zone?
+			for (String logicalSampleName : logic.getLogicalNames(zone)) {
+				sampleName = SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), zone.getPad().getName(), logicalSampleName);
+				if (sampleName != null)
+					break;
+			}
+		}
 		if (sampleName == null){
 			logger.warning("No sample name is mapped to " + zone.getPad().getName() + ":" + zone.getName());
 			return null;

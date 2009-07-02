@@ -25,6 +25,8 @@ public class SampleMapping {
 	private static String selectedSampleGroup = DEFAULT_SAMPLE_GROUP;
 	private static Object mutex = new Object();
 
+	//***Sample Group methods*** 
+	
 	public static Set<String> getSampleGroups(){
 		if (sampleMappings.keySet().size() == 0)
 			addSampleGroup(getSelectedSampleGroup());
@@ -90,7 +92,7 @@ public class SampleMapping {
 	
 	
 	
-	
+	//***Sample Mapping methods***
 	
 	
 
@@ -141,10 +143,6 @@ public class SampleMapping {
 		addSampleMapping(getSelectedSampleGroup(), padName, logicalName, sampleName);
 	}
 
-//	public static String getSampleMapping(String padName, String zoneName){
-//		return getSampleMapping(getSelectedSampleGroup(), padName, zoneName);
-//	}
-	
 	public static void addSampleMapping(String sampleGroupName, String padName, String logicalName, String sampleName){
 		if (padName == null || logicalName == null || sampleName == null)
 			throw new RuntimeException("None of padName, logicalName, sampleName can be null");
