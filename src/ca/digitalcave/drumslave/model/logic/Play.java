@@ -26,10 +26,8 @@ public class Play extends Logic {
 	protected final static Map<Zone, Long> lastPlayedTimeByZone = new ConcurrentHashMap<Zone, Long>();
 	protected final static Map<Pad, Long> lastPlayedTimeByPad = new ConcurrentHashMap<Pad, Long>();
 	protected final static Map<String, Long> lastPlayedTimeByHDRKey = new ConcurrentHashMap<String, Long>();
-	protected final static Map<Zone, Float> lastPlayedVelocityByZone = new ConcurrentHashMap<Zone, Float>();
 	protected final static Map<Pad, Float> lastPlayedVelocityByPad = new ConcurrentHashMap<Pad, Float>();
 	protected final static Map<String, List<Float>> recentPlayedVelocityByHDRKey = new ConcurrentHashMap<String, List<Float>>();
-//	protected final static Map<String, Float> lastPlayedVelocityByHDRKey = new ConcurrentHashMap<String, Float>();
 	
 	public final static String OPTION_ADDITIVE_VOLUME = "Additive Volume";
 	public final static String OPTION_DOUBLE_TRIGGER_THRESHOLD = "Double Trigger Threshold";
@@ -87,7 +85,7 @@ public class Play extends Logic {
 			
 			lastPlayedTimeByZone.put(zone, currentTime);
 			lastPlayedTimeByPad.put(zone.getPad(), currentTime);
-			lastPlayedVelocityByZone.put(zone, rawValue);
+//			lastPlayedVelocityByZone.put(zone, rawValue);
 			lastPlayedVelocityByPad.put(zone.getPad(), rawValue);
 			
 			//Reset the HDR values if this has taken too long.

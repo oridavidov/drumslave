@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="lib/moss-common-2.0.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/quaqua-4.4.7.jar"/>
 	<classpathentry kind="lib" path="lib/moss-swing-2.0.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/moss-collections-2.0.1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

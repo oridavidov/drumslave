@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import ca.digitalcave.drumslave.model.audio.Sample;
+import ca.digitalcave.drumslave.model.hardware.Pad;
 import ca.digitalcave.drumslave.model.hardware.Zone;
 import ca.digitalcave.drumslave.model.mapping.GainMapping;
 import ca.digitalcave.drumslave.model.mapping.SampleMapping;
@@ -23,68 +24,106 @@ import ca.digitalcave.drumslave.model.mapping.SampleMapping;
 public class HiHatControllerDigital extends Logic {
 
 	private final Logger logger = Logger.getLogger(this.getClass().getName());
-	private final Map<String, Long> lastTimeByPad = new ConcurrentHashMap<String, Long>();
-	private final Map<String, Boolean> openValueByPad = new ConcurrentHashMap<String, Boolean>();
-//	private final Map<String, Long> lastClosedTimeByPad = new ConcurrentHashMap<String, Long>();
+	private final Map<Pad, Long> lastStateChangeTimeByPad = new ConcurrentHashMap<Pad, Long>();
+	private final Map<Pad, Boolean> currentStateByPad = new ConcurrentHashMap<Pad, Boolean>();
+	private final Map<Pad, Long> lastChicPlayedTimeByPad = new ConcurrentHashMap<Pad, Long>();
+	private final Map<Pad, Long> lastSplashPlayedTimeByPad = new ConcurrentHashMap<Pad, Long>();
+	
+//	private final static Map<Pad, HiHatControllerDigital> hiHatControllerDigitalLogicsByPad = new ConcurrentHashMap<Pad, HiHatControllerDigital>();
+//
+//	public static HiHatControllerDigital getHiControllerDigital(Pad pad){
+//		if (pad == null)
+//			return null;
+//		return hiHatControllerDigitalLogicsByPad.get(pad);
+//	}
+
 	
 	private final static String LOGICAL_CHIC = "Chic";
 	private final static String LOGICAL_SPLASH = "Splash";
+	 
+	private static final long CHIC_SAMPLE_DEBOUNCE_PERIOD = 150; //in ms.
 	
-//	private final static Map<String, HiHatControllerDigital> logicByPadName = new ConcurrentHashMap<String, HiHatControllerDigital>();
-//	
-//	public final static HiHatControllerDigital getHiHatControllerDigital(String padName){
-//		if (padName == null)
-//			return null;
-//		return logicByPadName.get(padName);
-//	}
-	
-	private static final long CHIC_SAMPLE_DEBOUNCE_PERIOD = 100; //in ms.
+	//For the sample to play, it must have 
+	private static final long SPLASH_SAMPLE_DEBOUNCE_PERIOD = 15; 
+	private static final long SPLASH_SAMPLE_THRESHOLD = 75; //How soon after a close should it be open to play splash
 	
 	//This is initialized the first time the HiHat Controller is instantiated.
-	//TODO This will only let there be one HiHatControllerAnalog.  Is this right?
-	static String HIHAT_CONTROLLER_DIGITAL_NAME;
+	//TODO This will only let there be one HiHatControllerDigital.  Is this right?
+	static String HIHAT_CONTROLLER_DIGITAL_NAME = null;
 	
 	public HiHatControllerDigital(String name) {
 		super(name);
+		if (HIHAT_CONTROLLER_DIGITAL_NAME != null)
+			throw new RuntimeException("You cannot have HiHatControllerDigital logic assigned to multiple zones.");
 		HIHAT_CONTROLLER_DIGITAL_NAME = name;
+//		hiHatControllerDigitalLogicsByPad.put(LogicMapping.getLogicMapping(padName, zoneName)key, value)
 	}
 	
 	public void execute(Zone zone, float rawValue) {
-		String padName = zone.getPad().getName();
-		openValueByPad.put(padName, rawValue > 0.5f);
-		if (lastTimeByPad.get(padName) == null)
-			lastTimeByPad.put(padName, 0l);
+		long currentTime = System.currentTimeMillis();
+//		String padName = zone.getPad().getName();
+		currentStateByPad.put(zone.getPad(), rawValue > 0.5f);
+		if (lastStateChangeTimeByPad.get(zone.getPad()) == null)
+			lastStateChangeTimeByPad.put(zone.getPad(), 0l);
+		if (lastChicPlayedTimeByPad.get(zone.getPad()) == null)
+			lastChicPlayedTimeByPad.put(zone.getPad(), 0l);
+		if (lastSplashPlayedTimeByPad.get(zone.getPad()) == null)
+			lastSplashPlayedTimeByPad.put(zone.getPad(), 0l);
 		
+		//Since the values come in as floats, we do less / greater than 0.5 to avoid
+		// exact comparison errors; of course, these will always be 0.0 or 1.0, since
+		// this must be hooked up to a digital channel.
 		if (rawValue < 0.5f){
-			logger.finest(padName + " opened");
-		}
-		else{
-			logger.finest(padName + " closed");
-			//If the HH is closed, we want to be sure that all non-closed sounds stop.
-			zone.getPad().stop(10, LOGICAL_CHIC, zone.getName() + PlayHiHat.LOGICAL_TIGHT, zone.getName() + PlayHiHat.LOGICAL_CLOSED);
-			if (lastTimeByPad.get(padName) + CHIC_SAMPLE_DEBOUNCE_PERIOD < System.currentTimeMillis()){
-				zone.getPad().stop(10, LOGICAL_CHIC);
-			
-				Sample sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), padName, LOGICAL_CHIC));
+			logger.finest(zone.getPad().getName() + " opened");
+			//If the HH has just been closed and is now open (far enough), we will
+			// play the splash sample
+			if (lastStateChangeTimeByPad.get(zone.getPad()) + SPLASH_SAMPLE_THRESHOLD > currentTime
+					&& lastSplashPlayedTimeByPad.get(zone.getPad()) + SPLASH_SAMPLE_DEBOUNCE_PERIOD < currentTime){
+				zone.getPad().stop(10, LOGICAL_SPLASH);
+				Sample sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), zone.getPad().getName(), LOGICAL_SPLASH));
 				if (sample != null){
 					HiHatControllerAnalog analog = (HiHatControllerAnalog) Logic.getLogic(HiHatControllerAnalog.HIHAT_CONTROLLER_ANALOG_NAME);
-					Float volume = analog.getAnalogValueByPad(padName);
+					//Technically the 'closed' argument to get the velocity should be false, as by the time
+					// this is called, it will already be open.  However, we know that it was *just* closed,
+					// and by assuming that it was, we avoid the situation where we mis-read the analog values
+					// because they are moving too fast (i.e., pedal started at open, and was slammed shut
+					// and re-opened before the controller could see the value of the closed state).
+					Float volume = analog.getAnalogVelocityByPad(zone.getPad(), true);
+					if (volume != null){
+						logger.finer("Playing HiHat Splash at volume " + volume);
+						sample.play(volume, GainMapping.getPadGain(zone.getPad().getName()));
+					}
+				}
+			}
+		}
+		else{
+			logger.finest(zone.getPad().getName() + " closed");
+			//If the HH is closed, we want to be sure that all non-closed sounds stop.
+			zone.getPad().stop(10, LOGICAL_CHIC, zone.getName() + PlayHiHat.LOGICAL_TIGHT, zone.getName() + PlayHiHat.LOGICAL_CLOSED);
+			if (lastChicPlayedTimeByPad.get(zone.getPad()) + CHIC_SAMPLE_DEBOUNCE_PERIOD < currentTime){
+				zone.getPad().stop(10, LOGICAL_CHIC, LOGICAL_SPLASH);
+			
+				Sample sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), zone.getPad().getName(), LOGICAL_CHIC));
+				if (sample != null){
+					HiHatControllerAnalog analog = (HiHatControllerAnalog) Logic.getLogic(HiHatControllerAnalog.HIHAT_CONTROLLER_ANALOG_NAME);
+					Float volume = analog.getAnalogVelocityByPad(zone.getPad(), true);
 					if (volume != null){
 						logger.finer("Playing HiHat Chic at volume " + volume);
 						sample.play(volume, GainMapping.getPadGain(zone.getPad().getName()));
+						lastChicPlayedTimeByPad.put(zone.getPad(), currentTime);
 					}
 				}
 			}
 		}
 		
 		//Keep track of the time
-		lastTimeByPad.put(padName, System.currentTimeMillis());
+		lastStateChangeTimeByPad.put(zone.getPad(), currentTime);
 	}
 	
-	public boolean isClosedByPad(String padName){
-		if (openValueByPad.get(padName) == null)
+	public boolean isClosedByPad(Pad pad){
+		if (currentStateByPad.get(pad) == null)
 			return false;
-		return openValueByPad.get(padName);
+		return currentStateByPad.get(pad);
 	}
 	
 	@Override

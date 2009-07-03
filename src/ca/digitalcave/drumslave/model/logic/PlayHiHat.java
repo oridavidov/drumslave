@@ -34,28 +34,26 @@ public class PlayHiHat extends Play {
 	}
 	
 	public void execute(Zone zone, float rawValue) {
-		String padName = zone.getPad().getName();
-		
 		HiHatControllerAnalog analog = (HiHatControllerAnalog) Logic.getLogic(HiHatControllerAnalog.HIHAT_CONTROLLER_ANALOG_NAME);
 		HiHatControllerDigital digital = (HiHatControllerDigital) Logic.getLogic(HiHatControllerDigital.HIHAT_CONTROLLER_DIGITAL_NAME);
-		Float analogValue = analog.getAnalogValueByPad(padName);
-		boolean isClosed = digital.isClosedByPad(padName);
+		Float analogValue = analog.getAnalogValueByPad(zone.getPad());
+		boolean isClosed = digital.isClosedByPad(zone.getPad());
 		
 		if (analogValue == null)
 			return;
 		
 		Sample sample = null;
 		if (isClosed){
-			sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), padName, zone.getName() + LOGICAL_TIGHT));
+			sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), zone.getPad().getName(), zone.getName() + LOGICAL_TIGHT));
 		}
 		else if (analogValue > 0.95f){
-			sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), padName, zone.getName() + LOGICAL_OPEN));
+			sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), zone.getPad().getName(), zone.getName() + LOGICAL_OPEN));
 		}
 		else if (analogValue > 0.3f){
-			sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), padName, zone.getName() + LOGICAL_LOOSE));
+			sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), zone.getPad().getName(), zone.getName() + LOGICAL_LOOSE));
 		}
 		else {
-			sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), padName, zone.getName() + LOGICAL_CLOSED));
+			sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), zone.getPad().getName(), zone.getName() + LOGICAL_CLOSED));
 		}
 		
 		if (sample != null){
