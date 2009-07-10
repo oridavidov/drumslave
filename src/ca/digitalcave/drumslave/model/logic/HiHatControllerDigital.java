@@ -41,11 +41,10 @@ public class HiHatControllerDigital extends Logic {
 	private final static String LOGICAL_CHIC = "Chic";
 	private final static String LOGICAL_SPLASH = "Splash";
 	 
-	private static final long CHIC_SAMPLE_DEBOUNCE_PERIOD = 150; //in ms.
+	private static final long CHIC_SAMPLE_DEBOUNCE_PERIOD = 250; //in ms.
 	
-	//For the sample to play, it must have 
-	private static final long SPLASH_SAMPLE_DEBOUNCE_PERIOD = 15; 
-	private static final long SPLASH_SAMPLE_THRESHOLD = 75; //How soon after a close should it be open to play splash
+	private static final long SPLASH_SAMPLE_DEBOUNCE_PERIOD = 100; //If the open was less than this after a close, chances are it is from switch bouncing  
+	private static final long SPLASH_SAMPLE_THRESHOLD = 300; //How soon after a close should it be open to play splash
 	
 	//This is initialized the first time the HiHat Controller is instantiated.
 	//TODO This will only let there be one HiHatControllerDigital.  Is this right?
@@ -74,7 +73,7 @@ public class HiHatControllerDigital extends Logic {
 		// exact comparison errors; of course, these will always be 0.0 or 1.0, since
 		// this must be hooked up to a digital channel.
 		if (rawValue < 0.5f){
-			logger.finest(zone.getPad().getName() + " opened");
+			logger.finest(zone.getPad().getName() + " opened at " + currentTime);
 			//If the HH has just been closed and is now open (far enough), we will
 			// play the splash sample
 			if (lastStateChangeTimeByPad.get(zone.getPad()) + SPLASH_SAMPLE_THRESHOLD > currentTime
@@ -89,7 +88,7 @@ public class HiHatControllerDigital extends Logic {
 					// because they are moving too fast (i.e., pedal started at open, and was slammed shut
 					// and re-opened before the controller could see the value of the closed state).
 					Float volume = analog.getAnalogVelocityByPad(zone.getPad(), true);
-					if (volume != null){
+					if (volume != null && volume > 0.5f){
 						logger.finer("Playing HiHat Splash at volume " + volume);
 						sample.play(volume, GainMapping.getPadGain(zone.getPad().getName()));
 					}
@@ -97,11 +96,11 @@ public class HiHatControllerDigital extends Logic {
 			}
 		}
 		else{
-			logger.finest(zone.getPad().getName() + " closed");
+			logger.finest(zone.getPad().getName() + " closed at " + currentTime);
 			//If the HH is closed, we want to be sure that all non-closed sounds stop.
-			zone.getPad().stop(10, LOGICAL_CHIC, zone.getName() + PlayHiHat.LOGICAL_TIGHT, zone.getName() + PlayHiHat.LOGICAL_CLOSED);
+			zone.getPad().stop(10, LOGICAL_CHIC, LOGICAL_SPLASH, zone.getName() + PlayHiHat.LOGICAL_TIGHT, zone.getName() + PlayHiHat.LOGICAL_CLOSED);
 			if (lastChicPlayedTimeByPad.get(zone.getPad()) + CHIC_SAMPLE_DEBOUNCE_PERIOD < currentTime){
-				zone.getPad().stop(10, LOGICAL_CHIC, LOGICAL_SPLASH);
+				zone.getPad().stop(10, LOGICAL_CHIC);
 			
 				Sample sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), zone.getPad().getName(), LOGICAL_CHIC));
 				if (sample != null){

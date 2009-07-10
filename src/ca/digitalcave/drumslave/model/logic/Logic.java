@@ -66,6 +66,7 @@ public abstract class Logic {
 		// needed.
 		private float maxValue;
 		private float minValue;
+		private int rangeSteps;
 		private float defaultValue;
 //		private float floatValue;
 //		private boolean boolValue;
@@ -103,6 +104,12 @@ public abstract class Logic {
 		}
 		public void setDefaultValue(float defaultValue) {
 			this.defaultValue = defaultValue;
+		}
+		public int getRangeSteps() {
+			return rangeSteps;
+		}
+		public void setRangeSteps(int rangeStep) {
+			this.rangeSteps = rangeStep;
 		}
 //		public float getFloatValue() {
 //			return floatValue;

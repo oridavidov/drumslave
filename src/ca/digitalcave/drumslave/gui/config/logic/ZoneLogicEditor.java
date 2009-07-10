@@ -12,6 +12,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -126,6 +127,27 @@ public class ZoneLogicEditor extends MossPanel implements ActionListener {
 						});
 					}
 					
+					else if (logicOption.getLogicOptionType().equals(LogicOptionType.OPTION_RANGE)){
+						final JSlider slider = new JSlider(
+								(int) (logicOption.getMinValue() * logicOption.getRangeSteps()), 
+								(int) (logicOption.getMaxValue() * logicOption.getRangeSteps()));
+						try {
+							slider.setValue((int) (logicOption.getRangeSteps() * Float.parseFloat(logicEditor.getLogicOption(zone.getPad().getName(), zone.getName(), logicOption.getName()))));
+						}
+						catch (RuntimeException re){
+							slider.setValue((int) (logicOption.getDefaultValue() * logicOption.getRangeSteps()));
+						}
+						JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+						panel.add(slider);
+						panel.add(new JLabel(logicOption.getShortName()));
+						component = panel;
+						slider.addChangeListener(new ChangeListener(){
+							public void stateChanged(ChangeEvent e) {
+								logicEditor.setLogicOption(zone.getPad().getName(), zone.getName(), logicOptionFinal.getName(), (slider.getValue() / (float) logicOptionFinal.getRangeSteps()) + "");
+							}
+						});
+						
+					}
 					//TODO add other option types here
 
 					if (component != null)

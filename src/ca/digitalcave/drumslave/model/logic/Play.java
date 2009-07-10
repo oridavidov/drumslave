@@ -27,6 +27,7 @@ public class Play extends Logic {
 	protected final static Map<Pad, Long> lastPlayedTimeByPad = new ConcurrentHashMap<Pad, Long>();
 	protected final static Map<String, Long> lastPlayedTimeByHDRKey = new ConcurrentHashMap<String, Long>();
 	protected final static Map<Pad, Float> lastPlayedVelocityByPad = new ConcurrentHashMap<Pad, Float>();
+	protected final static Map<Pad, Zone> lastPlayedZoneByPad = new ConcurrentHashMap<Pad, Zone>();
 	protected final static Map<String, List<Float>> recentPlayedVelocityByHDRKey = new ConcurrentHashMap<String, List<Float>>();
 	
 	public final static String OPTION_ADDITIVE_VOLUME = "Additive Volume";
@@ -52,57 +53,69 @@ public class Play extends Logic {
 		
 		//Check that this is not a double hit; we only want to play this if it
 		// has been more than DOUBLE_TRIGGER_THRESHOLD (millis) since the last hit
-		if (lastPlayedTimeByZone.get(zone) == null 
-				|| lastPlayedTimeByZone.get(zone) + doubleTriggerThreshold < currentTime){
-			
-			//If this zone uses additive volume, calculate the adjustment			
-			if (additiveVolume){
-				float volumeAdjustment = getAdditiveVolumeAdjustment(zone);
-				System.out.println(volumeAdjustment);
-				if (volumeAdjustment > 1){
-					rawValue = rawValue * volumeAdjustment;
-					rawValue = Math.min(1, Math.max(0, rawValue));
-				}
-			}
-
-			//If the HDR key is set, we can either adjust volume based on recent hits 
-			if (hdrKey != null){
-				Long lastPlayedTimeHDR = lastPlayedTimeByHDRKey.get(hdrKey);
-				List<Float> recentVelocities = recentPlayedVelocityByHDRKey.get(hdrKey);
-				if (lastPlayedTimeHDR != null && recentVelocities != null && recentVelocities.size() > 0){
-					logger.fine("Adjusting volume levels");
-					recentPlayedVelocityByHDRKey.get(hdrKey).add(rawValue);
-					
-					Sample sample = getSample(zone);
-
-					//Adjust the last played sample
-					sample.adjustLastVolume(getHDRAdjustedValue(hdrKey), GainMapping.getPadGain(zone.getPad().getName()));
-
-				}
-			}
-			
-
-			
-			lastPlayedTimeByZone.put(zone, currentTime);
-			lastPlayedTimeByPad.put(zone.getPad(), currentTime);
-//			lastPlayedVelocityByZone.put(zone, rawValue);
-			lastPlayedVelocityByPad.put(zone.getPad(), rawValue);
-			
-			//Reset the HDR values if this has taken too long.
-			if (hdrKey != null){
-				if (recentPlayedVelocityByHDRKey.get(hdrKey) == null 
-						|| lastPlayedTimeByHDRKey.get(hdrKey) == null
-						|| lastPlayedTimeByHDRKey.get(hdrKey) + DEFAULT_HDR_TRIGGER_THRESHOLD < currentTime)
-					recentPlayedVelocityByHDRKey.put(hdrKey, new ArrayList<Float>());
-				recentPlayedVelocityByHDRKey.get(hdrKey).add(rawValue);
-				lastPlayedTimeByHDRKey.put(hdrKey, currentTime);
-			}
-			
-			executor.execute(new PlayThread(zone, rawValue));
-		}
-		else {
+		if (lastPlayedTimeByZone.get(zone) != null 
+				&& lastPlayedTimeByZone.get(zone) + doubleTriggerThreshold > currentTime){
 			logger.fine("Ignoring double trigger");
+			return;
 		}
+		
+		//If this was a 'double trigger' on the same pad (but not the same zone), then
+		// we stop the last playing sound, and play the new one instead.
+		if (lastPlayedTimeByPad.get(zone.getPad()) != null
+				&& lastPlayedTimeByPad.get(zone.getPad()) + doubleTriggerThreshold > currentTime
+				&& lastPlayedVelocityByPad.get(zone.getPad()) < rawValue){
+			Sample sample = getSample(lastPlayedZoneByPad.get(zone.getPad()));
+			if (sample != null){
+				logger.fine("Stopping last played sound on pad; playing new sound instead, as it is louder");
+				sample.stopLastSample();
+			}
+		}
+
+		//If this zone uses additive volume, calculate the adjustment			
+		if (additiveVolume){
+			float volumeAdjustment = getAdditiveVolumeAdjustment(zone);
+			System.out.println(volumeAdjustment);
+			if (volumeAdjustment > 1){
+				rawValue = rawValue * volumeAdjustment;
+				rawValue = Math.min(1, Math.max(0, rawValue));
+			}
+		}
+
+		//If the HDR key is set, we can either adjust volume based on recent hits 
+		if (hdrKey != null){
+			Long lastPlayedTimeHDR = lastPlayedTimeByHDRKey.get(hdrKey);
+			List<Float> recentVelocities = recentPlayedVelocityByHDRKey.get(hdrKey);
+			if (lastPlayedTimeHDR != null && recentVelocities != null && recentVelocities.size() > 0){
+				logger.fine("Adjusting volume levels");
+				recentPlayedVelocityByHDRKey.get(hdrKey).add(rawValue);
+
+				Sample sample = getSample(zone);
+
+				//Adjust the last played sample
+				sample.adjustLastVolume(getHDRAdjustedValue(hdrKey), GainMapping.getPadGain(zone.getPad().getName()));
+
+			}
+		}
+
+
+
+		lastPlayedTimeByZone.put(zone, currentTime);
+		lastPlayedTimeByPad.put(zone.getPad(), currentTime);
+		//			lastPlayedVelocityByZone.put(zone, rawValue);
+		lastPlayedVelocityByPad.put(zone.getPad(), rawValue);
+		lastPlayedZoneByPad.put(zone.getPad(), zone);
+
+		//Reset the HDR values if this has taken too long.
+		if (hdrKey != null){
+			if (recentPlayedVelocityByHDRKey.get(hdrKey) == null 
+					|| lastPlayedTimeByHDRKey.get(hdrKey) == null
+					|| lastPlayedTimeByHDRKey.get(hdrKey) + DEFAULT_HDR_TRIGGER_THRESHOLD < currentTime)
+				recentPlayedVelocityByHDRKey.put(hdrKey, new ArrayList<Float>());
+			recentPlayedVelocityByHDRKey.get(hdrKey).add(rawValue);
+			lastPlayedTimeByHDRKey.put(hdrKey, currentTime);
+		}
+
+		executor.execute(new PlayThread(zone, rawValue));
 	}
 	
 	/**
