@@ -68,13 +68,13 @@ public class Equalizer extends MossFrame {
 				logger.log(Level.SEVERE, "Error opening Hardware Editor dialog", woe);
 			}
 		}
+		
+		this.setJMenuBar(new DrumSlaveMenuBar(this));
 	}
 	
 	@Override
 	public void updateContent() {
 		super.updateContent();
-		
-		this.setJMenuBar(new DrumSlaveMenuBar(this));
 		
 		for (PadEQChannel channel : eqChannels) {
 			eqChannelsPanel.remove(channel);

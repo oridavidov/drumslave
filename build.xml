@@ -11,7 +11,7 @@
 	<!-- Set up all the project specific properties -->
 	<property name="PROJECT_NAME" value="Drum Slave"/>
 	<property name="PROJECT_SHORT_NAME" value="drumslave"/>
-	<property name="PROJECT_DESCRIPTION" value="Java implementation of DrumMaster mixer software"/>
+	<property name="PROJECT_DESCRIPTION" value="Java implementation of Drum Slave USB drum mixer / synth software"/>
 	<property name="PROJECT_COPYRIGHT" value="Copyright Wyatt Olson"/>
 
     <path id="classpath">

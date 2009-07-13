@@ -11,8 +11,15 @@ public class DrumSlaveMenuBar extends MossMenuBar {
 
 	public DrumSlaveMenuBar(MossFrame frame) {
 		super(frame);
-
-		this.add(new EditMenu(frame));
-		this.add(new SampleMappingsMenu(frame));
+	}
+	
+	@Override
+	public void updateMenus() {
+		this.removeAll();
+		
+		this.add(new EditMenu(getFrame()));
+		this.add(new SampleMappingsMenu(getFrame()));
+		
+		super.updateMenus();
 	}
 }
