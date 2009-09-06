@@ -59,6 +59,7 @@ public class PlayHiHat extends Play {
 		if (sample != null){
 			logger.finer("Playing " + sample.getName() + " (hihat analog value is " + analogValue + ")");
 			executor.execute(new HiHatPlayThread(sample, rawValue, GainMapping.getPadGain(zone.getPad().getName())));
+//			new HiHatPlayThread(sample, rawValue, GainMapping.getPadGain(zone.getPad().getName()));
 		}
 	}
 

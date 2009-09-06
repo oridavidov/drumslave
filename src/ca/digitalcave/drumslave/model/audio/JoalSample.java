@@ -28,7 +28,7 @@ public class JoalSample extends Sample {
 	private int lastSampleNumber; //Last number which was played; this is used for adjustLastVolume. 
 	private final Object lastSampleNumberMutex = new Object();
 	
-	private final static Executor executor = new ThreadPoolExecutor(2, 5, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+	private final static Executor executor = new ThreadPoolExecutor(5, 5, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 	
 	public JoalSample(String name) {
 		super(name);
@@ -83,6 +83,7 @@ public class JoalSample extends Sample {
 		};
 		
 		executor.execute(stopRunner);
+//		stopRunner.run();
 	}
 	
 	@Override
@@ -105,6 +106,7 @@ public class JoalSample extends Sample {
 			};
 		}
 
+//		stopRunner.run();
 		executor.execute(stopRunner);
 	}
 

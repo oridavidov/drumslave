@@ -40,7 +40,7 @@ public class DrumSlave {
 			variables.add(new ParseVariable("--log-level", String.class, false));
 			variables.add(new ParseVariable("--sample-folder", String.class, false));
 
-			String help = "USAGE: java -jar Buddi.jar <options> <data file>, where options include:\n"
+			String help = "USAGE: java -jar DrumSlave.jar <options> <data file>, where options include:\n"
 				+ "\t--keyboard\t\tUse keyboard for testing, instead of serial port\n"
 				+ "\t--console\t\tDo not launch the GUI\n"
 				+ "\t--log-level\tLEVEL\tSet log level: [SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST], default INFO\n";
@@ -98,7 +98,8 @@ public class DrumSlave {
 			try {
 				CommunicationsFactory commLink;
 				//commLink = new SerialFactory("/dev/tty.usbserial-FTE0U36U");
-				commLink = new SerialFactory("/dev/tty.usbserial-A200294u");
+				//commLink = new SerialFactory("/dev/tty.usbserial-A200294u");
+				commLink = new SerialFactory("/dev/ttyUSB0");
 				commLink.connect();
 			}
 			catch (Exception e){

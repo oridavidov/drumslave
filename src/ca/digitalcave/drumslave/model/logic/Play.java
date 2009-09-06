@@ -37,7 +37,7 @@ public class Play extends Logic {
 	protected final long DEFAULT_DOUBLE_TRIGGER_THRESHOLD = 50;
 	protected final long DEFAULT_HDR_TRIGGER_THRESHOLD = 50;
 	
-	protected final Executor executor = new ThreadPoolExecutor(5, 10, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+	protected final Executor executor = new ThreadPoolExecutor(10, 10, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 
 	public Play(String name) {
 		super(name);
@@ -92,8 +92,9 @@ public class Play extends Logic {
 				Sample sample = getSample(zone);
 
 				//Adjust the last played sample
-				sample.adjustLastVolume(getHDRAdjustedValue(hdrKey), GainMapping.getPadGain(zone.getPad().getName()));
-
+				if (sample != null){
+					sample.adjustLastVolume(getHDRAdjustedValue(hdrKey), GainMapping.getPadGain(zone.getPad().getName()));
+				}
 			}
 		}
 
@@ -116,6 +117,7 @@ public class Play extends Logic {
 		}
 
 		executor.execute(new PlayThread(zone, rawValue));
+//		new PlayThread(zone, rawValue);
 	}
 	
 	/**

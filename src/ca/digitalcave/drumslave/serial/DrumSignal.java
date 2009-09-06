@@ -10,7 +10,7 @@ import ca.digitalcave.drumslave.model.hardware.Zone;
 public class DrumSignal implements Runnable {
 	public static final long serialVersionUID = 0;
 
-	public static final Executor threadPool = new ThreadPoolExecutor(5, 20, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+	public static final Executor threadPool = new ThreadPoolExecutor(20, 20, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 	private final String command;
 
 	public DrumSignal(String command) {
