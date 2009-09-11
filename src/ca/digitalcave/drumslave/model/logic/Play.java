@@ -62,15 +62,20 @@ public class Play extends Logic {
 			return;
 		}
 		
-		//If this was a 'double trigger' on the same pad (but not the same zone), then
-		// we stop the last playing sound, and play the new one instead.
+		//If this was a 'double trigger' on the same pad (but not the same zone), 
+		// which was louder than the last one, then we stop the last playing 
+		// sound, and play the new one instead.  Otherwise, we ignore it.
 		if (lastPlayedTimeByPad.get(zone.getPad()) != null
-				&& lastPlayedTimeByPad.get(zone.getPad()) + doubleTriggerThreshold > currentTime
-				&& lastPlayedVelocityByPad.get(zone.getPad()) < rawValue){
-			Sample sample = getSample(lastPlayedZoneByPad.get(zone.getPad()));
-			if (sample != null){
-				logger.fine("Stopping last played sound on pad; playing new sound instead, as it is louder");
-				sample.stopLastSample();
+				&& lastPlayedTimeByPad.get(zone.getPad()) + doubleTriggerThreshold > currentTime){
+			if (lastPlayedVelocityByPad.get(zone.getPad()) < rawValue){
+				Sample sample = getSample(lastPlayedZoneByPad.get(zone.getPad()));
+				if (sample != null){
+					logger.fine("Stopping last played sound on pad; playing new sound instead, as it is louder");
+					sample.stopLastSample();
+				}
+			}
+			else {
+				return;
 			}
 		}
 
