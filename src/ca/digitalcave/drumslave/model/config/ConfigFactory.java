@@ -17,7 +17,6 @@ import ca.digitalcave.drumslave.model.logic.LogicConfigManager;
 import ca.digitalcave.drumslave.model.logic.Mute;
 import ca.digitalcave.drumslave.model.logic.Play;
 import ca.digitalcave.drumslave.model.logic.PlayHiHat;
-import ca.digitalcave.drumslave.model.logic.PlaySecondary;
 import ca.digitalcave.drumslave.model.mapping.GainMappingConfigManager;
 import ca.digitalcave.drumslave.model.mapping.LogicMappingConfigManager;
 import ca.digitalcave.drumslave.model.mapping.SampleMappingConfigManager;
@@ -120,7 +119,7 @@ public class ConfigFactory {
 				
 				new Play("Play");
 //				new PlayHDR("Play HDR");
-				new PlaySecondary("Play Secondary");
+//				new PlaySecondary("Play Secondary");
 				new PlayHiHat("Play Hi-Hat");
 				new Mute("Mute");
 				new HiHatControllerAnalog("Hi-Hat Controller Analog");

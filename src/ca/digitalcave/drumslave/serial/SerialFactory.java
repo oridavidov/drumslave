@@ -71,9 +71,6 @@ public class SerialFactory implements CommunicationsFactory {
 
 				String command = new String(buffer, 0, len);
 				DrumSignal.threadPool.execute(new DrumSignal(command));
-//				System.out.println(command);
-//				System.out.println(command.trim() + ":" + System.currentTimeMillis() % 10000);
-//				new DrumSignal(command).run();
 			}
 			catch (Exception e) {
 				e.printStackTrace();

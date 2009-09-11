@@ -1,11 +1,17 @@
 package ca.digitalcave.drumslave.serial;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import ca.digitalcave.drumslave.model.hardware.Pad;
 import ca.digitalcave.drumslave.model.hardware.Zone;
+import ca.digitalcave.drumslave.model.logic.LogicDelegate;
 
 public class DrumSignal implements Runnable {
 	public static final long serialVersionUID = 0;
@@ -21,6 +27,8 @@ public class DrumSignal implements Runnable {
 		if (command == null)
 			return;
 
+		Map<Pad, List<PlayedZone>> padCommands = new ConcurrentHashMap<Pad, List<PlayedZone>>();
+		
 		System.out.println(command);
 		String[] commands = command.split(";");
 		for (String command : commands) {
@@ -30,17 +38,27 @@ public class DrumSignal implements Runnable {
 				float rawVelocity = Integer.parseInt(signal[1]);
 
 				//If the channel is digital, use raw value; otherwise, divide by max value.
-				float volume;
-				if (z.getChannel() >= 32)
-					volume = rawVelocity;
-				else 
-					volume = rawVelocity / 1024;
-				
 				if (z != null){
-//					System.out.println(z.getChannel() + ":" + volume);
-					z.play(volume);
+					float volume;
+					if (z.getChannel() >= 32)
+						volume = rawVelocity;
+					else 
+						volume = rawVelocity / 1024;
+
+					//System.out.println(z.getChannel() + ":" + volume);
+					//z.play(volume);
+					if (padCommands.get(z.getPad()) == null)
+						padCommands.put(z.getPad(), new ArrayList<PlayedZone>());
+					padCommands.get(z.getPad()).add(new PlayedZone(z, volume));
 				}
-			}			
+			}
+		}
+		
+		//Once we have gone through all commands, we will pass
+		// each set of PlayedZones to the logic delegate, which will
+		// then determine which zones to play.
+		for (Pad pad : padCommands.keySet()) {
+			LogicDelegate.chooseZoneToPlay(padCommands.get(pad));
 		}
 	}
 }

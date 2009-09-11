@@ -115,6 +115,30 @@ public class ZoneLogicEditor extends MossPanel implements ActionListener {
 						});
 					}
 					
+					else if (logicOption.getLogicOptionType().equals(LogicOptionType.OPTION_FLOAT)){
+						component = new JPanel(new FlowLayout(FlowLayout.LEFT));
+						final MossDecimalField number = new MossDecimalField((long) logicOption.getDefaultValue(), false, 2);
+						number.setToolTipText(logicOption.getName());
+						try {
+							String logicOptionString = logicEditor.getLogicOption(zone.getPad().getName(), zone.getName(), logicOption.getName());
+							if (logicOptionString == null)
+								logicOptionString = "0";
+							float value = Float.parseFloat(logicOptionString);
+							number.setValue((long) (value * 100f));
+						}
+						catch (NumberFormatException nfe){}
+						component.add(number);
+						JLabel label = new JLabel(logicOption.getShortName());
+						label.setToolTipText(logicOption.getName());
+						component.add(label);
+						number.addKeyListener(new KeyAdapter(){
+							@Override
+							public void keyReleased(KeyEvent e) {
+								logicEditor.setLogicOption(zone.getPad().getName(), zone.getName(), logicOptionFinal.getName(), (float) (number.getValue() / 100f) + "");
+							}
+						});
+					}
+					
 					else if (logicOption.getLogicOptionType().equals(LogicOptionType.OPTION_STRING)){
 						component = new MossHintTextField(logicOption.getShortName());
 						((MossHintTextField) component).setText(logicEditor.getLogicOption(zone.getPad().getName(), zone.getName(), logicOptionFinal.getName()));

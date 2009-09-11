@@ -44,7 +44,7 @@ public class HiHatControllerAnalog extends Logic {
 	public void execute(Zone zone, float rawValue) {
 		currentValueByPad.put(zone.getPad(), rawValue);
 		history.add(new HistoryUnit(System.currentTimeMillis(), rawValue));
-		logger.finest(zone.getPad().getName() + " changed to " + rawValue);
+//		logger.finest(zone.getPad().getName() + " changed to " + rawValue);
 	}
 	
 	public Float getAnalogValueByPad(Pad pad){
