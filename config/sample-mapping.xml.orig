@@ -1,0 +1,35 @@
+<drum-slave>
+  <group name="Electronic">
+    <sample-mapping pad-name="Tom 1" logical-name="Head" sample-name="Tom 1/808/Head"/>
+    <sample-mapping pad-name="Tom 3" logical-name="Head" sample-name="Tom 3/808/Head"/>
+    <sample-mapping pad-name="Tom 2" logical-name="Head" sample-name="Tom 2/808/Head"/>
+    <sample-mapping pad-name="Tom 4" logical-name="Head" sample-name="Tom 4/808/Head"/>
+  </group>
+  <group name="Acoustic">
+    <sample-mapping pad-name="Bass" logical-name="Head" sample-name="Bass/Acoustic/Head"/>
+    <sample-mapping pad-name="Hi-Hat" logical-name="Splash" sample-name="Hi Hat/Zildjian A Custom 14/Splash"/>
+    <sample-mapping pad-name="Hi-Hat" logical-name="Edge (Tight)" sample-name="Hi Hat/Zildjian A Custom 14/Bow/Tight"/>
+    <sample-mapping pad-name="Hi-Hat" logical-name="Bell (Loose)" sample-name="Hi Hat/Zildjian A Custom 14/Bow/Loose"/>
+    <sample-mapping pad-name="Hi-Hat" logical-name="Bell (Closed)" sample-name="Hi Hat/Zildjian A Custom 14/Bow/Closed"/>
+    <sample-mapping pad-name="Hi-Hat" logical-name="Chic" sample-name="Hi Hat/Zildjian A Custom 14/Chic"/>
+    <sample-mapping pad-name="Hi-Hat" logical-name="Edge (Open)" sample-name="Hi Hat/Zildjian A Custom 14/Bow/Open"/>
+    <sample-mapping pad-name="Hi-Hat" logical-name="Bow (Closed)" sample-name="Hi Hat/Zildjian A Custom 14/Bow/Closed"/>
+    <sample-mapping pad-name="Hi-Hat" logical-name="Bow (Tight)" sample-name="Hi Hat/Zildjian A Custom 14/Bow/Tight"/>
+    <sample-mapping pad-name="Hi-Hat" logical-name="Edge (Closed)" sample-name="Hi Hat/Zildjian A Custom 14/Bow/Closed"/>
+    <sample-mapping pad-name="Hi-Hat" logical-name="Edge (Loose)" sample-name="Hi Hat/Zildjian A Custom 14/Bow/Loose"/>
+    <sample-mapping pad-name="Hi-Hat" logical-name="Bell (Tight)" sample-name="Hi Hat/Zildjian A Custom 14/Bow/Tight"/>
+    <sample-mapping pad-name="Hi-Hat" logical-name="Bell (Open)" sample-name="Hi Hat/Zildjian A Custom 14/Bow/Open"/>
+    <sample-mapping pad-name="Hi-Hat" logical-name="Bow (Open)" sample-name="Hi Hat/Zildjian A Custom 14/Bow/Open"/>
+    <sample-mapping pad-name="Hi-Hat" logical-name="Bow (Loose)" sample-name="Hi Hat/Zildjian A Custom 14/Bow/Loose"/>
+    <sample-mapping pad-name="Tom 1" logical-name="Head" sample-name="Tom 1/Beech/Head"/>
+    <sample-mapping pad-name="Tom 3" logical-name="Head" sample-name="Tom 3/Beech/Head"/>
+    <sample-mapping pad-name="Tom 2" logical-name="Head" sample-name="Tom 2/Beech/Head"/>
+    <sample-mapping pad-name="Tom 4" logical-name="Head" sample-name="Tom 4/Beech/Head"/>
+    <sample-mapping pad-name="Snare" logical-name="Rim" sample-name="Snare/Rock/Rim"/>
+    <sample-mapping pad-name="Snare" logical-name="Head" sample-name="Snare/Rock/Head"/>
+    <sample-mapping pad-name="Crash 2" logical-name="Bow" sample-name="Crash/Zildjian A Medium 17/Bow"/>
+    <sample-mapping pad-name="Crash 1" logical-name="Bell" sample-name="Crash/Zildjian A Custom 18/Bell"/>
+    <sample-mapping pad-name="Crash 1" logical-name="Bow" sample-name="Crash/Zildjian A Custom 18/Bow"/>
+    <sample-mapping pad-name="Crash 1" logical-name="Edge" sample-name="Crash/Zildjian A Custom 18/Edge"/>
+  </group>
+</drum-slave>

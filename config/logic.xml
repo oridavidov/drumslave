@@ -1,0 +1,7 @@
+<drum-slave>
+  <logic name="Play" className="ca.digitalcave.drumslave.model.logic.Play"/>
+  <logic name="Hi-Hat Controller Digital" className="ca.digitalcave.drumslave.model.logic.HiHatControllerDigital"/>
+  <logic name="Play Hi-Hat" className="ca.digitalcave.drumslave.model.logic.PlayHiHat"/>
+  <logic name="Hi-Hat Controller Analog" className="ca.digitalcave.drumslave.model.logic.HiHatControllerAnalog"/>
+  <logic name="Mute" className="ca.digitalcave.drumslave.model.logic.Mute"/>
+</drum-slave>

@@ -1,0 +1,70 @@
+<drum-slave>
+  <option-mapping pad-name="Tom 3" zone-name="Head">
+    <option name="Double Trigger Threshold" value="100"/>
+  </option-mapping>
+  <option-mapping pad-name="Crash 1" zone-name="Bow">
+    <option name="Additive Volume" value="true"/>
+  </option-mapping>
+  <option-mapping pad-name="Crash 2" zone-name="Bow">
+    <option name="Additive Volume" value="true"/>
+  </option-mapping>
+  <option-mapping pad-name="Tom 1" zone-name="Head">
+    <option name="Double Trigger Threshold" value="100"/>
+  </option-mapping>
+  <option-mapping pad-name="Tom 2" zone-name="Head">
+    <option name="Double Trigger Threshold" value="100"/>
+  </option-mapping>
+  <option-mapping pad-name="Ride" zone-name="Edge">
+    <option name="Secondary Threshold" value="0.7"/>
+  </option-mapping>
+  <option-mapping pad-name="Ride" zone-name="Bell">
+    <option name="Secondary Threshold" value="0.5"/>
+  </option-mapping>
+  <option-mapping pad-name="Snare" zone-name="Head 1">
+    <option name="HDR Logical Key Name" value="Head"/>
+    <option name="Double Trigger Threshold" value="50"/>
+  </option-mapping>
+  <option-mapping pad-name="Crash 1" zone-name="Edge">
+    <option name="Secondary Threshold" value="1.0"/>
+    <option name="Additive Volume" value="true"/>
+  </option-mapping>
+  <option-mapping pad-name="Snare" zone-name="Rim 2">
+    <option name="HDR Logical Key Name" value="Rim"/>
+    <option name="Double Trigger Threshold" value="50"/>
+  </option-mapping>
+  <option-mapping pad-name="Snare" zone-name="Head 2">
+    <option name="HDR Logical Key Name" value="Head"/>
+    <option name="Double Trigger Threshold" value="50"/>
+  </option-mapping>
+  <option-mapping pad-name="Snare" zone-name="Head 4">
+    <option name="HDR Logical Key Name" value="Head"/>
+    <option name="Double Trigger Threshold" value="50"/>
+  </option-mapping>
+  <option-mapping pad-name="Crash 1" zone-name="Bell">
+    <option name="Secondary Threshold" value="0.5"/>
+    <option name="Additive Volume" value="true"/>
+  </option-mapping>
+  <option-mapping pad-name="Snare" zone-name="Head 3">
+    <option name="HDR Logical Key Name" value="Head"/>
+    <option name="Double Trigger Threshold" value="50"/>
+  </option-mapping>
+  <option-mapping pad-name="Snare" zone-name="Rim 1">
+    <option name="HDR Logical Key Name" value="Rim"/>
+    <option name="Double Trigger Threshold" value="50"/>
+  </option-mapping>
+  <option-mapping pad-name="Crash 2" zone-name="Bell">
+    <option name="Secondary Threshold" value="0.5"/>
+    <option name="Additive Volume" value="true"/>
+  </option-mapping>
+  <option-mapping pad-name="Tom 4" zone-name="Head">
+    <option name="Double Trigger Threshold" value="100"/>
+  </option-mapping>
+  <option-mapping pad-name="Bass" zone-name="Head">
+    <option name="Additive Volume" value="false"/>
+    <option name="Double Trigger Threshold" value="150"/>
+  </option-mapping>
+  <option-mapping pad-name="Ride" zone-name="Bow">
+    <option name="Secondary Threshold" value="0.0"/>
+    <option name="Additive Volume" value="false"/>
+  </option-mapping>
+</drum-slave>
