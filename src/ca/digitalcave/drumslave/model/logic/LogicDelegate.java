@@ -72,7 +72,7 @@ public class LogicDelegate {
 			Zone z = playedZone.getZone();
 			Logic l = Logic.getLogic(LogicMapping.getLogicMapping(z.getPad().getName(), z.getName()));
 			
-			if (!(l instanceof Play || l instanceof Mute)){
+			if (!(l instanceof Play || l instanceof Mute) && l != null && playedZone != null){
 				l.execute(z, playedZone.getVelocity());
 			}
 		}

@@ -29,7 +29,9 @@ public class DrumSignal implements Runnable {
 
 		Map<Pad, List<PlayedZone>> padCommands = new ConcurrentHashMap<Pad, List<PlayedZone>>();
 		
-		System.out.println(command);
+		String commandToPrint = command.replaceAll("24:[0-9]+;", "").trim();
+		if (commandToPrint.length() > 0)
+			System.out.println(commandToPrint);
 		String[] commands = command.split(";");
 		for (String command : commands) {
 			String[] signal = command.trim().split(":");

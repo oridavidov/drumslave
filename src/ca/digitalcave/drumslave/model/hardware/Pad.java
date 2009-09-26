@@ -129,23 +129,30 @@ public class Pad implements Comparable<Pad> {
 	 * @param fadeOutPeriod
 	 */
 	public void stop(long fadeOutPeriod, String... exemptedLogicals){
-		Collection<String> sampleNames = SampleMapping.getSampleMappingsByPad(SampleMapping.getSelectedSampleGroup(), this.getName()).values();
-		Collection<String> exemptedSamples = new HashSet<String>();
+		Map<String, String> sampleMappings = SampleMapping.getSampleMappingsByPad(SampleMapping.getSelectedSampleGroup(), this.getName()); 
+		if (sampleMappings != null){
+			Collection<String> sampleNames = sampleMappings.values();
+			Collection<String> exemptedSamples = new HashSet<String>();
 
-		//Figure out which samples are excluded, based on logical names
-		for (String exemptedLogical : exemptedLogicals) {
-			exemptedSamples.add(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), this.getName(), exemptedLogical));
+			//Figure out which samples are excluded, based on logical names
+			for (String exemptedLogical : exemptedLogicals) {
+				exemptedSamples.add(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), this.getName(), exemptedLogical));
+			}
+
+			if (exemptedLogicals != null){
+				System.err.println("Removing " + exemptedSamples + " from " + sampleNames);
+				sampleNames.removeAll(exemptedSamples);
+			}
+
+
+			for (String sampleName : sampleNames) {
+				Sample sample = Sample.getSample(sampleName);
+				if (sample != null){
+					sample.stop(fadeOutPeriod);
+					System.err.println("Stopping " + sampleName);
+				}
+			}		
 		}
-		
-		if (exemptedLogicals != null)
-			sampleNames.removeAll(exemptedSamples);
-		
-		
-		for (String sampleName : sampleNames) {
-			Sample sample = Sample.getSample(sampleName);
-			if (sample != null)
-				sample.stop(fadeOutPeriod);
-		}		
 	}
 	
 	@Override

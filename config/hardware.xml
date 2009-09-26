@@ -6,9 +6,10 @@
     <zone name="Edge" channel="22"/>
   </pad>
   <pad name="Crash 2">
-    <zone name="Bow" channel="18"/>
+    <zone name="Bow" channel="17"/>
     <zone name="Mute" channel="34"/>
-    <zone name="Bell" channel="19"/>
+    <zone name="Bell" channel="18"/>
+    <zone name="Edge" channel="19"/>
   </pad>
   <pad name="Tom 2">
     <zone name="Head" channel="13"/>

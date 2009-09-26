@@ -7,6 +7,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import ca.digitalcave.drumslave.model.mapping.GainMapping;
+
 /**
  * A Sample implementation, based on the OpenAL Java wrapper project 'JOAL' (https://joal.dev.java.net/).
  * JOAL allows many very interesting features for playing sounds, including positional
@@ -48,8 +50,12 @@ public class JoalSample extends Sample {
 		int sampleNumber = getVolumeToSampleNumberMapping(sampleCount, rawVolume);
 		if (joalSources.get(sampleNumber) == null)
 			throw new RuntimeException("No sample loaded for sample number " + sampleNumber);
+
+		Float masterGain = GainMapping.getPadGain(GainMapping.MASTER);
+		if (masterGain == null)
+			masterGain = 1f;
 		
-		joalSources.get(sampleNumber).play(rawVolume * gain);
+		joalSources.get(sampleNumber).play(rawVolume * gain * masterGain);
 		synchronized (lastSampleNumberMutex) {
 			lastSampleNumber = sampleNumber;			
 		}
@@ -57,8 +63,12 @@ public class JoalSample extends Sample {
 	
 	@Override
 	public void adjustLastVolume(float rawVolume, float gain) {
+		Float masterGain = GainMapping.getPadGain(GainMapping.MASTER);
+		if (masterGain == null)
+			masterGain = 1f;
+		
 		synchronized (lastSampleNumberMutex) {
-			joalSources.get(lastSampleNumber).adjustLastVolume(rawVolume * gain);
+			joalSources.get(lastSampleNumber).adjustLastVolume(rawVolume * gain * masterGain);
 		}
 	}
 

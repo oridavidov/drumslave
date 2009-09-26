@@ -6,14 +6,15 @@
   <logic-mapping pad-name="Crash 2" zone-name="Bow" logic-name="Play"/>
   <logic-mapping pad-name="Crash 2" zone-name="Mute" logic-name="Mute"/>
   <logic-mapping pad-name="Crash 2" zone-name="Bell" logic-name="Play"/>
+  <logic-mapping pad-name="Crash 2" zone-name="Edge" logic-name="Play"/>
   <logic-mapping pad-name="Tom 2" zone-name="Head" logic-name="Play"/>
   <logic-mapping pad-name="Hi-Hat" zone-name="Digital" logic-name="Hi-Hat Controller Digital"/>
   <logic-mapping pad-name="Hi-Hat" zone-name="Bow" logic-name="Play Hi-Hat"/>
   <logic-mapping pad-name="Hi-Hat" zone-name="Analog" logic-name="Hi-Hat Controller Analog"/>
   <logic-mapping pad-name="Hi-Hat" zone-name="Bell" logic-name="Play Hi-Hat"/>
   <logic-mapping pad-name="Hi-Hat" zone-name="Edge" logic-name="Play Hi-Hat"/>
-  <logic-mapping pad-name="Tom 4" zone-name="Head" logic-name="Play"/>
   <logic-mapping pad-name="Tom 3" zone-name="Head" logic-name="Play"/>
+  <logic-mapping pad-name="Tom 4" zone-name="Head" logic-name="Play"/>
   <logic-mapping pad-name="Ride" zone-name="Bow" logic-name="Play"/>
   <logic-mapping pad-name="Ride" zone-name="Mute" logic-name="Mute"/>
   <logic-mapping pad-name="Ride" zone-name="Bell" logic-name="Play"/>
@@ -21,8 +22,8 @@
   <logic-mapping pad-name="Tom 1" zone-name="Head" logic-name="Play"/>
   <logic-mapping pad-name="Bass" zone-name="Head" logic-name="Play"/>
   <logic-mapping pad-name="Splash 1" zone-name="Mute" logic-name="Mute"/>
-  <logic-mapping pad-name="Snare" zone-name="Head 4" logic-name="Play"/>
   <logic-mapping pad-name="Snare" zone-name="Head 1" logic-name="Play"/>
+  <logic-mapping pad-name="Snare" zone-name="Head 4" logic-name="Play"/>
   <logic-mapping pad-name="Snare" zone-name="Rim 1" logic-name="Play"/>
   <logic-mapping pad-name="Snare" zone-name="Head 3" logic-name="Play"/>
   <logic-mapping pad-name="Snare" zone-name="Head 2" logic-name="Play"/>

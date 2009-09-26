@@ -8,6 +8,9 @@ public class GainMapping {
 
 	private final static Map<String, Map<String, Float>> padToGains = new ConcurrentHashMap<String, Map<String,Float>>();
 
+	public static final String MASTER = "Master"; //Gain mapping name for master channel.
+
+	
 	/**
 	 * Returns the pad gain for the given sample mapping group and pad.  If the 
 	 * gain has not been explicitly set, return 1.0 (effectively no gain change).

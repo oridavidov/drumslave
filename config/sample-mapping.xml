@@ -1,10 +1,11 @@
 <drum-slave>
   <group name="Acoustic">
-    <sample-mapping pad-name="Crash 1" logical-name="Bow" sample-name="Crash/Zildjian A Custom 18/Bow"/>
-    <sample-mapping pad-name="Crash 1" logical-name="Bell" sample-name="Crash/Zildjian A Custom 18/Bell"/>
+    <sample-mapping pad-name="Crash 1" logical-name="Bow" sample-name="Crash/Zildjian A Medium 17/Bow"/>
+    <sample-mapping pad-name="Crash 1" logical-name="Bell" sample-name="Crash/Zildjian A Fast 16/Bow"/>
     <sample-mapping pad-name="Crash 1" logical-name="Edge" sample-name="Crash/Zildjian A Custom 18/Edge"/>
-    <sample-mapping pad-name="Crash 2" logical-name="Bow" sample-name="Crash/Zildjian A Fast 16/Bow"/>
+    <sample-mapping pad-name="Crash 2" logical-name="Bow" sample-name="Crash/Zildjian A Fast 15/Bow"/>
     <sample-mapping pad-name="Crash 2" logical-name="Bell" sample-name="Crash/Zildjian A Fast 14/Bow"/>
+    <sample-mapping pad-name="Crash 2" logical-name="Edge" sample-name="Crash/Zildjian A Medium 17/Bow"/>
     <sample-mapping pad-name="Tom 2" logical-name="Head" sample-name="Tom 2/Beech/Head"/>
     <sample-mapping pad-name="Hi-Hat" logical-name="Splash" sample-name="Hi Hat/Zildjian A Custom 14/Splash"/>
     <sample-mapping pad-name="Hi-Hat" logical-name="Chic" sample-name="Hi Hat/Zildjian A Custom 14/Chic"/>
