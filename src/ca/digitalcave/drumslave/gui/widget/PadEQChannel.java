@@ -25,7 +25,7 @@ import ca.digitalcave.drumslave.model.mapping.GainMapping;
 
 public class PadEQChannel extends MossPanel implements ChangeListener {
 	public static final long serialVersionUID = 0l;
-
+	
 	private final Pad pad;
 	
 	private VUMeter vuMeter;
@@ -68,25 +68,31 @@ public class PadEQChannel extends MossPanel implements ChangeListener {
 		this.setLayout(new BorderLayout());
 		
 		JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		centerPanel.add(vuMeter);
+		if (pad != null)
+			centerPanel.add(vuMeter);
 		centerPanel.add(volumeAdjustment);
 		
 		JPanel namePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		namePanel.add(new JLabel(pad.getName()));
+		if (pad != null)
+			namePanel.add(new JLabel(pad.getName()));
+		else
+			namePanel.add(new JLabel(GainMapping.MASTER));
 		
 		this.add(centerPanel, BorderLayout.CENTER);
 		
 		this.add(namePanel, BorderLayout.SOUTH);
 		
-		Timer timer = new Timer(100, new ActionListener(){
-			public void actionPerformed(ActionEvent e) {
-				if (pad != null){
-					vuMeter.setValue(pad.getLevel());
-					vuMeter.updateFalloff();
-				}				
-			}
-		});
-		timer.start();
+		if (pad != null){
+			Timer timer = new Timer(100, new ActionListener(){
+				public void actionPerformed(ActionEvent e) {
+					if (pad != null){
+						vuMeter.setValue(pad.getLevel());
+						vuMeter.updateFalloff();
+					}				
+				}
+			});
+			timer.start();
+		}
 	}
 	
 	private void putLabel(Hashtable<Integer, JComponent> labels, int value, String label){
@@ -100,11 +106,17 @@ public class PadEQChannel extends MossPanel implements ChangeListener {
 	public void updateContent() {
 		super.updateContent();
 
-		volumeAdjustment.setValue((int) (GainMapping.getPadGain(pad.getName()) * 100));
+		if (pad != null)
+			volumeAdjustment.setValue((int) (GainMapping.getPadGain(pad.getName()) * 100));
+		else
+			volumeAdjustment.setValue((int) (GainMapping.getPadGain(GainMapping.MASTER) * 100));
 	}
 	
 	public void stateChanged(ChangeEvent e) {
-		GainMapping.addGainMapping(pad.getName(), volumeAdjustment.getValue() / 100f);
+		if (pad != null)
+			GainMapping.addGainMapping(pad.getName(), volumeAdjustment.getValue() / 100f);
+		else
+			GainMapping.addGainMapping(GainMapping.MASTER, volumeAdjustment.getValue() / 100f);
 		ConfigFactory.getInstance().saveConfig(ConfigType.GAIN_MAPPING);
 	}
 }

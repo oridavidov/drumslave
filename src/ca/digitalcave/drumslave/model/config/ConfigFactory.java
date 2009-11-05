@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 
 import org.homeunix.thecave.moss.common.OperatingSystemUtil;
 
+import ca.digitalcave.drumslave.DrumSlave;
 import ca.digitalcave.drumslave.model.hardware.HardwareConfigManager;
 import ca.digitalcave.drumslave.model.logic.HiHatControllerAnalog;
 import ca.digitalcave.drumslave.model.logic.HiHatControllerDigital;
@@ -17,7 +18,6 @@ import ca.digitalcave.drumslave.model.logic.LogicConfigManager;
 import ca.digitalcave.drumslave.model.logic.Mute;
 import ca.digitalcave.drumslave.model.logic.Play;
 import ca.digitalcave.drumslave.model.logic.PlayHiHat;
-import ca.digitalcave.drumslave.model.logic.PlaySecondary;
 import ca.digitalcave.drumslave.model.mapping.GainMappingConfigManager;
 import ca.digitalcave.drumslave.model.mapping.LogicMappingConfigManager;
 import ca.digitalcave.drumslave.model.mapping.SampleMappingConfigManager;
@@ -36,36 +36,43 @@ public class ConfigFactory {
 		return configFactorySingleton;
 	}
 	
+	private File getConfigFile(String filename){
+		if (DrumSlave.getConfigFolderOverride() != null)
+			return new File(DrumSlave.getConfigFolderOverride().getAbsolutePath() + File.separator + filename); 
+		else
+			return OperatingSystemUtil.getUserFile("DrumSlave", filename);
+	}
+	
 	public void loadConfig(ConfigType configType){
 		
 		File configFile = null;
 		switch (configType) {
 		case HARDWARE:
-			configFile = OperatingSystemUtil.getUserFile("DrumSlave", "hardware.xml");
+			configFile = getConfigFile("hardware.xml");
 			break;
 			
 		case LOGIC:
-			configFile = OperatingSystemUtil.getUserFile("DrumSlave", "logic.xml");
+			configFile = getConfigFile("logic.xml");
 			break;
 			
 		case LOGIC_MAPPING:
-			configFile = OperatingSystemUtil.getUserFile("DrumSlave", "logic-mapping.xml");
+			configFile = getConfigFile("logic-mapping.xml");
 			break;
 			
 		case SAMPLE_MAPPING:
-			configFile = OperatingSystemUtil.getUserFile("DrumSlave", "sample-mapping.xml");
+			configFile = getConfigFile("sample-mapping.xml");
 			break;
 			
 		case OPTION_MAPPING:
-			configFile = OperatingSystemUtil.getUserFile("DrumSlave", "option-mapping.xml");
+			configFile = getConfigFile("option-mapping.xml");
 			break;
 			
 		case SETTINGS:
-			configFile = OperatingSystemUtil.getUserFile("DrumSlave", "settings.xml");
+			configFile = getConfigFile("settings.xml");
 			break;
 			
 		case GAIN_MAPPING:
-			configFile = OperatingSystemUtil.getUserFile("DrumSlave", "gain-mapping.xml");
+			configFile = getConfigFile("gain-mapping.xml");
 			break;
 		}
 		
@@ -120,7 +127,7 @@ public class ConfigFactory {
 				
 				new Play("Play");
 //				new PlayHDR("Play HDR");
-				new PlaySecondary("Play Secondary");
+//				new PlaySecondary("Play Secondary");
 				new PlayHiHat("Play Hi-Hat");
 				new Mute("Mute");
 				new HiHatControllerAnalog("Hi-Hat Controller Analog");
@@ -141,37 +148,37 @@ public class ConfigFactory {
 		switch (configType) {
 		case HARDWARE:
 			config.setPads(new HardwareConfigManager().saveToConfig());
-			saveFile = OperatingSystemUtil.getUserFile("DrumSlave", "hardware.xml");
+			saveFile = getConfigFile("hardware.xml");
 			break;
 			
 		case LOGIC:
 			config.setLogics(new LogicConfigManager().saveToConfig());
-			saveFile = OperatingSystemUtil.getUserFile("DrumSlave", "logic.xml");
+			saveFile = getConfigFile("logic.xml");
 			break;
 			
 		case LOGIC_MAPPING:
 			config.setLogicMappings(new LogicMappingConfigManager().saveToConfig());
-			saveFile = OperatingSystemUtil.getUserFile("DrumSlave", "logic-mapping.xml");
+			saveFile = getConfigFile("logic-mapping.xml");
 			break;
 			
 		case SAMPLE_MAPPING:
 			config.setSampleMappingGroups(new SampleMappingConfigManager().saveToConfig());
-			saveFile = OperatingSystemUtil.getUserFile("DrumSlave", "sample-mapping.xml");
+			saveFile = getConfigFile("sample-mapping.xml");
 			break;
 			
 		case OPTION_MAPPING:
 			config.setOptionMappings(new OptionMappingConfigManager().saveToConfig());
-			saveFile = OperatingSystemUtil.getUserFile("DrumSlave", "option-mapping.xml");
+			saveFile = getConfigFile("option-mapping.xml");
 			break;
 			
 		case SETTINGS:
 			config.setSettings(new SettingsConfigManager().saveToConfig());
-			saveFile = OperatingSystemUtil.getUserFile("DrumSlave", "settings.xml");
+			saveFile = getConfigFile("settings.xml");
 			break;
 
 		case GAIN_MAPPING:
 			config.setGainMappings(new GainMappingConfigManager().saveToConfig());
-			saveFile = OperatingSystemUtil.getUserFile("DrumSlave", "gain-mapping.xml");
+			saveFile = getConfigFile("gain-mapping.xml");
 			break;
 		}
 		

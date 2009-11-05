@@ -43,7 +43,7 @@ public class PlayHiHat extends Play {
 			return;
 		
 		Sample sample = null;
-		if (isClosed){
+		if (isClosed || analogValue < 0.1f){
 			sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), zone.getPad().getName(), zone.getName() + LOGICAL_TIGHT));
 		}
 		else if (analogValue > 0.95f){
@@ -59,6 +59,7 @@ public class PlayHiHat extends Play {
 		if (sample != null){
 			logger.finer("Playing " + sample.getName() + " (hihat analog value is " + analogValue + ")");
 			executor.execute(new HiHatPlayThread(sample, rawValue, GainMapping.getPadGain(zone.getPad().getName())));
+//			new HiHatPlayThread(sample, rawValue, GainMapping.getPadGain(zone.getPad().getName()));
 		}
 	}
 

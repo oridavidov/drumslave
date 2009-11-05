@@ -3,9 +3,13 @@
  */
 package ca.digitalcave.drumslave.gui.menu.item;
 
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.swing.KeyStroke;
 
 import org.homeunix.thecave.moss.swing.MossFrame;
 import org.homeunix.thecave.moss.swing.MossMenuItem;
@@ -18,6 +22,8 @@ public class EditSampleMappings extends MossMenuItem{
 
 	public EditSampleMappings(MossFrame frame) {
 		super(frame, "Edit Sample Mappings");
+		this.setMnemonic('M');
+		this.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 	}
 
 	@Override

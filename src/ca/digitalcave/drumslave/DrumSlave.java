@@ -28,7 +28,8 @@ import ca.digitalcave.drumslave.serial.SerialFactory;
 public class DrumSlave {
 	private static Logger logger = Logger.getLogger(DrumSlave.class.getName());
 
-	private static File samplesFolder = null; 
+	private static File samplesFolder = null;
+	private static File config = null;
 	private static boolean showConsole = false;
 
 	public static void main(String[] args) {
@@ -39,10 +40,13 @@ public class DrumSlave {
 			variables.add(new ParseVariable("--console", Boolean.class, false));
 			variables.add(new ParseVariable("--log-level", String.class, false));
 			variables.add(new ParseVariable("--sample-folder", String.class, false));
+			variables.add(new ParseVariable("--config", String.class, false));
 
-			String help = "USAGE: java -jar Buddi.jar <options> <data file>, where options include:\n"
+			String help = "USAGE: java -jar DrumSlave.jar <options> <data file>, where options include:\n"
 				+ "\t--keyboard\t\tUse keyboard for testing, instead of serial port\n"
 				+ "\t--console\t\tDo not launch the GUI\n"
+				+ "\t--sample-folder\tPath\tOverride default sample folder (useful for development)\n"
+				+ "\t--config\tPath\tOverride default config path (useful for development)\n"
 				+ "\t--log-level\tLEVEL\tSet log level: [SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST], default INFO\n";
 			ParseResults results = ParseCommands.parse(args, help, variables);
 
@@ -53,6 +57,10 @@ public class DrumSlave {
 			if (results.getString("--sample-folder") != null){
 				samplesFolder = new File(results.getString("--sample-folder"));
 			}
+			
+			if (results.getString("--config") != null){
+				config = new File(results.getString("--config"));
+			}			
 
 
 			//Load config from disk; first we want hardware, so that we can init GUI
@@ -90,6 +98,10 @@ public class DrumSlave {
 			return (OperatingSystemUtil.getUserFile("DrumSlave", "samples"));
 		return samplesFolder;
 	}
+	
+	public static File getConfigFolderOverride(){
+		return config;
+	}	
 
 	private static class CommunicationsRunner implements Runnable {
 		public static final long serialVersionUID = 0;
@@ -98,7 +110,8 @@ public class DrumSlave {
 			try {
 				CommunicationsFactory commLink;
 				//commLink = new SerialFactory("/dev/tty.usbserial-FTE0U36U");
-				commLink = new SerialFactory("/dev/tty.usbserial-A200294u");
+				//commLink = new SerialFactory("/dev/tty.usbserial-A200294u");
+				commLink = new SerialFactory("/dev/ttyUSB0");
 				commLink.connect();
 			}
 			catch (Exception e){

@@ -33,11 +33,14 @@ public class Play extends Logic {
 	public final static String OPTION_ADDITIVE_VOLUME = "Additive Volume";
 	public final static String OPTION_DOUBLE_TRIGGER_THRESHOLD = "Double Trigger Threshold";
 	public final static String OPTION_HDR_LOGICAL_KEY_NAME = "HDR Logical Key Name";
+	private final static String OPTION_SECONDARY_THRESHOLD = "Secondary Threshold";
 	
-	protected final long DEFAULT_DOUBLE_TRIGGER_THRESHOLD = 50;
-	protected final long DEFAULT_HDR_TRIGGER_THRESHOLD = 50;
 	
-	protected final Executor executor = new ThreadPoolExecutor(5, 10, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+	protected final static long DEFAULT_DOUBLE_TRIGGER_THRESHOLD = 50;
+	protected final static long DEFAULT_HDR_TRIGGER_THRESHOLD = 50;
+	protected final static float DEFAULT_SECONDARY_VELOCITY_THRESHOLD = 0.5f;
+	
+	protected final Executor executor = new ThreadPoolExecutor(10, 10, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 
 	public Play(String name) {
 		super(name);
@@ -59,15 +62,20 @@ public class Play extends Logic {
 			return;
 		}
 		
-		//If this was a 'double trigger' on the same pad (but not the same zone), then
-		// we stop the last playing sound, and play the new one instead.
+		//If this was a 'double trigger' on the same pad (but not the same zone), 
+		// which was louder than the last one, then we stop the last playing 
+		// sound, and play the new one instead.  Otherwise, we ignore it.
 		if (lastPlayedTimeByPad.get(zone.getPad()) != null
-				&& lastPlayedTimeByPad.get(zone.getPad()) + doubleTriggerThreshold > currentTime
-				&& lastPlayedVelocityByPad.get(zone.getPad()) < rawValue){
-			Sample sample = getSample(lastPlayedZoneByPad.get(zone.getPad()));
-			if (sample != null){
-				logger.fine("Stopping last played sound on pad; playing new sound instead, as it is louder");
-				sample.stopLastSample();
+				&& lastPlayedTimeByPad.get(zone.getPad()) + doubleTriggerThreshold > currentTime){
+			if (lastPlayedVelocityByPad.get(zone.getPad()) < rawValue){
+				Sample sample = getSample(lastPlayedZoneByPad.get(zone.getPad()));
+				if (sample != null){
+					logger.fine("Stopping last played sound on pad; playing new sound instead, as it is louder");
+					sample.stopLastSample();
+				}
+			}
+			else {
+				return;
 			}
 		}
 
@@ -92,8 +100,9 @@ public class Play extends Logic {
 				Sample sample = getSample(zone);
 
 				//Adjust the last played sample
-				sample.adjustLastVolume(getHDRAdjustedValue(hdrKey), GainMapping.getPadGain(zone.getPad().getName()));
-
+				if (sample != null){
+					sample.adjustLastVolume(getHDRAdjustedValue(hdrKey), GainMapping.getPadGain(zone.getPad().getName()));
+				}
 			}
 		}
 
@@ -116,6 +125,7 @@ public class Play extends Logic {
 		}
 
 		executor.execute(new PlayThread(zone, rawValue));
+//		new PlayThread(zone, rawValue);
 	}
 	
 	/**
@@ -138,6 +148,33 @@ public class Play extends Logic {
 		}
 		
 		return doubleTriggerThreshold;
+	}
+	
+	/**
+	 * Returns the threshold at which the secondary zone should play, expressed
+	 * as a ratio between the primary zone and the secondary zone.  This lets you
+	 * determine how hard (relative to the main zone) this zone must have been
+	 * hit before it will be played instead of the main zone.  For instance, a 
+	 * value of 1.0 will mean that if this zone is hit at the same or higher volume,
+	 * it will play; a value of 0.5 means that if this zone is hit at 1/2 the 
+	 * velocity as the main, it will override main. 
+	 * @param zone
+	 * @return
+	 */
+	protected float getSecondaryVelocityThreshold(Zone zone){
+		float secondaryVelocityThreshold = DEFAULT_SECONDARY_VELOCITY_THRESHOLD;
+		OptionMapping om = OptionMapping.getOptionMapping(zone.getPad().getName(), zone.getName());
+		if (om != null){
+			String st = om.getOptions().get(OPTION_SECONDARY_THRESHOLD);
+			if (st != null){
+				try {
+					secondaryVelocityThreshold = Float.parseFloat(st);
+				}
+				catch (NumberFormatException nfe){}
+			}
+		}
+
+		return secondaryVelocityThreshold;
 	}
 	
 	private static float SLOPE = 100; //Higher number is less of a drop-off
@@ -284,6 +321,9 @@ public class Play extends Logic {
 		doubleTrigger.setDefaultValue(DEFAULT_DOUBLE_TRIGGER_THRESHOLD);
 		logicOptions.add(doubleTrigger);
 		logicOptions.add(new LogicOption(LogicOptionType.OPTION_STRING, OPTION_HDR_LOGICAL_KEY_NAME, "HDR Key"));
+		LogicOption secondaryThreshold = new LogicOption(LogicOptionType.OPTION_FLOAT, OPTION_SECONDARY_THRESHOLD, "ST");
+		secondaryThreshold.setDefaultValue(0f);
+		logicOptions.add(secondaryThreshold);
 		return logicOptions;
 	}
 }

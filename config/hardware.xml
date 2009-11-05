@@ -1,0 +1,53 @@
+<drum-slave>
+  <pad name="Crash 1">
+    <zone name="Bow" channel="20"/>
+    <zone name="Mute" channel="33"/>
+    <zone name="Bell" channel="21"/>
+    <zone name="Edge" channel="22"/>
+  </pad>
+  <pad name="Crash 2">
+    <zone name="Bow" channel="17"/>
+    <zone name="Mute" channel="34"/>
+    <zone name="Bell" channel="18"/>
+    <zone name="Edge" channel="19"/>
+  </pad>
+  <pad name="Tom 2">
+    <zone name="Head" channel="13"/>
+  </pad>
+  <pad name="Hi-Hat">
+    <zone name="Digital" channel="32"/>
+    <zone name="Bow" channel="28"/>
+    <zone name="Analog" channel="24"/>
+    <zone name="Bell" channel="29"/>
+    <zone name="Edge" channel="30"/>
+  </pad>
+  <pad name="Tom 4">
+    <zone name="Head" channel="15"/>
+  </pad>
+  <pad name="Tom 3">
+    <zone name="Head" channel="14"/>
+  </pad>
+  <pad name="Ride">
+    <zone name="Bow" channel="25"/>
+    <zone name="Mute" channel="36"/>
+    <zone name="Bell" channel="26"/>
+    <zone name="Edge" channel="27"/>
+  </pad>
+  <pad name="Tom 1">
+    <zone name="Head" channel="12"/>
+  </pad>
+  <pad name="Bass">
+    <zone name="Head" channel="23"/>
+  </pad>
+  <pad name="Splash 1">
+    <zone name="Mute" channel="35"/>
+  </pad>
+  <pad name="Snare">
+    <zone name="Head 4" channel="3"/>
+    <zone name="Head 1" channel="0"/>
+    <zone name="Rim 1" channel="8"/>
+    <zone name="Head 3" channel="2"/>
+    <zone name="Head 2" channel="1"/>
+    <zone name="Rim 2" channel="9"/>
+  </pad>
+</drum-slave>

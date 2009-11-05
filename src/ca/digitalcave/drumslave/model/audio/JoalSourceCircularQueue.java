@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.java.games.joal.AL;
 import net.java.games.joal.ALFactory;
@@ -66,7 +68,7 @@ public class JoalSourceCircularQueue {
 	// Velocity of the source sound.
 	private static final float[] sourceVel = { 0.0f, 0.0f, 0.0f };
 
-	private static int loadedSources = 0;
+//	private static int loadedSources = 0;
 
 	/**
 	 * This should only happen once per program run.  Running ALut.alutInit() multiple
@@ -88,8 +90,12 @@ public class JoalSourceCircularQueue {
 	private int[] sources = new int[MAX_SIMULTANEOUS]; //First index is from 0 - (MAX_SIMULTANEOUS - 1), and will loop based on sourceCounter
 	private int[] buffers = new int[1]; //We share the same buffer with all sources in a given JoalCircularSource instance.
 	private final ByteBuffer bufferData; //We need to store the buffer data so that we can find the value at a given position, for VU meter.
+	
+//	private static int count = 0;
 
-	public JoalSourceCircularQueue(File sample) {		
+	public JoalSourceCircularQueue(File sample) {
+		Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Starting to load buffer and sources for sample " + sample.getAbsolutePath());
+		
 		int[] format = new int[1];
 		int[] size = new int[1];
 		ByteBuffer[] data = new ByteBuffer[1];
@@ -109,25 +115,56 @@ public class JoalSourceCircularQueue {
 		al.alBufferData(buffers[0], format[0], data[0], size[0], freq[0]);
 		
 		bufferData = data[0].asReadOnlyBuffer();
-		
+
 		//Check for error after buffer loading
 		int error = al.alGetError();
 		if (error != AL.AL_NO_ERROR) {
-			throw new RuntimeException("Error encountered while loading source #" + loadedSources + " for " + sample.getAbsolutePath() + " error #" + error);
+			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Error encountered while loading buffer for " + sample.getAbsolutePath() + "; error #" + error);
 		}
 
 		//Generate sources and link to buffer, set defaults, etc
 		al.alGenSources(MAX_SIMULTANEOUS, sources, 0);
 		for (int i = 0; i < MAX_SIMULTANEOUS; i++) {
 			al.alSourcei(sources[i], AL.AL_BUFFER, buffers[0]);
+			error = al.alGetError();
+			if (error != AL.AL_NO_ERROR) {
+				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Error encountered while generating source for " + sample.getAbsolutePath() + "; error #" + error);
+			}
+			
 			al.alSourcef(sources[i], AL.AL_PITCH, 1.0f);
+			error = al.alGetError();
+			if (error != AL.AL_NO_ERROR) {
+				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Error encountered while setting pitch for " + sample.getAbsolutePath() + "; error #" + error);
+			}
+			
 			al.alSourcef(sources[i], AL.AL_GAIN, 1.0f);
 			al.alSourcef(sources[i], AL.AL_MIN_GAIN, 0.0f);
-			al.alSourcef(sources[i], AL.AL_MAX_GAIN, 3.0f);
-			al.alSourcefv(sources[i], AL.AL_POSITION, sourcePos, 0);
+			al.alSourcef(sources[i], AL.AL_MAX_GAIN, 1.0f);
+			error = al.alGetError();
+			if (error != AL.AL_NO_ERROR) {
+				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Error encountered while setting current, min, and max gain for " + sample.getAbsolutePath() + "; error #" + error);
+			}			
+			
+			error = al.alGetError(); al.alSourcefv(sources[i], AL.AL_POSITION, sourcePos, 0);
+			error = al.alGetError();
+			if (error != AL.AL_NO_ERROR) {
+				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Error encountered while setting playback position for " + sample.getAbsolutePath() + "; error #" + error);
+			}			
+			
 			al.alSourcefv(sources[i], AL.AL_POSITION, sourceVel, 0);
+			error = al.alGetError();
+			if (error != AL.AL_NO_ERROR) {
+				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Error encountered while setting source velocity for " + sample.getAbsolutePath() + "; error #" + error);
+			}			
+			
 			al.alSourcei(sources[i], AL.AL_LOOPING, AL.AL_FALSE);
+			error = al.alGetError();
+			if (error != AL.AL_NO_ERROR) {
+				Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Error encountered while disabling looping for " + sample.getAbsolutePath() + "; error #" + error);
+			}			
 		}
+		
+		Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Finished loading buffer and sources for sample " + sample.getAbsolutePath());
 	}
 
 	/**

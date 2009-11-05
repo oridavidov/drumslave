@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
 
 import org.homeunix.thecave.moss.collections.HistorySet;
 
@@ -23,13 +22,10 @@ import ca.digitalcave.drumslave.model.hardware.Zone;
  */
 public class HiHatControllerAnalog extends Logic {
 
-	private final Logger logger = Logger.getLogger(this.getClass().getName());
+//	private final Logger logger = Logger.getLogger(this.getClass().getName());
 	private final Map<Pad, Float> currentValueByPad = new ConcurrentHashMap<Pad, Float>();
 	private final Set<HistoryUnit> history = new HistorySet<HistoryUnit>(100);
-	
-	//How far back in time (in ms) do we look when finding the velocity?
-	private final static int VELOCITY_HISTORY_PERIOD = 500;
-	
+		
 	//This is initialized the first time the HiHat Controller is instantiated.
 	//TODO This will only let there be one HiHatControllerAnalog.  Is this right?
 	static String HIHAT_CONTROLLER_ANALOG_NAME = null;
@@ -44,19 +40,19 @@ public class HiHatControllerAnalog extends Logic {
 	public void execute(Zone zone, float rawValue) {
 		currentValueByPad.put(zone.getPad(), rawValue);
 		history.add(new HistoryUnit(System.currentTimeMillis(), rawValue));
-		logger.finest(zone.getPad().getName() + " changed to " + rawValue);
+//		logger.finest(zone.getPad().getName() + " changed to " + rawValue);
 	}
 	
 	public Float getAnalogValueByPad(Pad pad){
 		return currentValueByPad.get(pad);
 	}
-	
+		
 	/**
 	 * We define velocity as the total change in value over the past VELOCITY_HISTORY_PERIOD ms. 
 	 * @param pad
 	 * @return
 	 */
-	public Float getAnalogVelocityByPad(Pad pad, boolean closed){
+	public Float getAnalogVelocityByPad(Pad pad, boolean closed, long time){
 		if (currentValueByPad.get(pad) == null)
 			return 0f;
 		
@@ -65,7 +61,7 @@ public class HiHatControllerAnalog extends Logic {
 		
 		long currentTime = System.currentTimeMillis();
 		for (HistoryUnit historyUnit : history) {
-			if (historyUnit.getTime() + VELOCITY_HISTORY_PERIOD > currentTime){
+			if (historyUnit.getTime() + time > currentTime){
 				if (max < historyUnit.getValue())
 					max = historyUnit.getValue();
 				if (min > historyUnit.getValue())

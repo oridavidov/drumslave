@@ -78,7 +78,7 @@ public class HiHatControllerDigital extends Logic {
 			// play the splash sample
 			if (lastStateChangeTimeByPad.get(zone.getPad()) + SPLASH_SAMPLE_THRESHOLD > currentTime
 					&& lastSplashPlayedTimeByPad.get(zone.getPad()) + SPLASH_SAMPLE_DEBOUNCE_PERIOD < currentTime){
-				zone.getPad().stop(10, LOGICAL_SPLASH);
+				zone.getPad().stop(10, LOGICAL_SPLASH, LOGICAL_CHIC);
 				Sample sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), zone.getPad().getName(), LOGICAL_SPLASH));
 				if (sample != null){
 					HiHatControllerAnalog analog = (HiHatControllerAnalog) Logic.getLogic(HiHatControllerAnalog.HIHAT_CONTROLLER_ANALOG_NAME);
@@ -87,7 +87,11 @@ public class HiHatControllerDigital extends Logic {
 					// and by assuming that it was, we avoid the situation where we mis-read the analog values
 					// because they are moving too fast (i.e., pedal started at open, and was slammed shut
 					// and re-opened before the controller could see the value of the closed state).
-					Float volume = analog.getAnalogVelocityByPad(zone.getPad(), true);
+					//Adjust the final argument 'time' to change the sensitivity.  Perhaps sometime
+					// we may abstract this to a config file value, but for now it is
+					// just hard coded.
+					Float volume = analog.getAnalogVelocityByPad(zone.getPad(), true, 70);
+					System.err.println("Last know analog value: " + volume);
 					if (volume != null && volume > 0.5f){
 						logger.finer("Playing HiHat Splash at volume " + volume);
 						sample.play(volume, GainMapping.getPadGain(zone.getPad().getName()));
@@ -95,7 +99,7 @@ public class HiHatControllerDigital extends Logic {
 				}
 			}
 		}
-		else{
+		else {
 			logger.finest(zone.getPad().getName() + " closed at " + currentTime);
 			//If the HH is closed, we want to be sure that all non-closed sounds stop.
 			zone.getPad().stop(10, LOGICAL_CHIC, LOGICAL_SPLASH, zone.getName() + PlayHiHat.LOGICAL_TIGHT, zone.getName() + PlayHiHat.LOGICAL_CLOSED);
@@ -105,7 +109,7 @@ public class HiHatControllerDigital extends Logic {
 				Sample sample = Sample.getSample(SampleMapping.getSampleMapping(SampleMapping.getSelectedSampleGroup(), zone.getPad().getName(), LOGICAL_CHIC));
 				if (sample != null){
 					HiHatControllerAnalog analog = (HiHatControllerAnalog) Logic.getLogic(HiHatControllerAnalog.HIHAT_CONTROLLER_ANALOG_NAME);
-					Float volume = analog.getAnalogVelocityByPad(zone.getPad(), true);
+					Float volume = analog.getAnalogVelocityByPad(zone.getPad(), true, 100);
 					if (volume != null){
 						logger.finer("Playing HiHat Chic at volume " + volume);
 						sample.play(volume, GainMapping.getPadGain(zone.getPad().getName()));

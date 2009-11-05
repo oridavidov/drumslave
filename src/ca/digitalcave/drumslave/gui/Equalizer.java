@@ -88,6 +88,10 @@ public class Equalizer extends MossFrame {
 			}
 		});
 		
+
+		PadEQChannel masterEqChannel = new PadEQChannel(null);
+		eqChannels.add(masterEqChannel);
+		eqChannelsPanel.add(masterEqChannel);
 		
 		for (Pad pad : pads){
 			PadEQChannel eqChannel = new PadEQChannel(pad);

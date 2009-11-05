@@ -15,7 +15,7 @@ public class EditMenu extends MossMenu {
 	
 	public EditMenu(MossFrame frame) {
 		super(frame, "Edit");
-		
+		this.setMnemonic('E');
 	}
 	
 	@Override

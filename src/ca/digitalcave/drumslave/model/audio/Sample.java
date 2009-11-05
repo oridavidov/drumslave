@@ -182,12 +182,6 @@ public abstract class Sample {
 	public abstract void stop(long fadeOutPeriod);
 	
 	/**
-	 * Stops all samples playing on the current sample.  This MUST stop immediately.
-	 * This method MUST NOT block.
-	 */
-//	public abstract void stopImmediately();
-	
-	/**
 	 * Stop the last played sample, using the same algorithm as stop() does.
 	 */
 	public abstract void stopLastSample();
