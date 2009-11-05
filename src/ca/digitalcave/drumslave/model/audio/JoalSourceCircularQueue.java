@@ -85,7 +85,7 @@ public class JoalSourceCircularQueue {
 		al.alListenerfv(AL.AL_ORIENTATION, new float[]{0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f }, 0);
 	}
 
-	private final int MAX_SIMULTANEOUS = 8; //How many Sources to include in the circular buffer
+	private final int MAX_SIMULTANEOUS = 4; //How many Sources to include in the circular buffer
 	private int sourceCounter = 0; //Internal counter to find the next source
 	private int[] sources = new int[MAX_SIMULTANEOUS]; //First index is from 0 - (MAX_SIMULTANEOUS - 1), and will loop based on sourceCounter
 	private int[] buffers = new int[1]; //We share the same buffer with all sources in a given JoalCircularSource instance.
