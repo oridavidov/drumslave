@@ -110,8 +110,8 @@ public class DrumSlave {
 			try {
 				CommunicationsFactory commLink;
 				//commLink = new SerialFactory("/dev/tty.usbserial-FTE0U36U");
-				//commLink = new SerialFactory("/dev/tty.usbserial-A200294u");
-				commLink = new SerialFactory("/dev/ttyUSB0");
+				commLink = new SerialFactory("/dev/tty.usbserial-A200294u");
+				//commLink = new SerialFactory("/dev/ttyUSB0");
 				commLink.connect();
 			}
 			catch (Exception e){

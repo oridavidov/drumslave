@@ -7,8 +7,8 @@
 	<classpathentry kind="lib" path="lib/quaqua-5.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/moss-collections-2.0.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/joal-1.1.2.jar"/>
-	<classpathentry kind="lib" path="lib/RXTXcomm-2.1-7r2.jar"/>
 	<classpathentry kind="lib" path="lib/moss-swing-2.0.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/gluegen-rt-joal-1.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/RXTXcomm-2.2pre2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -31,7 +31,7 @@ public class SerialFactory implements CommunicationsFactory {
 
 			if (commPort instanceof SerialPort) {
 				SerialPort serialPort = (SerialPort) commPort;
-				serialPort.setSerialPortParams(115200, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+				serialPort.setSerialPortParams(57600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
 
 				InputStream in = serialPort.getInputStream();
 
@@ -51,7 +51,7 @@ public class SerialFactory implements CommunicationsFactory {
 	 */
 	public class SerialReader implements SerialPortEventListener {
 		private InputStream in;
-		private byte[] buffer = new byte[1024];
+		private int[] buffer = new int[3];
 		
 		public SerialReader (InputStream in){
 			this.in = in;
@@ -61,16 +61,16 @@ public class SerialFactory implements CommunicationsFactory {
 			int data;
 
 			try {
-				int len = 0;
 				while ((data = in.read()) > -1) {
-					if (data == '\n') {
-						break;
+					if ((data & 0xF0) == 0xF0) {
+						buffer[0] = data;
+						buffer[1] = in.read();
+						buffer[2] = in.read();
+						
+						DrumSignal.threadPool.execute(new DrumSignal(buffer));		
 					}
-					buffer[len++] = (byte) data;
 				}
-
-				String command = new String(buffer, 0, len);
-				DrumSignal.threadPool.execute(new DrumSignal(command));
+				
 			}
 			catch (Exception e) {
 				e.printStackTrace();

@@ -53,7 +53,27 @@ public class ConsoleInput extends MossPanel implements ActionListener {
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		String command = inputField.getText();
+		String text = inputField.getText();
+		
+		String[] split = text.split(":");
+		int channel = Integer.parseInt(split[0]);
+		int data = Math.min(1023, Integer.parseInt(split[1]));
+
+		int[] command = new int[3];
+		int checksum = 0x0;
+		
+		command[0] = (0xF0 | ((channel >> 2) & 0xF));
+		checksum ^= command[0] >> 4;
+		checksum ^= command[0] & 0xF;
+
+		command[1] = (((channel & 0x3) << 6) | ((data >> 4) & 0x3F));
+		checksum ^= command[1] >> 4;
+		checksum ^= command[1] & 0xF;
+		
+		command[2] = ((data & 0xF) << 4);
+		checksum ^= command[2] >> 4;
+		command[2] |= checksum & 0xF;
+		
 		DrumSignal.threadPool.execute(new DrumSignal(command));
 		inputField.setText("");
 		updateContent();
