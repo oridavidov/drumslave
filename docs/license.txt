@@ -1,0 +1,4 @@
+Drum Slave is released under a Creative Commons Attribution Non-Commercial Share-Alike license.  
+See http://creativecommons.org/licenses/by-nc-sa/2.5/ca/ for details and full license terms.
+
+Drum Slave is written and is under copyright by Wyatt Olson <wyatt@digitalcave.ca>.  
