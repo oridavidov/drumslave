@@ -34,11 +34,11 @@ public class Equalizer extends MossFrame {
 	
 	private final JPanel eqChannelsPanel = new JPanel(new GridLayout(1, 0));
 	private final List<PadEQChannel> eqChannels = new ArrayList<PadEQChannel>();
+	private final ConsoleInput consoleInput = new ConsoleInput();
 	
-	private final boolean showConsole;
-	
-	public Equalizer(boolean showConsole) {
-		this.showConsole = showConsole;
+	public void setConsoleInputVisible(boolean visible){
+		if (consoleInput != null) consoleInput.setVisible(visible);
+		this.doLayout();
 	}
 	
 	@Override
@@ -49,8 +49,7 @@ public class Equalizer extends MossFrame {
 		
 		this.setLayout(new BorderLayout());
 		this.add(eqChannelsPanel, BorderLayout.CENTER);
-		if (showConsole)
-			this.add(new ConsoleInput(), BorderLayout.SOUTH);
+		this.add(consoleInput, BorderLayout.SOUTH);
 		
 		this.setResizable(false);
 		

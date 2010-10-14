@@ -28,7 +28,7 @@ public class ConsoleInput extends MossPanel implements ActionListener {
 		
 		open();
 	}
-		
+	
 	@Override
 	public void init() {
 		super.init();

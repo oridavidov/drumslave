@@ -107,24 +107,38 @@ public class DrumSlave {
 		public static final long serialVersionUID = 0;
 
 		public void run() {
-			try {
-				CommunicationsFactory commLink;
-				//commLink = new SerialFactory("/dev/tty.usbserial-FTE0U36U");
-				commLink = new SerialFactory("/dev/tty.usbserial-A200294u");
-				//commLink = new SerialFactory("/dev/ttyUSB0");
-				commLink.connect();
+			String[] ports = {
+					"/dev/tty.usbserial-A200294u",
+					"/dev/tty.usbserial*"
+			};
+			boolean success = false;
+			for (String port : ports) {
+				try {
+					CommunicationsFactory commLink = null;
+					commLink = new SerialFactory(port);
+					commLink.connect();
+					success = true;
+					break;
+				}
+				catch (Exception e){
+					logger.log(Level.FINE, "Could not connect to serial port " + port + "; trying next one...");
+				}
 			}
-			catch (Exception e){
-				logger.log(Level.SEVERE, "Problem encountered while reading communications line", e);
+
+			if (!success){
+				logger.log(Level.SEVERE, "Could not connect to any serial port.  Starting in test mode.");
+				GuiRunner.equalizer.setConsoleInputVisible(true);
 			}
 		}
 	}
 
 	private static class GuiRunner implements Runnable {
 		public static final long serialVersionUID = 0;
+		public static final Equalizer equalizer = new Equalizer();
 		public void run() {
 			try {
-				new Equalizer(showConsole).openWindow();
+				equalizer.openWindow();
+				equalizer.setConsoleInputVisible(showConsole);
 			}
 			catch (WindowOpenException woe){
 				woe.printStackTrace();

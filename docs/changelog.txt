@@ -1,2 +1,8 @@
+2.0.1.0 - October 13 2010
+-Getting to a more stable version.  Standalone OSX package is created and works on my machine at least.
+-Switched to binary protocol to decrease latency (in theory).
+-Added my config and samples to website to help testers
+-Automatically scan various common serial ports, and if none are found, falls back to test mode (with a text form on the window where you can type commands).  Commands are still in the legacy ASCII protocol form <channel>:<velocity>, e.g. 0:1024 to send a full strength signal on channel 0.  
+
 2.0.0.0 - June 4 2009
 -First implementation of Java Drum Slave.  Technically this is really version 1.0 (hah!  probably more like 0.1), but since it is the re-implementation of the original Python drum slave, I bumped a major version number to keep things as clear as possible. 
