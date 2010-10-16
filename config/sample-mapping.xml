@@ -29,7 +29,6 @@
     <sample-mapping pad-name="Tom 1" logical-name="Head" sample-name="Tom 1/Beech/Head"/>
     <sample-mapping pad-name="Bass" logical-name="Head" sample-name="Bass/Acoustic/Head"/>
     <sample-mapping pad-name="Snare" logical-name="Head" sample-name="Snare/Rock/Head"/>
-    <sample-mapping pad-name="Snare" logical-name="Rim" sample-name="Snare/Rock/Rim"/>
   </group>
   <group name="Electronic">
     <sample-mapping pad-name="Tom 2" logical-name="Head" sample-name="Tom 2/808/Head"/>

@@ -30,6 +30,7 @@ public class DrumSlave {
 
 	private static File samplesFolder = null;
 	private static File config = null;
+	private static String port = null;
 	private static boolean showConsole = false;
 
 	public static void main(String[] args) {
@@ -41,10 +42,12 @@ public class DrumSlave {
 			variables.add(new ParseVariable("--log-level", String.class, false));
 			variables.add(new ParseVariable("--sample-folder", String.class, false));
 			variables.add(new ParseVariable("--config", String.class, false));
+			variables.add(new ParseVariable("--port", String.class, false));
 
 			String help = "USAGE: java -jar DrumSlave.jar <options> <data file>, where options include:\n"
 				+ "\t--keyboard\t\tUse keyboard for testing, instead of serial port\n"
 				+ "\t--console\t\tDo not launch the GUI\n"
+				+ "\t--port\tPort\tSpecify serial port to use (default: search common ones)\n"
 				+ "\t--sample-folder\tPath\tOverride default sample folder (useful for development)\n"
 				+ "\t--config\tPath\tOverride default config path (useful for development)\n"
 				+ "\t--log-level\tLEVEL\tSet log level: [SEVERE|WARNING|INFO|CONFIG|FINE|FINER|FINEST], default INFO\n";
@@ -62,7 +65,11 @@ public class DrumSlave {
 				config = new File(results.getString("--config"));
 			}			
 
+			if (results.getString("--port") != null){
+				port = results.getString("--port");
+			}			
 
+			
 			//Load config from disk; first we want hardware, so that we can init GUI
 			ConfigFactory.getInstance().loadConfig(ConfigType.HARDWARE);
 			ConfigFactory.getInstance().loadConfig(ConfigType.SETTINGS);
@@ -108,6 +115,7 @@ public class DrumSlave {
 
 		public void run() {
 			String[] ports = {
+					(port == null ? "" : port),
 					"/dev/tty.usbserial-A200294u",
 					"/dev/tty.usbserial*"
 			};

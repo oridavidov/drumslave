@@ -24,8 +24,6 @@
   <logic-mapping pad-name="Splash 1" zone-name="Mute" logic-name="Mute"/>
   <logic-mapping pad-name="Snare" zone-name="Head 1" logic-name="Play"/>
   <logic-mapping pad-name="Snare" zone-name="Head 4" logic-name="Play"/>
-  <logic-mapping pad-name="Snare" zone-name="Rim 1" logic-name="Play"/>
   <logic-mapping pad-name="Snare" zone-name="Head 3" logic-name="Play"/>
   <logic-mapping pad-name="Snare" zone-name="Head 2" logic-name="Play"/>
-  <logic-mapping pad-name="Snare" zone-name="Rim 2" logic-name="Play"/>
 </drum-slave>

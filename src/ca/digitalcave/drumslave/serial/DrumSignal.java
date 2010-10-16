@@ -44,7 +44,7 @@ public class DrumSignal implements Runnable {
 
 		Map<Pad, List<PlayedZone>> padCommands = new ConcurrentHashMap<Pad, List<PlayedZone>>();
 		
-		int channel = ((command[0] & 0xF) << 4) | (command[1] >> 6);
+		int channel = ((command[0] & 0xF) << 2) | (command[1] >> 6);
 		int rawVelocity = ((command[1] & 0x3F) << 4) | (command[2] >> 4);
 		
 		Zone z = Zone.getZone(channel);

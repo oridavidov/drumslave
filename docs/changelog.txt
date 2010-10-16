@@ -1,3 +1,7 @@
+2.0.1.1 - October 14 2010
+-Added option to specify your serial port on the command line, useful for testing when you don't have a common USB serial port name (or are on an OS which I have not added explicit support for yet).
+-Fixed an off-by-two-bits error when decoding binary packet.
+
 2.0.1.0 - October 13 2010
 -Getting to a more stable version.  Standalone OSX package is created and works on my machine at least.
 -Switched to binary protocol to decrease latency (in theory).
