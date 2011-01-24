@@ -159,7 +159,7 @@ public class AudioSystemSample extends Sample {
 					Clip clip = clips.get(sampleNumber).poll();
 					FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
 					gainControl.setValue(gainControl.getValue() - 5);
-					System.out.println("Reducing volume to " + gainControl.getValue());
+					Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Reducing volume to " + gainControl.getValue());
 
 					try {
 						Thread.sleep(10);

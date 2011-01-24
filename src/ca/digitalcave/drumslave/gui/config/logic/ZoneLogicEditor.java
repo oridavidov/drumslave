@@ -188,6 +188,7 @@ public class ZoneLogicEditor extends MossPanel implements ActionListener {
 			logicEditor.getLogicMappings().get(zone.getPad().getName()).put(zone.getName(), (String) logicNames.getSelectedItem());
 			
 			updateContent();
+			logicEditor.updateContent();
 		}
 	}
 }

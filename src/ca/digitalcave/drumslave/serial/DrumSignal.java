@@ -57,7 +57,7 @@ public class DrumSignal implements Runnable {
 			else 
 				volume = rawVelocity / 1024f;
 
-			//System.out.println(z.getChannel() + ":" + volume);
+			System.out.println(z.getChannel() + ":" + volume);
 			z.play(volume);
 			if (padCommands.get(z.getPad()) == null)
 				padCommands.put(z.getPad(), new ArrayList<PlayedZone>());

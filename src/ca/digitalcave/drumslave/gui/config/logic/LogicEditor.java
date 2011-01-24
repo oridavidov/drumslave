@@ -168,18 +168,25 @@ public class LogicEditor extends MossDialog implements ActionListener {
 		List<ConfigOptionMapping> optionMappings = new ArrayList<ConfigOptionMapping>();
 		for (String padName : this.logicOptions.keySet()) {
 			for (String zoneName : this.logicOptions.get(padName).keySet()) {
-				ConfigOptionMapping optionMapping = new ConfigOptionMapping();
-				optionMapping.setPadName(padName);
-				optionMapping.setZoneName(zoneName);
-				optionMapping.setOptions(new ArrayList<ConfigOption>());
-				for (String optionName : this.logicOptions.get(padName).get(zoneName).keySet()){
-					String optionValue = getLogicOption(padName, zoneName, optionName);
-					ConfigOption option = new ConfigOption();
-					option.setName(optionName);
-					option.setValue(optionValue);
-					optionMapping.getOptions().add(option);
+				//We need to make sure that we only include option mappings for pads / zones
+				// which are currently defined in hardware.  Normally this is not a problem, 
+				// but if you rename hardware mappings, you can sometimes run into a situation
+				// where logicOptions are defined for a pad / zone which no longer exists.
+				if (getLogicMappings().get(padName) != null 
+						&& getLogicMappings().get(padName).get(zoneName) != null){ 
+					ConfigOptionMapping optionMapping = new ConfigOptionMapping();
+					optionMapping.setPadName(padName);
+					optionMapping.setZoneName(zoneName);
+					optionMapping.setOptions(new ArrayList<ConfigOption>());
+					for (String optionName : this.logicOptions.get(padName).get(zoneName).keySet()){
+						String optionValue = getLogicOption(padName, zoneName, optionName);
+						ConfigOption option = new ConfigOption();
+						option.setName(optionName);
+						option.setValue(optionValue);
+						optionMapping.getOptions().add(option);
+					}
+					optionMappings.add(optionMapping);
 				}
-				optionMappings.add(optionMapping);
 			}
 		}
 		

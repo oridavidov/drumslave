@@ -9,6 +9,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ca.digitalcave.drumslave.model.audio.Sample;
@@ -82,7 +83,7 @@ public class Play extends Logic {
 		//If this zone uses additive volume, calculate the adjustment			
 		if (additiveVolume){
 			float volumeAdjustment = getAdditiveVolumeAdjustment(zone);
-			System.out.println(volumeAdjustment);
+			Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Volumne adjustment due to additive volume: " + volumeAdjustment);
 			if (volumeAdjustment > 1){
 				rawValue = rawValue * volumeAdjustment;
 				rawValue = Math.min(1, Math.max(0, rawValue));

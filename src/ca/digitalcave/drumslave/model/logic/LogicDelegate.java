@@ -3,6 +3,8 @@ package ca.digitalcave.drumslave.model.logic;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ca.digitalcave.drumslave.model.hardware.Zone;
 import ca.digitalcave.drumslave.model.mapping.LogicMapping;
@@ -52,7 +54,7 @@ public class LogicDelegate {
 			if (l instanceof Play
 					&& !z.equals(primaryZone)
 					&& playedZone.getSecondaryVelocityRatio() > ((Play) l).getSecondaryVelocityThreshold(z)){
-				System.err.println("Playing " + z.getName() + " at ratio " + ((Play) l).getSecondaryVelocityThreshold(z));
+				Logger.getLogger(LogicDelegate.class.getName()).log(Level.INFO, "Playing " + z.getName() + " at ratio " + ((Play) l).getSecondaryVelocityThreshold(z));
 				z.play(playedZone.getVelocity());
 				return;
 			}

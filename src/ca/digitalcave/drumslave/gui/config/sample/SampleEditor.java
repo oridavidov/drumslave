@@ -161,7 +161,6 @@ public class SampleEditor extends MossDialog implements ActionListener {
 			if (sampleGroupNamesComboBox.getSelectedItem() != null){
 				SampleMapping.setSelectedSampleGroup(sampleGroupNamesComboBox.getSelectedItem().toString());
 				padSampleEditor.updateContent();
-				System.out.println(SampleMapping.getSelectedSampleGroup());
 			}
 		}
 		else if (e.getSource().equals(saveButton)){
@@ -256,7 +255,6 @@ public class SampleEditor extends MossDialog implements ActionListener {
 	private void saveChanges() throws InvalidConfigurationException {
 		List<ConfigSampleMappingGroup> sampleMappingGroups = new ArrayList<ConfigSampleMappingGroup>();
 		for (String sampleConfigName : this.sampleMappings.keySet()){
-			System.out.println("Saving " + sampleConfigName);
 			ConfigSampleMappingGroup configSampleMappingGroup = new ConfigSampleMappingGroup();
 			configSampleMappingGroup.setName(sampleConfigName);
 			List<ConfigSampleMapping> sampleMappings = new ArrayList<ConfigSampleMapping>();

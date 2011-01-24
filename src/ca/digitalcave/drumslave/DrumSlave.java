@@ -117,15 +117,17 @@ public class DrumSlave {
 			String[] ports = {
 					(port == null ? "" : port),
 					"/dev/tty.usbserial-A200294u",
-					"/dev/tty.usbserial*"
+					"/dev/tty.usbserial-FTE0U36U"
 			};
 			boolean success = false;
 			for (String port : ports) {
 				try {
+					logger.log(Level.FINE, "Trying to connect to serial port " + port + "...");
 					CommunicationsFactory commLink = null;
 					commLink = new SerialFactory(port);
 					commLink.connect();
 					success = true;
+					logger.log(Level.FINE, "Connection to serial port " + port + " succeeded!");
 					break;
 				}
 				catch (Exception e){

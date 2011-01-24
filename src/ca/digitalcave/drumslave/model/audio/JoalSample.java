@@ -136,13 +136,16 @@ public class JoalSample extends Sample {
 		return (float) Math.log10((level + 1000) / 1000) / 1.5f; 
 	}
 	
-	public static void main(String[] args) throws Exception {
-		Sample s = new JoalSample("Cymbal/Ride/Zildjian A Ping 20/Bow");
-		s.play(1f, 1f);
-		Thread.sleep(1000);
-		System.out.println(System.currentTimeMillis());
-		s.stop(200);
-		System.out.println(System.currentTimeMillis());
-		Thread.sleep(5000);
-	}
+//	/**
+//	 * Only needed for debugging...
+//	 */
+//	public static void main(String[] args) throws Exception {
+//		Sample s = new JoalSample("Cymbal/Ride/Zildjian A Ping 20/Bow");
+//		s.play(1f, 1f);
+//		Thread.sleep(1000);
+//		System.out.println(System.currentTimeMillis());
+//		s.stop(200);
+//		System.out.println(System.currentTimeMillis());
+//		Thread.sleep(5000);
+//	}
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ca.digitalcave.drumslave.model.audio.Sample;
@@ -60,7 +61,6 @@ public class HiHatControllerDigital extends Logic {
 	
 	public void execute(Zone zone, float rawValue) {
 		long currentTime = System.currentTimeMillis();
-//		String padName = zone.getPad().getName();
 		currentStateByPad.put(zone.getPad(), rawValue > 0.5f);
 		if (lastStateChangeTimeByPad.get(zone.getPad()) == null)
 			lastStateChangeTimeByPad.put(zone.getPad(), 0l);
@@ -91,7 +91,7 @@ public class HiHatControllerDigital extends Logic {
 					// we may abstract this to a config file value, but for now it is
 					// just hard coded.
 					Float volume = analog.getAnalogVelocityByPad(zone.getPad(), true, 70);
-					System.err.println("Last know analog value: " + volume);
+					Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Last known analog value: " + volume);
 					if (volume != null && volume > 0.5f){
 						logger.finer("Playing HiHat Splash at volume " + volume);
 						sample.play(volume, GainMapping.getPadGain(zone.getPad().getName()));

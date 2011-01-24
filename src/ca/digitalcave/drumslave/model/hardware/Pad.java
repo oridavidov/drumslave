@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ca.digitalcave.drumslave.model.audio.Sample;
 import ca.digitalcave.drumslave.model.mapping.SampleMapping;
@@ -140,7 +142,7 @@ public class Pad implements Comparable<Pad> {
 			}
 
 			if (exemptedLogicals != null){
-				System.err.println("Removing " + exemptedSamples + " from " + sampleNames);
+				Logger.getLogger(this.getClass().getName()).log(Level.FINE, "Removing " + exemptedSamples + " from " + sampleNames);
 				sampleNames.removeAll(exemptedSamples);
 			}
 
@@ -149,7 +151,7 @@ public class Pad implements Comparable<Pad> {
 				Sample sample = Sample.getSample(sampleName);
 				if (sample != null){
 					sample.stop(fadeOutPeriod);
-					System.err.println("Stopping " + sampleName);
+					Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Stopping " + sampleName);
 				}
 			}		
 		}

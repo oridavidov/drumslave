@@ -7,6 +7,8 @@ import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This version of the TwoWaySerialComm example makes use of the 
@@ -24,7 +26,7 @@ public class SerialFactory implements CommunicationsFactory {
 	public void connect() throws Exception {
 		CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
 		if (portIdentifier.isCurrentlyOwned()) {
-			System.out.println("Error: Port is currently in use");
+			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "Error: Port is currently in use");
 		}
 		else {
 			CommPort commPort = portIdentifier.open(this.getClass().getName(), 2000);
@@ -40,7 +42,7 @@ public class SerialFactory implements CommunicationsFactory {
 
 			}
 			else {
-				System.out.println("Error: Only serial ports are handled by this example.");
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Only serial ports are handled by this program.");
 			}
 		}     
 	}
